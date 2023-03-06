@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SignIn from './components/SignIn';
 import SideBar from './components/SideBar';
+import Device from './components/Device';
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
 
@@ -49,7 +50,8 @@ ReactDOM.render(
         <Stack direction="row" spacing={3} height="100%">
           <SideBar />
           <Routes>
-            <Route path={"/"} element={<SignIn />} />
+            <Route path={"/SignIn"} element={<SignIn />} />
+            <Route path={"/"} element={<Device />} />
           </Routes>
           </Stack>
         </BrowserRouter>
