@@ -38,6 +38,13 @@ export default function SideBar() {
     const handleCloseEnterModal = () => setEnterModalOpen(false);
 
     const [openSnack, setOpenSnack] = React.useState(false);
+    const [values, setValues] = React.useState<State>({
+        login: '',
+        password: '',
+        showPassword: false
+    });
+    const [showPassword, setShowPassword] = React.useState(false);
+
 
     const handleClickSnack = () => {
         setOpenSnack(true);
@@ -63,18 +70,11 @@ export default function SideBar() {
         </React.Fragment>
     );
 
-    const [values, setValues] = React.useState<State>({
-        login: '',
-        password: '',
-        showPassword: false
-    });
-
     const handleChange =
         (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
             setValues({...values, [prop]: event.target.value});
         };
 
-    const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
