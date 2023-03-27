@@ -9,7 +9,6 @@ import {
     Link,
     Modal,
     OutlinedInput,
-    Snackbar,
     Stack,
     TextField,
     Typography
@@ -17,7 +16,6 @@ import {
 import {useNavigate} from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import CloseIcon from '@mui/icons-material/Close';
 import {LoginModel} from '../models/RequestModels';
 import sha256 from "sha256";
 import {State} from '../models';
@@ -29,46 +27,24 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import BuildIcon from '@mui/icons-material/Build';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../redux/store";
+import {AddSnackbar} from "../redux/actions/snackbarAction";
 
 export default function SideBar() {
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     const [openEnterModal, setEnterModalOpen] = React.useState(false);
     const handleOpenEnterModal = () => setEnterModalOpen(true);
     const handleCloseEnterModal = () => setEnterModalOpen(false);
 
-    const [openSnack, setOpenSnack] = React.useState(false);
     const [values, setValues] = React.useState<State>({
         login: '',
         password: '',
         showPassword: false
     });
     const [showPassword, setShowPassword] = React.useState(false);
-
-
-    const handleClickSnack = () => {
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = (event: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpenSnack(false);
-    };
-
-    const action = (
-        <React.Fragment>
-            <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleCloseSnack}
-            >
-                <CloseIcon fontSize="small"/>
-            </IconButton>
-        </React.Fragment>
-    );
 
     const handleChange =
         (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,20 +57,24 @@ export default function SideBar() {
         event.preventDefault();
     };
 
-    const onClick = () => {
+    const autorization = () => {
         const data: LoginModel = {
             login: values.login,
             password: sha256(values.password)
         };
-        handleClickSnack();
+        dispatch(AddSnackbar({
+            messageText: "Неверный логин или пароль!",
+            messageType: "error",
+            key: + new Date()
+        }))
         return;
     };
 
     return (
         <div style={{
             backgroundColor: '#727272',
-            marginTop: '-7px',
-            marginLeft: '-7px',
+            marginTop: '-8px',
+            marginLeft: '-8px',
             padding: '10px',
             width: '13%',
             minWidth: '200px',
@@ -102,17 +82,18 @@ export default function SideBar() {
             borderRadius: '0 5px 5px 0'
         }}>
             <Stack spacing={2} marginTop={8}>
-                <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<PeopleAltIcon/>} onClick={() => {
-                    navigate("/")
-                }}>
-                    Персонал
-                </Button>
+
                 <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                         startIcon={<FormatListBulletedIcon/>} onClick={() => {
-                    navigate("/order")
+                    navigate("/")
                 }}>
                     Заявки
+                </Button>
+                <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
+                        startIcon={<BuildIcon/>} onClick={() => {
+                    navigate("/device")
+                }}>
+                    Приборы
                 </Button>
                 <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                         startIcon={<DescriptionIcon/>} onClick={() => {
@@ -127,13 +108,13 @@ export default function SideBar() {
                     Архив
                 </Button>
                 <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<BuildIcon/>} onClick={() => {
-                    navigate("/device")
+                        startIcon={<PeopleAltIcon/>} onClick={() => {
+                    navigate("/")
                 }}>
-                    Приборы
+                    Персонал
                 </Button>
                 <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<LoginRoundedIcon/>} onClick={handleOpenEnterModal}>
+                        startIcon={<LoginRoundedIcon/>} onClick={handleOpenEnterModal} style={{marginTop: "10%"}}>
                     Авторизация
                 </Button>
 
@@ -183,19 +164,11 @@ export default function SideBar() {
                             </FormControl>
 
                             <Button variant="contained" size="large" color="primary" sx={{borderRadius: '10px'}}
-                                    onClick={onClick} disableElevation>Войти</Button>
-                            <Link component="button" variant="body2" onClick={handleCloseEnterModal}>Продолжить как
-                                гость</Link>
+                                    onClick={ () => {autorization()}} disableElevation>Войти</Button>
+                            <Link component="button" variant="body2" onClick={handleCloseEnterModal}>Продолжить как гость</Link>
                         </Stack>
                     </Box>
                 </Modal>
-                <Snackbar
-                    open={openSnack}
-                    autoHideDuration={6000}
-                    onClose={handleCloseSnack}
-                    message="Неверный логин или пароль"
-                    action={action}
-                />
             </Stack>
         </div>
     )

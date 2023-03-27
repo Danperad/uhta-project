@@ -3,7 +3,7 @@ import {
     Autocomplete,
     Box,
     Button,
-    Paper,
+    Paper, Skeleton,
     Stack,
     Table,
     TableBody,
@@ -12,18 +12,16 @@ import {
     TableHead,
     TableRow,
     TextField,
-    Typography
+    Typography,
 } from '@mui/material';
-import Snackbar, {SnackbarOrigin} from '@mui/material/Snackbar';
-import MuiAlert, {AlertColor, AlertProps} from '@mui/material/Alert';
 import TableRowMaterial from './TableRowMaterial';
 import "../assets/css/Scrollbar.css";
 import {Material} from '../models';
 import DeviceService from '../services/DeviceService';
-
-export interface State extends SnackbarOrigin {
-    openSnackbar: boolean;
-}
+import excelIcon from '../../public/image/excel.svg';
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../redux/store";
+import {AddSnackbar} from "../redux/actions/snackbarAction";
 
 //Dictionaries
 const Type = [
@@ -41,42 +39,28 @@ const Unit = [
     {label: 'М2'},
 ]
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref,) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 export default function Device() {
+    const dispatch = useDispatch<AppDispatch>();
 
     const [materials, setMaterials] = React.useState<Material[]>([]);
     const [key, setKey] = React.useState<boolean>(false);
 
-    const [materialName, setMaterialName] = React.useState<string>();
-    const [nr3, setNr3] = React.useState<number>();
-    const [kccc, setKccc] = React.useState<number>();
-    const [parentKccc, setParentKccc] = React.useState<number>();
-    const [producer, setProducer] = React.useState<string>();
-    const [materialType, setMaterialType] = React.useState<string>();
-    const [amount, setAmount] = React.useState<number>();
-    const [materialUnit, setMaterialUnit] = React.useState<string>();
+    const [materialName, setMaterialName] = React.useState<string | null>();
+    const [nr3, setNr3] = React.useState<string | null>();
+    const [kccc, setKccc] = React.useState<string | null>();
+    const [parentKccc, setParentKccc] = React.useState<string | null>();
+    const [producer, setProducer] = React.useState<string | null>();
+    const [materialType, setMaterialType] = React.useState<string | null>();
+    const [amount, setAmount] = React.useState<string | null>();
+    const [materialUnit, setMaterialUnit] = React.useState<string | null>();
 
     const [showDeviceBinding, setShowDeviceBinding] = React.useState(false);
-
-    const [stateSnack, setStateSnack] = React.useState<State>({
-        openSnackbar: false,
-        vertical: 'top',
-        horizontal: 'center',
-    });
-    const {vertical, horizontal, openSnackbar} = stateSnack;
-
-    const [messageType, setMessageType] = React.useState<string>();
-    const [messageText, setMessageText] = React.useState<string>();
 
     React.useEffect(() => {
         if (key) return;
         setKey(true);
         DeviceService.getDevices().then((res: Material[]) => {
             setMaterials(res);
-            console.log(res);
         }).catch(err => console.log(err));
     }, [materials, key])
 
@@ -86,7 +70,9 @@ export default function Device() {
         if (value === "Расходник") {
             setShowDeviceBinding(true)
         } else {
+
             setShowDeviceBinding(false)
+            setParentKccc(null)
         }
     }
 
@@ -96,44 +82,96 @@ export default function Device() {
 
     const DeviceBinding = () => (
         <TextField id="parent-kccc" label="КССС привязка *" variant="outlined" size='small' type='number'
-                   value={parentKccc} onChange={(newValue) => setParentKccc(parseInt(newValue.target.value))}
+                   value={parentKccc} onChange={(newValue) => setParentKccc(newValue.target.value)}
                    InputProps={{
                        inputProps: {min: 1}
                    }}
         />
     )
 
-    const addNewMaterial = (newState: SnackbarOrigin) => () => {
+    const addNewMaterial = () => {
         const check = CheckRequiredFields();
 
         if (check && materialType === "Прибор") {
-            setMessageType("success");
-            setMessageText("Прибор успешно добавлен!");
-            setStateSnack({openSnackbar: true, ...newState});
-        } else if (check && materialType === "Расходник" && parentKccc === undefined) {
-            setMessageType("error");
-            setMessageText("Материал не добавлен. Укажите КССС привязку!");
-            setStateSnack({openSnackbar: true, ...newState});
-        } else if (check && materialType === "Расходник" && parentKccc !== undefined) {
-            setMessageType("success");
-            setMessageText("Материал успешно добавлен!");
-            setStateSnack({openSnackbar: true, ...newState});
+            dispatch(AddSnackbar({
+                messageText: "Прибор успешно добавлен!",
+                messageType: "success",
+                key: + new Date()
+            }))
+            ClearFields();
+        } else if (check && materialType === "Расходник" && (parentKccc === undefined || parentKccc === null)) {
+            dispatch(AddSnackbar({
+                messageText: "Материал не добавлен! Укажите КССС привязку.",
+                messageType: "error",
+                key: + new Date()
+            }))
+        } else if (check && materialType === "Расходник" && (parentKccc !== undefined || true)) {
+            dispatch(AddSnackbar({
+                messageText: "Материал успешно добавлен!",
+                messageType: "success",
+                key: + new Date()
+            }))
+            ClearFields();
         } else {
-            setMessageType("error");
-            setMessageText("Не все поля заполнены!");
-            setStateSnack({openSnackbar: true, ...newState});
+            dispatch(AddSnackbar({
+                messageText: "Не все поля заполнены!",
+                messageType: "error",
+                key: + new Date()
+            }))
         }
 
     };
+
+    const [showMaterialTable, setShowMaterialTable] = React.useState(false);
+    const MaterialTable = () => (
+        <div className='section' style={{width: '104%', height: '30.9%', marginRight: '8px'}}>
+            {materials.length !== 0 ? (
+                <TableContainer component={Paper}>
+                    <Table aria-label="material table" sx={{width: '100%'}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell>Наименование</TableCell>
+                                <TableCell align="right">№R-3</TableCell>
+                                <TableCell align="right">№КССС</TableCell>
+                                <TableCell align="right">Количество в эксплуатации</TableCell>
+                                <TableCell align="right">Количество на складе</TableCell>
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+
+                            {materials.map((row) => (
+                                <TableRowMaterial key={row.name} rowMaterial={row}/>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ) : (
+                <Stack spacing={2}>
+                    {[0,1,2,3,4].map((i) => (
+                        <Skeleton variant="rounded" height={100} sx={{width: '100%'}} key={i}/>
+                    ))}
+                </Stack>
+            )}
+        </div>
+    )
+    const handleShowMaterialTable = () => setShowMaterialTable(true);
 
     function CheckRequiredFields() {
         return !(materialName === undefined || nr3 === undefined || kccc === undefined ||
             materialType === undefined || amount === undefined || materialUnit === undefined);
     }
-
-    const handleCloseSnackbar = () => {
-        setStateSnack({...stateSnack, openSnackbar: false});
-    };
+    function ClearFields(){
+        setMaterialName("");
+        setNr3("" );
+        setKccc("");
+        setMaterialType("");
+        setParentKccc("");
+        setProducer("");
+        setAmount("");
+        setMaterialUnit("");
+    }
 
     return (
         <Box style={{marginLeft: '16px'}} sx={{
@@ -146,30 +184,13 @@ export default function Device() {
                    sx={{width: '71%'}} style={{margin: '0px', marginTop: '8px'}}>
                 <Paper sx={{width: '100%'}} style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                     <Typography mb={1}>Приборы и расходники</Typography>
-                    <TextField sx={{width: '40%'}} id="search" label="Поиск" variant="outlined" size='small'
-                               type="search"/>
+                    <Stack direction="row" spacing={1}>
+                        <TextField sx={{width: '40%'}} id="search" label="Поиск" variant="outlined" size='small'
+                                   type="search" />
+                        <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
+                    </Stack>
                 </Paper>
-                <div className='section' style={{width: '104.5%', height: '30.9%'}}>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="material table" sx={{width: '100%'}}>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell/>
-                                    <TableCell>Наименование</TableCell>
-                                    <TableCell align="right">№R-3</TableCell>
-                                    <TableCell align="right">№КССС</TableCell>
-                                    <TableCell align="right">Количество в эксплуатации</TableCell>
-                                    <TableCell align="right">Количество на складе</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {materials.map((row) => (
-                                    <TableRowMaterial key={row.name} rowMaterial={row}/>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
+                {showMaterialTable ? <MaterialTable/> : null}
             </Stack>
 
             <Paper sx={{width: '21%'}} style={{
@@ -191,13 +212,13 @@ export default function Device() {
                                    value={materialName}
                                    onChange={(newValue) => setMaterialName(newValue.target.value)}/>
                         <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number" required
-                                   value={kccc} onChange={(newValue) => setKccc(parseInt(newValue.target.value))}
+                                   value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
                                    InputProps={{
                                        inputProps: {min: 1}
                                    }}
                         />
                         <TextField id="nr3" label="№R-3" variant="outlined" size='small' type="number" required
-                                   value={nr3} onChange={(newValue) => setNr3(parseInt(newValue.target.value))}
+                                   value={nr3} onChange={(newValue) => setNr3(newValue.target.value)}
                                    InputProps={{
                                        inputProps: {min: 1}
                                    }}
@@ -206,14 +227,15 @@ export default function Device() {
                                    value={producer} onChange={(newValue) => setProducer(newValue.target.value)}/>
                         <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
                                       onInputChange={CheckMaterialType}
-                                      renderInput={(params) => <TextField {...params} label="Тип *" value={materialType}
+
+                                      renderInput={(params) => <TextField {...params} label="Тип" required value={materialType}
                                                                           onChange={(newValue) => setMaterialType(newValue.target.value)}/>}
                         />
 
                         {showDeviceBinding ? <DeviceBinding/> : null}
 
                         <TextField id="amount-material" label="Количество" type="number" size='small' required
-                                   value={amount} onChange={(newValue) => setAmount(parseInt(newValue.target.value))}
+                                   value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
                                    InputLabelProps={{
                                        shrink: true,
                                    }}
@@ -223,21 +245,17 @@ export default function Device() {
                         />
                         <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
                                       onInputChange={CheckMaterialUnit}
-                                      renderInput={(params) => <TextField {...params} label="Ед. измерения *"
-                                                                          value={materialUnit}
+                                      renderInput={(params) => <TextField {...params} label="Ед. измерения"
+                                                                          value={materialUnit} required
                                                                           onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
                         />
                     </Stack>
-                    <Button variant="contained"
-                            onClick={addNewMaterial({vertical: 'top', horizontal: 'right',})}>Добавить</Button>
-
-                    <Snackbar anchorOrigin={{vertical, horizontal}} open={openSnackbar} onClose={handleCloseSnackbar}
-                              autoHideDuration={3000} key={vertical + horizontal}
-                    >
-                        <Alert onClose={handleCloseSnackbar} severity={messageType as AlertColor} sx={{width: '100%'}}>
-                            {messageText}
-                        </Alert>
-                    </Snackbar>
+                    <Stack direction='row' spacing={1} justifyContent='center'>
+                        <Button variant="contained" endIcon={<img src={excelIcon} style={{width: "20px"}} alt="excel"></img>}>
+                            Загрузить
+                        </Button>
+                        <Button variant="contained" onClick={() => {addNewMaterial()}}>Добавить</Button>
+                    </Stack>
                 </Stack>
             </Paper>
         </Box>
