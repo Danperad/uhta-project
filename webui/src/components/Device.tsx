@@ -3,7 +3,6 @@ import {
     Autocomplete,
     Box,
     Button,
-    Grid,
     Paper,
     Skeleton,
     Stack,
@@ -126,7 +125,7 @@ export default function Device() {
 
     const [showMaterialTable, setShowMaterialTable] = React.useState(false);
     const MaterialTable = () => (
-        <div className='section'>
+        <div className='section' style={{height: '100%'}}>
             {materials.length !== 0 ? (
                 <TableContainer component={Paper}>
                     <Table aria-label="material table" sx={{width: '100%'}}>
@@ -179,15 +178,25 @@ export default function Device() {
     return (
         <Box sx={{
             width: '100%',
-            display: 'flex',
-            flexWrap: 'wrap',
-            padding: "8px",
-            marginLeft: "0px",
-            marginTop: "-8px",
-            height: "100%"
+            height: "100%",
+            '& > .MuiBox-root > .MuiBox-root': {
+                p: 1,
+            },
+
         }}>
-            <Grid container spacing={2} alignItems="stretch" direction="row">
-                <Grid item xs={12}>
+
+            <Box
+                sx={{
+                    display: 'grid',
+                    gridAutoFlow: 'row',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gridTemplateRows: 'repeat(14, 134px)',
+                    gridTemplateAreas: `"header header header header"
+                        "main main main sidebar"`,
+                }}
+            >
+
+                <Box sx={{gridArea: 'header'}}>
                     <Paper style={{padding: "20px"}}>
                         <Typography mb={1}>Приборы и расходники</Typography>
                         <Stack direction="row" spacing={1}>
@@ -196,16 +205,17 @@ export default function Device() {
                             <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
                         </Stack>
                     </Paper>
-                </Grid>
-                <Grid item xs={9}>
-                    {showMaterialTable ? <MaterialTable/> : null}
-                </Grid>
-                <Grid item xs={3}>
-                    <Paper style={{
+                </Box>
+                <Box sx={{gridArea: 'main', gridRow: '2 / 7'}}>
+                    {showMaterialTable ? <MaterialTable /> : null}
+                </Box>
+                <Box sx={{gridArea: 'sidebar', gridRow: '2 / 7'}} >
+                    <Paper
+                    style={{
                         padding: "20px",
                         textAlign: "center",
-                        height: '100%'
-                    }} >
+                        height: '94%'
+                    }}>
                         <Stack
                             justifyContent="space-between"
                             alignItems="center"
@@ -271,8 +281,8 @@ export default function Device() {
                             </Stack>
                         </Stack>
                     </Paper>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
         </Box>
     )
 }
