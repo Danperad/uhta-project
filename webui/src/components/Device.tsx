@@ -4,25 +4,17 @@ import {
     Box,
     Button,
     Paper,
-    Skeleton,
     Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     TextField,
     Typography,
 } from '@mui/material';
-import TableRowMaterial from './TableRowMaterial';
+
 import "../assets/css/Scrollbar.css";
-import {Material} from '../models';
-import DeviceService from '../services/DeviceService';
 import excelIcon from '../../public/image/excel.svg';
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
 import {AddSnackbar} from "../redux/actions/snackbarAction";
+import MaterialTable from "./MaterialTable";
 
 //Dictionaries
 const Type = [
@@ -43,9 +35,6 @@ const Unit = [
 export default function Device() {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [materials, setMaterials] = React.useState<Material[]>([]);
-    const [key, setKey] = React.useState<boolean>(false);
-
     const [materialName, setMaterialName] = React.useState<string | null>();
     const [nr3, setNr3] = React.useState<string | null>();
     const [kccc, setKccc] = React.useState<string | null>();
@@ -56,14 +45,6 @@ export default function Device() {
     const [materialUnit, setMaterialUnit] = React.useState<string | null>();
 
     const [showDeviceBinding, setShowDeviceBinding] = React.useState(false);
-
-    React.useEffect(() => {
-        if (key) return;
-        setKey(true);
-        DeviceService.getDevices().then((res: Material[]) => {
-            setMaterials(res);
-        }).catch(err => console.log(err));
-    }, [materials, key])
 
     function CheckMaterialType(event: any, value: string) {
         setMaterialType(value);
@@ -124,39 +105,6 @@ export default function Device() {
     };
 
     const [showMaterialTable, setShowMaterialTable] = React.useState(false);
-    const MaterialTable = () => (
-        <div className='section' style={{height: '100%'}}>
-            {materials.length !== 0 ? (
-                <TableContainer component={Paper}>
-                    <Table aria-label="material table" sx={{width: '100%'}}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell/>
-                                <TableCell>Наименование</TableCell>
-                                <TableCell align="right">№R-3</TableCell>
-                                <TableCell align="right">№КССС</TableCell>
-                                <TableCell align="right">Количество в эксплуатации</TableCell>
-                                <TableCell align="right">Количество на складе</TableCell>
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-
-                            {materials.map((row) => (
-                                <TableRowMaterial key={row.nr3} rowMaterial={row}/>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            ) : (
-                <Stack spacing={2}>
-                    {[0, 1, 2, 3, 4].map((i) => (
-                        <Skeleton variant="rounded" height={100} sx={{width: '100%'}} key={i}/>
-                    ))}
-                </Stack>
-            )}
-        </div>
-    )
     const handleShowMaterialTable = () => setShowMaterialTable(true);
 
     function CheckRequiredFields() {
