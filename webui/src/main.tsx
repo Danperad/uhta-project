@@ -11,6 +11,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import SnackbarViewer from "./components/SnackbarViewer";
 import {Provider} from "react-redux";
 import {store} from "./redux/store";
+import Order from "./components/Order";
 
 export const outerTheme = createTheme({
     palette: {
@@ -54,13 +55,13 @@ if (domNode !== null) {
         <React.StrictMode>
             <Provider store={store}>
                 <ThemeProvider theme={outerTheme}>
-                    <SnackbarProvider maxSnack={3} anchorOrigin={{vertical: "top", horizontal: "right"}} >
+                    <SnackbarProvider maxSnack={2} anchorOrigin={{vertical: "top", horizontal: "right"}}>
                         <BrowserRouter>
-                            <Stack direction="row" spacing={3} height="100%">
+                            <Stack direction="row" spacing={1} height="100%">
                                 <SideBar/>
                                 <Routes>
                                     <Route path={"device"} element={<Device/>}/>
-
+                                    <Route path={"order"} element={<Order/>}/>
                                 </Routes>
                                 <SnackbarViewer/>
                             </Stack>

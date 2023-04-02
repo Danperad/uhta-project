@@ -8,11 +8,9 @@ import {
     Modal,
     Paper,
     Stack,
-    Switch,
     Table,
     TableBody,
     TableCell,
-    TableContainer,
     TableHead,
     TableRow,
     TextField,
@@ -27,77 +25,13 @@ import {Consumable, Material} from '../models';
 import {style} from "../assets/css/CreateOrderModal";
 import DeviceService from "../services/DeviceService";
 import material from "../models/Material";
-import {EnhancedTableToolbar, Order} from './ConsumableInModal';
+import {EnhancedTableHead, EnhancedTableToolbar, getComparator, Order, stableSort} from './ConsumableInModal';
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
 import {AddSnackbar} from "../redux/actions/snackbarAction";
 
 export default function TableRowMaterial(props: { rowMaterial: Material }) {
     const dispatch = useDispatch<AppDispatch>();
-
-    const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Consumable>('nr3');
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
-    const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-    const handleRequestSort = (
-        event: React.MouseEvent<unknown>,
-        property: keyof Consumable,
-    ) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
-
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = rowMaterial.materials.map((n) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
-
-    const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected: readonly string[] = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-        setSelected(newSelected);
-    };
-
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-    const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDense(event.target.checked);
-    };
-
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
-
-    const [rows, setRows] = React.useState<Consumable | null>(null);
-    // Avoid a layout jump when reaching the last page with empty rows.
-    // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows!.length) : 0;
-    //End modal const
 
     const [material, setMaterial] = React.useState<Material | null>(null);
 
@@ -179,8 +113,8 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
                 </TableCell>
                 <TableCell align="right">{rowMaterial.nr3}</TableCell>
                 <TableCell align="right">{rowMaterial.kccc}</TableCell>
-                <TableCell align="right" contentEditable>{rowMaterial.inOperation}</TableCell>
-                <TableCell align="right" contentEditable>{rowMaterial.inStock}</TableCell>
+                <TableCell align="right" >{rowMaterial.inOperation}</TableCell>
+                <TableCell align="right" >{rowMaterial.inStock}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
@@ -205,9 +139,9 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
                                             <TableCell component="th" scope="row">{materialRow.name}</TableCell>
                                             <TableCell>{materialRow.nr3}</TableCell>
                                             <TableCell>{materialRow.kccc}</TableCell>
-                                            <TableCell align="right" contentEditable
+                                            <TableCell align="right"
                                                        typeof='number'>{materialRow.inOperation}</TableCell>
-                                            <TableCell align="right" contentEditable
+                                            <TableCell align="right"
                                                        typeof='number'>{materialRow.inStock}</TableCell>
                                         </TableRow>
                                     ))}
@@ -273,89 +207,9 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
                         </Paper>
                         <Box sx={{width: '103%'}}>
                             <Paper sx={{width: '100%', mb: 2}}>
-                                <EnhancedTableToolbar numSelected={selected.length}/>
-                                <TableContainer>
-                                    <Table
-                                        sx={{minWidth: 750}}
-                                        aria-labelledby="tableTitle"
-                                        size={dense ? 'small' : 'medium'}
-                                    >
-                                        {/*<EnhancedTableHead*/}
-                                        {/*    numSelected={selected.length}*/}
-                                        {/*    order={order}*/}
-                                        {/*    orderBy={orderBy}*/}
-                                        {/*    onSelectAllClick={handleSelectAllClick}*/}
-                                        {/*    onRequestSort={handleRequestSort}*/}
-                                        {/*    rowCount={rows.length} //{material!.materials.length}?ser*/}
-                                        {/*/>*/}
-                                        {/*<TableBody>*/}
-                                        {/*    {stableSort(rows, getComparator(order, orderBy))*/}
-                                        {/*        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)*/}
-                                        {/*        .map((row, index) => {*/}
-                                        {/*            const isItemSelected = isSelected(row.name);*/}
-                                        {/*            const labelId = `enhanced-table-checkbox-${index}`;*/}
 
-                                        {/*            return (*/}
-                                        {/*                <TableRow*/}
-                                        {/*                    hover*/}
-                                        {/*                    onClick={(event) => handleClick(event, row.name)}*/}
-                                        {/*                    role="checkbox"*/}
-                                        {/*                    aria-checked={isItemSelected}*/}
-                                        {/*                    tabIndex={-1}*/}
-                                        {/*                    key={row.name}*/}
-                                        {/*                    selected={isItemSelected}*/}
-                                        {/*                    sx={{ cursor: 'pointer' }}*/}
-                                        {/*                >*/}
-                                        {/*                    <TableCell padding="checkbox">*/}
-                                        {/*                        <Checkbox*/}
-                                        {/*                            color="primary"*/}
-                                        {/*                            checked={isItemSelected}*/}
-                                        {/*                            inputProps={{*/}
-                                        {/*                                'aria-labelledby': labelId,*/}
-                                        {/*                            }}*/}
-                                        {/*                        />*/}
-                                        {/*                    </TableCell>*/}
-                                        {/*                    <TableCell*/}
-                                        {/*                        component="th"*/}
-                                        {/*                        id={labelId}*/}
-                                        {/*                        scope="row"*/}
-                                        {/*                        padding="none"*/}
-                                        {/*                    >*/}
-                                        {/*                        {row.name}*/}
-                                        {/*                    </TableCell>*/}
-                                        {/*                    <TableCell align="right">{row.nr3}</TableCell>*/}
-                                        {/*                    <TableCell align="right">{row.kccc}</TableCell>*/}
-                                        {/*                    <TableCell align="right">{row.inOperation}</TableCell>*/}
-                                        {/*                    <TableCell align="right">{row.inStock}</TableCell>*/}
-                                        {/*                </TableRow>*/}
-                                        {/*            );*/}
-                                        {/*        })}*/}
-                                        {/*    {emptyRows > 0 && (*/}
-                                        {/*        <TableRow*/}
-                                        {/*            style={{*/}
-                                        {/*                height: (dense ? 33 : 53) * emptyRows,*/}
-                                        {/*            }}*/}
-                                        {/*        >*/}
-                                        {/*            <TableCell colSpan={6} />*/}
-                                        {/*        </TableRow>*/}
-                                        {/*    )}*/}
-                                        {/*</TableBody>*/}
-                                    </Table>
-                                </TableContainer>
-                                {/*<TablePagination*/}
-                                {/*    rowsPerPageOptions={[5, 10, 25]}*/}
-                                {/*    component="div"*/}
-                                {/*    count={rows.length}*/}
-                                {/*    rowsPerPage={rowsPerPage}*/}
-                                {/*    page={page}*/}
-                                {/*    onPageChange={handleChangePage}*/}
-                                {/*    onRowsPerPageChange={handleChangeRowsPerPage}*/}
-                                {/*/>*/}
                             </Paper>
-                            <FormControlLabel
-                                control={<Switch checked={dense} onChange={handleChangeDense}/>}
-                                label="Dense padding"
-                            />
+
                         </Box>
                         <Paper sx={{width: '100%'}} style={{margin: "0px", padding: "20px"}}>
                             <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>

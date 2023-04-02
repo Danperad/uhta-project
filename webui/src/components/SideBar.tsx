@@ -73,19 +73,20 @@ export default function SideBar() {
     return (
         <div style={{
             backgroundColor: '#727272',
-            marginTop: '-8px',
-            marginLeft: '-8px',
             padding: '10px',
-            width: '13%',
-            minWidth: '200px',
+            // width: '100%',
+            height: '100%',
+            //width: '180px',
             paddingBottom: '100%',
-            borderRadius: '0 5px 5px 0'
+            borderRadius: '0 5px 5px 0',
+            marginLeft: "-8px",
+            marginTop: "-8px",
         }}>
             <Stack spacing={2} marginTop={8}>
 
                 <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                         startIcon={<FormatListBulletedIcon/>} onClick={() => {
-                    navigate("/")
+                    navigate("/order")
                 }}>
                     Заявки
                 </Button>

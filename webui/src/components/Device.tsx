@@ -3,7 +3,9 @@ import {
     Autocomplete,
     Box,
     Button,
-    Paper, Skeleton,
+    Grid,
+    Paper,
+    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -96,27 +98,27 @@ export default function Device() {
             dispatch(AddSnackbar({
                 messageText: "Прибор успешно добавлен!",
                 messageType: "success",
-                key: + new Date()
+                key: +new Date()
             }))
             ClearFields();
         } else if (check && materialType === "Расходник" && (parentKccc === undefined || parentKccc === null)) {
             dispatch(AddSnackbar({
                 messageText: "Материал не добавлен! Укажите КССС привязку.",
                 messageType: "error",
-                key: + new Date()
+                key: +new Date()
             }))
         } else if (check && materialType === "Расходник" && (parentKccc !== undefined || true)) {
             dispatch(AddSnackbar({
                 messageText: "Материал успешно добавлен!",
                 messageType: "success",
-                key: + new Date()
+                key: +new Date()
             }))
             ClearFields();
         } else {
             dispatch(AddSnackbar({
                 messageText: "Не все поля заполнены!",
                 messageType: "error",
-                key: + new Date()
+                key: +new Date()
             }))
         }
 
@@ -124,7 +126,7 @@ export default function Device() {
 
     const [showMaterialTable, setShowMaterialTable] = React.useState(false);
     const MaterialTable = () => (
-        <div className='section' style={{width: '104%', height: '30.9%', marginRight: '8px'}}>
+        <div className='section'>
             {materials.length !== 0 ? (
                 <TableContainer component={Paper}>
                     <Table aria-label="material table" sx={{width: '100%'}}>
@@ -142,14 +144,14 @@ export default function Device() {
                         <TableBody>
 
                             {materials.map((row) => (
-                                <TableRowMaterial key={row.name} rowMaterial={row}/>
+                                <TableRowMaterial key={row.nr3} rowMaterial={row}/>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             ) : (
                 <Stack spacing={2}>
-                    {[0,1,2,3,4].map((i) => (
+                    {[0, 1, 2, 3, 4].map((i) => (
                         <Skeleton variant="rounded" height={100} sx={{width: '100%'}} key={i}/>
                     ))}
                 </Stack>
@@ -162,9 +164,10 @@ export default function Device() {
         return !(materialName === undefined || nr3 === undefined || kccc === undefined ||
             materialType === undefined || amount === undefined || materialUnit === undefined);
     }
-    function ClearFields(){
+
+    function ClearFields() {
         setMaterialName("");
-        setNr3("" );
+        setNr3("");
         setKccc("");
         setMaterialType("");
         setParentKccc("");
@@ -174,90 +177,102 @@ export default function Device() {
     }
 
     return (
-        <Box style={{marginLeft: '16px'}} sx={{
+        <Box sx={{
             width: '100%',
             display: 'flex',
             flexWrap: 'wrap',
-            '& > :not(style)': {m: 1, idth: 128, height: '100%'},
+            padding: "8px",
+            marginLeft: "0px",
+            marginTop: "-8px",
+            height: "100%"
         }}>
-            <Stack direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={1}
-                   sx={{width: '71%'}} style={{margin: '0px', marginTop: '8px'}}>
-                <Paper sx={{width: '100%'}} style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
-                    <Typography mb={1}>Приборы и расходники</Typography>
-                    <Stack direction="row" spacing={1}>
-                        <TextField sx={{width: '40%'}} id="search" label="Поиск" variant="outlined" size='small'
-                                   type="search" />
-                        <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
-                    </Stack>
-                </Paper>
-                {showMaterialTable ? <MaterialTable/> : null}
-            </Stack>
+            <Grid container spacing={2} alignItems="stretch" direction="row">
+                <Grid item xs={12}>
+                    <Paper style={{padding: "20px"}}>
+                        <Typography mb={1}>Приборы и расходники</Typography>
+                        <Stack direction="row" spacing={1}>
+                            <TextField sx={{width: '40%'}} id="search" label="Поиск" variant="outlined" size='small'
+                                       type="search"/>
+                            <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
+                        </Stack>
+                    </Paper>
+                </Grid>
+                <Grid item xs={9}>
+                    {showMaterialTable ? <MaterialTable/> : null}
+                </Grid>
+                <Grid item xs={3}>
+                    <Paper style={{
+                        padding: "20px",
+                        textAlign: "center",
+                        height: '100%'
+                    }} >
+                        <Stack
+                            justifyContent="space-between"
+                            alignItems="center"
+                            spacing={2}
+                            style={{height: '100%'}}
+                        >
+                            <Stack spacing={2}>
+                                <Typography>Добавление</Typography>
+                                <TextField id="add-material-name" label="Наименование" variant="outlined" size='small'
+                                           required
+                                           value={materialName}
+                                           onChange={(newValue) => setMaterialName(newValue.target.value)}/>
+                                <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number" required
+                                           value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
+                                           InputProps={{
+                                               inputProps: {min: 1}
+                                           }}
+                                />
+                                <TextField id="nr3" label="№R-3" variant="outlined" size='small' type="number" required
+                                           value={nr3} onChange={(newValue) => setNr3(newValue.target.value)}
+                                           InputProps={{
+                                               inputProps: {min: 1}
+                                           }}
+                                />
+                                <TextField id="producer" label="Производитель" variant="outlined" size='small'
+                                           value={producer}
+                                           onChange={(newValue) => setProducer(newValue.target.value)}/>
+                                <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
+                                              onInputChange={CheckMaterialType}
 
-            <Paper sx={{width: '21%'}} style={{
-                marginRight: "0px",
-                marginLeft: "54px",
-                padding: "20px",
-                textAlign: "center",
-                height: '36%'
-            }}>
-                <Stack
-                    justifyContent="space-between"
-                    alignItems="center"
-                    spacing={2}
-                    style={{height: '100%'}}
-                >
-                    <Stack spacing={2}>
-                        <Typography>Добавление</Typography>
-                        <TextField id="add-material-name" label="Наименование" variant="outlined" size='small' required
-                                   value={materialName}
-                                   onChange={(newValue) => setMaterialName(newValue.target.value)}/>
-                        <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number" required
-                                   value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
-                                   InputProps={{
-                                       inputProps: {min: 1}
-                                   }}
-                        />
-                        <TextField id="nr3" label="№R-3" variant="outlined" size='small' type="number" required
-                                   value={nr3} onChange={(newValue) => setNr3(newValue.target.value)}
-                                   InputProps={{
-                                       inputProps: {min: 1}
-                                   }}
-                        />
-                        <TextField id="producer" label="Производитель" variant="outlined" size='small'
-                                   value={producer} onChange={(newValue) => setProducer(newValue.target.value)}/>
-                        <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
-                                      onInputChange={CheckMaterialType}
+                                              renderInput={(params) => <TextField {...params} label="Тип" required
+                                                                                  value={materialType}
+                                                                                  onChange={(newValue) => setMaterialType(newValue.target.value)}/>}
+                                />
 
-                                      renderInput={(params) => <TextField {...params} label="Тип" required value={materialType}
-                                                                          onChange={(newValue) => setMaterialType(newValue.target.value)}/>}
-                        />
+                                {showDeviceBinding ? <DeviceBinding/> : null}
 
-                        {showDeviceBinding ? <DeviceBinding/> : null}
-
-                        <TextField id="amount-material" label="Количество" type="number" size='small' required
-                                   value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
-                                   InputLabelProps={{
-                                       shrink: true,
-                                   }}
-                                   InputProps={{
-                                       inputProps: {min: 1}
-                                   }}
-                        />
-                        <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
-                                      onInputChange={CheckMaterialUnit}
-                                      renderInput={(params) => <TextField {...params} label="Ед. измерения"
-                                                                          value={materialUnit} required
-                                                                          onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
-                        />
-                    </Stack>
-                    <Stack direction='row' spacing={1} justifyContent='center'>
-                        <Button variant="contained" endIcon={<img src={excelIcon} style={{width: "20px"}} alt="excel"></img>}>
-                            Загрузить
-                        </Button>
-                        <Button variant="contained" onClick={() => {addNewMaterial()}}>Добавить</Button>
-                    </Stack>
-                </Stack>
-            </Paper>
+                                <TextField id="amount-material" label="Количество" variant="outlined" size='small'
+                                           type="number" required
+                                           value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
+                                           InputLabelProps={{
+                                               shrink: true,
+                                           }}
+                                           InputProps={{
+                                               inputProps: {min: 1}
+                                           }}
+                                />
+                                <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
+                                              onInputChange={CheckMaterialUnit}
+                                              renderInput={(params) => <TextField {...params} label="Ед. измерения"
+                                                                                  value={materialUnit} required
+                                                                                  onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
+                                />
+                            </Stack>
+                            <Stack direction='row' spacing={1} justifyContent='center'>
+                                <Button variant="contained"
+                                        endIcon={<img src={excelIcon} style={{width: "20px"}} alt="excel"></img>}>
+                                    Загрузить
+                                </Button>
+                                <Button variant="contained" onClick={() => {
+                                    addNewMaterial()
+                                }}>Добавить</Button>
+                            </Stack>
+                        </Stack>
+                    </Paper>
+                </Grid>
+            </Grid>
         </Box>
     )
 }
