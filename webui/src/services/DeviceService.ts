@@ -20,6 +20,7 @@ class DeviceService {
                 return null
             });
     }
+
 }
 
 export default new DeviceService();

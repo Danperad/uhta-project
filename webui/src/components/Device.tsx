@@ -129,9 +129,8 @@ export default function Device() {
                     display: 'grid',
                     height: "98.5%",
                     margin: "8px 8px 8px 0",
-                    gridAutoFlow: 'row',
                     gridTemplateColumns: 'repeat(4, 1fr)',
-                    gridTemplateRows: 'repeat(14, 134px)',
+                    gridTemplateRows: 'repeat(2, 138px)',
                     gridTemplateAreas: `"header header header header"
                         "main main main sidebar"`,
                 }}

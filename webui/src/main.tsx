@@ -11,7 +11,6 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import SnackbarViewer from "./components/SnackbarViewer";
 import {Provider} from "react-redux";
 import {store} from "./redux/store";
-import Order from "./components/Order";
 
 export const outerTheme = createTheme({
     palette: {
@@ -72,7 +71,6 @@ if (domNode !== null) {
                                 <SideBar/>
                                 <Routes>
                                     <Route path={"device"} element={<Device/>}/>
-                                    <Route path={"order"} element={<Order/>}/>
                                 </Routes>
                                 <SnackbarViewer/>
                             </Stack>

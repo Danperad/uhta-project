@@ -19,7 +19,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {LoginModel} from '../models/RequestModels';
 import sha256 from "sha256";
 import {State} from '../models';
-import {style} from '../assets/css/SignInModal';
+import style from '../assets/css/SignInModal.module.css';
 
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -65,7 +65,7 @@ export default function SideBar() {
         dispatch(AddSnackbar({
             messageText: "Неверный логин или пароль!",
             messageType: "error",
-            key: + new Date()
+            key: +new Date()
         }))
         return;
     };
@@ -80,7 +80,7 @@ export default function SideBar() {
 
                 <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                         startIcon={<FormatListBulletedIcon/>} onClick={() => {
-                    navigate("/order")
+                    navigate("/")
                 }}>
                     Заявки
                 </Button>
@@ -119,7 +119,7 @@ export default function SideBar() {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Box sx={style}>
+                    <Box className={style.signInModalStyle}>
                         <Typography variant="h5" color="primary" align='center'>Авторизация</Typography>
                         <Stack
                             component="form"
@@ -159,8 +159,11 @@ export default function SideBar() {
                             </FormControl>
 
                             <Button variant="contained" size="large" color="primary" sx={{borderRadius: '10px'}}
-                                    onClick={ () => {autorization()}} disableElevation>Войти</Button>
-                            <Link component="button" variant="body2" onClick={handleCloseEnterModal}>Продолжить как гость</Link>
+                                    onClick={() => {
+                                        autorization()
+                                    }} disableElevation>Войти</Button>
+                            <Link component="button" variant="body2" onClick={handleCloseEnterModal}>Продолжить как
+                                гость</Link>
                         </Stack>
                     </Box>
                 </Modal>
