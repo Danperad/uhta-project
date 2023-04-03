@@ -74,13 +74,7 @@ export default function SideBar() {
         <div style={{
             backgroundColor: '#727272',
             padding: '10px',
-            // width: '100%',
-            height: '100%',
-            //width: '180px',
-            paddingBottom: '100%',
-            borderRadius: '0 5px 5px 0',
-            marginLeft: "-8px",
-            marginTop: "-8px",
+            borderRadius: '0 8px 8px 0',
         }}>
             <Stack spacing={2} marginTop={8}>
 

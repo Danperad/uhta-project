@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-    Autocomplete,
-    Box,
-    Button,
-    Paper,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import {Autocomplete, Box, Button, Paper, Stack, TextField, Typography,} from '@mui/material';
 
 import "../assets/css/Scrollbar.css";
 import excelIcon from '../../public/image/excel.svg';
@@ -63,7 +55,7 @@ export default function Device() {
     }
 
     const DeviceBinding = () => (
-        <TextField id="parent-kccc" label="КССС привязка *" variant="outlined" size='small' type='number'
+        <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number' required
                    value={parentKccc} onChange={(newValue) => setParentKccc(newValue.target.value)}
                    InputProps={{
                        inputProps: {min: 1}
@@ -126,16 +118,17 @@ export default function Device() {
     return (
         <Box sx={{
             width: '100%',
-            height: "100%",
+            height: '100vh',
             '& > .MuiBox-root > .MuiBox-root': {
                 p: 1,
             },
-
         }}>
 
             <Box
                 sx={{
                     display: 'grid',
+                    height: "98.5%",
+                    margin: "8px 8px 8px 0",
                     gridAutoFlow: 'row',
                     gridTemplateColumns: 'repeat(4, 1fr)',
                     gridTemplateRows: 'repeat(14, 134px)',
@@ -154,16 +147,16 @@ export default function Device() {
                         </Stack>
                     </Paper>
                 </Box>
-                <Box sx={{gridArea: 'main', gridRow: '2 / 7'}}>
-                    {showMaterialTable ? <MaterialTable /> : null}
+                <Box sx={{gridArea: 'main', height: "80vh"}}>
+                    {showMaterialTable ? <MaterialTable/> : null}
                 </Box>
-                <Box sx={{gridArea: 'sidebar', gridRow: '2 / 7'}} >
+                <Box sx={{gridArea: 'sidebar', height: "76vh"}}>
                     <Paper
-                    style={{
-                        padding: "20px",
-                        textAlign: "center",
-                        height: '94%'
-                    }}>
+                        style={{
+                            padding: "20px",
+                            textAlign: "center",
+                            height: '100%'
+                        }}>
                         <Stack
                             justifyContent="space-between"
                             alignItems="center"

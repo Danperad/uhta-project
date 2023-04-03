@@ -46,7 +46,18 @@ export const outerTheme = createTheme({
           }
       `,
         },
+        MuiFormLabel: {
+            styleOverrides: {
+                asterisk: {
+                    color: "#db3131",
+                    "&$error": {
+                        color: "#db3131",
+                    },
+                },
+            },
+        },
     },
+
 });
 const domNode = document.getElementById("root");
 if (domNode !== null) {
@@ -57,7 +68,7 @@ if (domNode !== null) {
                 <ThemeProvider theme={outerTheme}>
                     <SnackbarProvider maxSnack={2} anchorOrigin={{vertical: "top", horizontal: "right"}}>
                         <BrowserRouter>
-                            <Stack direction="row" spacing={1} height="100%">
+                            <Stack direction="row" spacing={1} height="100vh">
                                 <SideBar/>
                                 <Routes>
                                     <Route path={"device"} element={<Device/>}/>
