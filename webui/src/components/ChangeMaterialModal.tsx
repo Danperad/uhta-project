@@ -19,14 +19,14 @@ export default (props: {receivedMaterial: Consumable}) =>
     const dispatch = useDispatch<AppDispatch>();
     const [consumable, setConsumable] = React.useState<Consumable | null>(null);
     const {useState} = React;
-    const [checked, setChecked] = useState(false);
+    const [checked, setChecked] = useState(true);
     const handleChangeChecked = () => {
         setChecked(prev => !prev)
     }
 
     const ParentKcccField = () => (
         <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number' required
-                   style={{width: "14%", marginLeft: "28px"}}
+                   style={{width: "14%", marginLeft: "28px"}} value={consumable !== null ? consumable!.parentKccc : ""}
                    InputProps={{
                        inputProps: {min: 1}
                    }}
@@ -83,11 +83,9 @@ export default (props: {receivedMaterial: Consumable}) =>
                             <Typography color="primary">{consumable !== null ? consumable!.kccc : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
                             <Typography color="primary">{consumable !== null ? consumable!.nr3 : ""}</Typography>
-                            <Typography mb={2}>КССС привязка:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.parentKccc : ""}</Typography>
                         </Stack>
                         <Stack direction="row" spacing={2}>
-                            <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
+                            <FormControlLabel control={<Checkbox onChange={handleChangeChecked} checked/>}
                                               label="Расходный материал"/>
                             {checked ? <ParentKcccField/> : null}
                         </Stack>
