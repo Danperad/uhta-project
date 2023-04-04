@@ -2,12 +2,15 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import SideBar from './components/SideBar';
 import Device from './components/Device';
-import Order from './components/Order';
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
+import {SnackbarProvider} from "notistack";
 
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import SnackbarViewer from "./components/SnackbarViewer";
+import {Provider} from "react-redux";
+import {store} from "./redux/store";
 
 export const outerTheme = createTheme({
     palette: {
@@ -42,24 +45,39 @@ export const outerTheme = createTheme({
           }
       `,
         },
+        MuiFormLabel: {
+            styleOverrides: {
+                asterisk: {
+                    color: "#db3131",
+                    "&$error": {
+                        color: "#db3131",
+                    },
+                },
+            },
+        },
     },
+
 });
 const domNode = document.getElementById("root");
 if (domNode !== null) {
     const root = createRoot(domNode);
     root.render(
         <React.StrictMode>
-            <ThemeProvider theme={outerTheme}>
-                <BrowserRouter>
-                    <Stack direction="row" spacing={3} height="100%">
-                        <SideBar/>
-                        <Routes>
-                            <Route path={"device"} element={<Device/>}/>
-                            <Route path={"order"} element={<Order/>}/>
-                        </Routes>
-                    </Stack>
-                </BrowserRouter>
-            </ThemeProvider>
+            <Provider store={store}>
+                <ThemeProvider theme={outerTheme}>
+                    <SnackbarProvider maxSnack={2} anchorOrigin={{vertical: "top", horizontal: "right"}}>
+                        <BrowserRouter>
+                            <Stack direction="row" spacing={1} height="100vh">
+                                <SideBar/>
+                                <Routes>
+                                    <Route path={"device"} element={<Device/>}/>
+                                </Routes>
+                                <SnackbarViewer/>
+                            </Stack>
+                        </BrowserRouter>
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </Provider>
         </React.StrictMode>,
     );
 }
