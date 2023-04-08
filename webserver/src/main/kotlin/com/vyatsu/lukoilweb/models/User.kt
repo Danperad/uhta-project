@@ -3,7 +3,7 @@ package com.vyatsu.lukoilweb.models
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
