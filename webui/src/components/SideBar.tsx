@@ -76,98 +76,99 @@ export default function SideBar() {
             padding: '10px',
             borderRadius: '0 8px 8px 0',
         }}>
-            <Stack spacing={2} marginTop={8}>
-
+            <Stack justifyContent='space-between' height='100%'>
+                <Stack spacing={2} marginTop={8}>
+                    <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
+                            startIcon={<FormatListBulletedIcon/>} onClick={() => {
+                        navigate("/order")
+                    }}>
+                        Заявки
+                    </Button>
+                    <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
+                            startIcon={<BuildIcon/>} onClick={() => {
+                        navigate("/device")
+                    }}>
+                        Приборы
+                    </Button>
+                    <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
+                            startIcon={<PeopleAltIcon/>} onClick={() => {
+                        navigate("/")
+                    }}>
+                        Персонал
+                    </Button>
+                    <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
+                            startIcon={<ArchiveIcon/>} onClick={() => {
+                        navigate("/")
+                    }}>
+                        Архив
+                    </Button>
+                    <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
+                            startIcon={<DescriptionIcon/>} onClick={() => {
+                        navigate("/")
+                    }}>
+                        Отчеты
+                    </Button>
+                </Stack>
                 <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<FormatListBulletedIcon/>} onClick={() => {
-                    navigate("/")
-                }}>
-                    Заявки
-                </Button>
-                <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<BuildIcon/>} onClick={() => {
-                    navigate("/device")
-                }}>
-                    Приборы
-                </Button>
-                <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<DescriptionIcon/>} onClick={() => {
-                    navigate("/")
-                }}>
-                    Отчеты
-                </Button>
-                <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<ArchiveIcon/>} onClick={() => {
-                    navigate("/")
-                }}>
-                    Архив
-                </Button>
-                <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<PeopleAltIcon/>} onClick={() => {
-                    navigate("/")
-                }}>
-                    Персонал
-                </Button>
-                <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                        startIcon={<LoginRoundedIcon/>} onClick={handleOpenEnterModal} style={{marginTop: "10%"}}>
+                        startIcon={<LoginRoundedIcon/>} onClick={handleOpenEnterModal}>
                     Авторизация
                 </Button>
-
-                <Modal
-                    open={openEnterModal}
-                    onClose={handleCloseEnterModal}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box className={style.signInModalStyle}>
-                        <Typography variant="h5" color="primary" align='center'>Авторизация</Typography>
-                        <Stack
-                            component="form"
-                            sx={{
-                                width: '100%',
-                                mt: '30px',
-                            }}
-                            spacing={3}
-                            noValidate
-                            autoComplete="off"
-                            alignItems="center"
-                        >
-                            <TextField sx={{width: '40ch'}} label="Логин" size='small' value={values.login}
-                                       onChange={handleChange('login')}/>
-
-                            <FormControl sx={{width: '40ch'}} variant="outlined" size='small'>
-                                <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
-                                <OutlinedInput
-                                    id="outlined-adornment-password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={values.password}
-                                    onChange={handleChange('password')}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label="toggle password visibility"
-                                                onClick={handleClickShowPassword}
-                                                onMouseDown={handleMouseDownPassword}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    label="Password"
-                                />
-                            </FormControl>
-
-                            <Button variant="contained" size="large" color="primary" sx={{borderRadius: '10px'}}
-                                    onClick={() => {
-                                        autorization()
-                                    }} disableElevation>Войти</Button>
-                            <Link component="button" variant="body2" onClick={handleCloseEnterModal}>Продолжить как
-                                гость</Link>
-                        </Stack>
-                    </Box>
-                </Modal>
             </Stack>
+
+            <Modal
+                open={openEnterModal}
+                onClose={handleCloseEnterModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box className={style.signInModalStyle}>
+                    <Typography variant="h5" color="primary" align='center'>Авторизация</Typography>
+                    <Stack
+                        component="form"
+                        sx={{
+                            width: '100%',
+                            mt: '30px',
+                        }}
+                        spacing={3}
+                        noValidate
+                        autoComplete="off"
+                        alignItems="center"
+                    >
+                        <TextField sx={{width: '40ch'}} label="Логин" size='small' value={values.login}
+                                   onChange={handleChange('login')}/>
+
+                        <FormControl sx={{width: '40ch'}} variant="outlined" size='small'>
+                            <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={values.password}
+                                onChange={handleChange('password')}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                label="Password"
+                            />
+                        </FormControl>
+
+                        <Button variant="contained" size="large" color="primary" sx={{borderRadius: '10px'}}
+                                onClick={() => {
+                                    autorization()
+                                }} disableElevation>Войти</Button>
+                        <Link component="button" variant="body2" onClick={handleCloseEnterModal}>Продолжить как
+                            гость</Link>
+                    </Stack>
+                </Box>
+            </Modal>
         </div>
     )
 }
