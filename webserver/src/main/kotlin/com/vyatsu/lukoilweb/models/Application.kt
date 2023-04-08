@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import java.util.Date
 
 @Entity
-@Table(name = "application")
+@Table(name = "applications")
 data class Application(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

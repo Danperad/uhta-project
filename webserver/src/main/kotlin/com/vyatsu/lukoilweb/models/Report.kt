@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import java.util.Date
 
 @Entity
-@Table(name="report")
+@Table(name="reports")
 data class Report(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
