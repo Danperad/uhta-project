@@ -3,14 +3,14 @@ export const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '90vw',
+    height: '90vh',
+    backgroundColor: '#C2C2C2',
 
-    bgcolor: 'background.paper',
     border: '2px solid #0D47A1',
     borderRadius: '10px',
     boxShadow: 50,
-    p: 4,
-    padding: '50px',
+    padding: '10px',
 };
     
   
