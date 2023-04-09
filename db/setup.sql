@@ -40,7 +40,7 @@ CREATE TABLE uhta.applications
 (
     application_id     int IDENTITY (1, 1),
     application_date   date NOT NULL,
-    application_period bigint, /* TODO: fix period type*/
+    application_period bigint,
     CONSTRAINT pk_application PRIMARY KEY (application_id)
 )
 
@@ -48,7 +48,7 @@ CREATE TABLE uhta.applications
 CREATE TABLE uhta.materials_application
 (
     material_id      int NOT NULL,
-    application_id int NOT NULL,
+    application_id   int NOT NULL,
     material_count   int NOT NULL,
     CONSTRAINT fk_device_application_device FOREIGN KEY (material_id) REFERENCES uhta.materials (material_id),
     CONSTRAINT fk_device_application_application FOREIGN KEY (application_id) REFERENCES uhta.applications (application_id)
