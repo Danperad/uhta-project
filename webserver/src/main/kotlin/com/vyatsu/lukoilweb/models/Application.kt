@@ -16,16 +16,9 @@ data class Application(
     val period: String,
     @ManyToMany
     @JoinTable(
-        name = "consumable_application",
-        joinColumns = [JoinColumn(name = "consumable_id")],
-        inverseJoinColumns = [JoinColumn(name = "application_id")]
-    )
-    val consumables: Set<Consumable>,
-    @ManyToMany
-    @JoinTable(
         name = "device_application",
         joinColumns = [JoinColumn(name = "device_id")],
         inverseJoinColumns = [JoinColumn(name = "application_id")]
     )
-    val devices: Set<Device>
+    val devices: Set<Material>
 )
