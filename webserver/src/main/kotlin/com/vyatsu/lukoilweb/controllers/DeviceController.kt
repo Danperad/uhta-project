@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("api/devices")
 class DeviceController(private val deviceService: DeviceService) {
-    @GetMapping
+    @GetMapping(produces = ["application/json"])
     fun getAllDevices(): Set<Device>{
         return deviceService.findAllDevices()
     }
 
-    @GetMapping("{nr}")
+    @GetMapping("{nr}", produces = ["application/json"])
     fun getDeviceByNr(@PathVariable nr: Int): Device?{
         return deviceService.findByNr(nr)
     }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("api/user")
 class UserController(private val userService: UserService) {
-    @PostMapping("auth")
+    @PostMapping("auth", produces = ["application/json"])
     fun authUser(authModel: AuthModel) : UserModel?{
         return userService.getAuth(authModel)
     }

@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("api/applications")
 class ApplicationController(private val applicationService: ApplicationService) {
-    @GetMapping
+    @GetMapping(produces = ["application/json"])
     fun getAllApplications() : List<ApplicationModel>{
         return applicationService.getAllApplications()
     }
-    @GetMapping("{number}")
+    @GetMapping("{number}", produces = ["application/json"])
     fun getApplicationByNumber(@PathVariable number: Int) : ApplicationModel?{
         return applicationService.getApplicationById(number)
     }
