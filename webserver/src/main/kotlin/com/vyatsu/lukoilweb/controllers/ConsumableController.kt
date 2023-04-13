@@ -2,13 +2,11 @@ package com.vyatsu.lukoilweb.controllers
 
 import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.services.ConsumableService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("apt/consumables")
+@CrossOrigin(origins = ["*"])
+@RequestMapping("api/consumables")
 class ConsumableController(private val consumableService: ConsumableService) {
     @GetMapping(produces = ["application/json"])
     fun getAllDevices(): List<Consumable>{
