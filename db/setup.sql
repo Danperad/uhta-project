@@ -24,7 +24,9 @@ CREATE TABLE uhta.binding
 (
     device_id      int NOT NULL,
     consumables_id int NOT NULL,
-    CONSTRAINT pk_binding PRIMARY KEY (device_id, consumables_id)
+    CONSTRAINT pk_binding PRIMARY KEY (device_id, consumables_id),
+    CONSTRAINT fk_material_device FOREIGN KEY (device_id) REFERENCES uhta.materials (material_id),
+    CONSTRAINT fk_material_consumable FOREIGN KEY (consumables_id) REFERENCES uhta.materials (material_id)
 );
 
 CREATE TABLE uhta.reports
@@ -38,9 +40,11 @@ CREATE TABLE uhta.reports
 
 CREATE TABLE uhta.applications
 (
-    application_id     int IDENTITY (1, 1),
-    application_date   date NOT NULL,
-    application_period bigint,
+    application_id      int IDENTITY (1, 1),
+    application_date    date          NOT NULL,
+    application_period  bigint,
+    title               nvarchar(100) NOT NULL,
+    applications_status nvarchar(20)  NOT NULL CHECK (applications_status IN (N'Новая', N'На согласование', N'Согласована')),
     CONSTRAINT pk_application PRIMARY KEY (application_id)
 );
 
@@ -59,6 +63,9 @@ CREATE TABLE uhta.users
     user_id       int IDENTITY (1,1),
     user_login    nvarchar(20) NOT NULL,
     user_password nvarchar(64) NOT NULL,
+    last_name     nvarchar(50) NOT NULL,
+    first_name    nvarchar(50) NOT NULL,
+    middle_name   nvarchar(50) NULL,
     user_role     nvarchar(10) NOT NULL CHECK (user_role IN (N'ADMIN', N'WORKER', N'GUEST')),
     CONSTRAINT pk_user PRIMARY KEY (user_id)
 );
