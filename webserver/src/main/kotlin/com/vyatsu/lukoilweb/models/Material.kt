@@ -28,7 +28,7 @@ data class Material(
     @Column(name = "unit_of_measurement")
     val unitOfMeasurement: String,
 
-    @Column(name = "id_deleted")
+    @Column(name = "is_deleted")
     val isDeleted: Boolean = false,
 
     @Column(name = "count_in_stock")
