@@ -5,6 +5,6 @@ declare type Consumable = {
     parentKccc: number,
     nr3: number,
     inOperation: number,
-    inStock: number,
+    inStock: number
 }
 export default Consumable;
