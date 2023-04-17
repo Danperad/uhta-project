@@ -24,13 +24,13 @@ data class Application(
         joinColumns = [JoinColumn(name = "material_id")],
         inverseJoinColumns = [JoinColumn(name = "application_id")]
     )
-    val materials: Set<Material>
+    val materials: Set<Device>
 ){
     fun convertToModel() : ApplicationModel{
-        val consumables = mutableSetOf<Consumable>()
-        materials.forEach {
-            consumables.add(it.convertToConsumable(1))
-        }
+        val consumables = mutableSetOf<ConsumableModel>()
+//        materials.forEach {
+//            consumables.add(it.toConsumable(1))
+//        }
         return ApplicationModel(number, date.time, title, period, status, consumables)
     }
 }

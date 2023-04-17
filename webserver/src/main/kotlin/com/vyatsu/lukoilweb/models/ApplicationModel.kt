@@ -9,5 +9,5 @@ data class ApplicationModel(
     val title: String,
     val period: Long,
     val status: String,
-    val materials: Set<Consumable>
+    val materials: Set<ConsumableModel>
 )
