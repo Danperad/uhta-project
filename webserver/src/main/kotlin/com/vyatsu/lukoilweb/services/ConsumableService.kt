@@ -1,16 +1,16 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.Consumable
-import com.vyatsu.lukoilweb.repositories.MaterialRepository
+import com.vyatsu.lukoilweb.models.ConsumableModel
+import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ConsumableService(private val materialRepository: MaterialRepository) {
-    fun findAllConsumables(): Set<Consumable> {
-        val materials = materialRepository.findAllByMaterialType("Расходник")
-        return materials.map { it.convertToConsumable(0) }.toSet()
+class ConsumableService(private val consumableRepository: ConsumableRepository) {
+    fun findAllConsumables(): Set<ConsumableModel> {
+        val materials = consumableRepository.findAll()
+        return materials.map { it.toConsumableModel() }.toSet()
     }
-    fun findConsumableByNr(nr: Int): Consumable? {
-        return materialRepository.findMaterialByNr(nr)?.convertToConsumable(0)
+    fun findConsumableByNr(nr: Int): ConsumableModel? {
+        return consumableRepository.findMaterialByNr(nr)?.toConsumableModel()
     }
 }
