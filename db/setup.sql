@@ -19,15 +19,22 @@ CREATE TABLE uhta.materials
     count_in_operation  int           NOT NULL DEFAULT (0),
     CONSTRAINT pk_device PRIMARY KEY (material_id)
 );
+CREATE INDEX material_type_index ON uhta.materials (material_type);
+CREATE INDEX material_nr_index ON uhta.materials (nr_3);
 
 CREATE TABLE uhta.binding
 (
+    binding_id     int IDENTITY (1,1),
     device_id      int NOT NULL,
     consumables_id int NOT NULL,
-    CONSTRAINT pk_binding PRIMARY KEY (device_id, consumables_id),
+    CONSTRAINT pk_binding PRIMARY KEY (binding_id),
     CONSTRAINT fk_material_device FOREIGN KEY (device_id) REFERENCES uhta.materials (material_id),
-    CONSTRAINT fk_material_consumable FOREIGN KEY (consumables_id) REFERENCES uhta.materials (material_id)
+    CONSTRAINT fk_material_consumable FOREIGN KEY (consumables_id) REFERENCES uhta.materials (material_id),
+    CONSTRAINT u_binding UNIQUE (device_id, consumables_id)
 );
+
+CREATE INDEX binding_device_index ON uhta.binding (device_id) INCLUDE (consumables_id);
+CREATE INDEX binding_consumable_index ON uhta.binding (consumables_id) INCLUDE (device_id);
 
 CREATE TABLE uhta.reports
 (

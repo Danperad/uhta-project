@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class ConsumableService(private val materialRepository: MaterialRepository) {
-    fun findAllConsumables(): List<Consumable> {
-        val materials = materialRepository.findAll()
-        return materials.filter { it.materialType == "Расходник" }.map { it.convertToConsumable(0) }
+    fun findAllConsumables(): Set<Consumable> {
+        val materials = materialRepository.findAllByMaterialType("Расходник")
+        return materials.map { it.convertToConsumable(0) }.toSet()
     }
     fun findConsumableByNr(nr: Int): Consumable? {
         return materialRepository.findMaterialByNr(nr)?.convertToConsumable(0)

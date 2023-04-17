@@ -36,18 +36,19 @@ data class Material(
 
     @Column(name = "count_in_operation")
     val inOperation: Int = 0,
-    @ManyToMany
+    // TODO: fix getting consumables
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "binding",
         joinColumns = [JoinColumn(name = "device_id")],
-        inverseJoinColumns = [JoinColumn(name = "material_id")]
+        inverseJoinColumns = [JoinColumn(name = "consumables_id")]
     )
     val devices: Set<Material>,
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "binding",
-        joinColumns = [JoinColumn(name = "consumable_id")],
-        inverseJoinColumns = [JoinColumn(name = "material_id")]
+        joinColumns = [JoinColumn(name = "consumables_id")],
+        inverseJoinColumns = [JoinColumn(name = "device_id")]
     )
     val consumables: Set<Material>
 ) {

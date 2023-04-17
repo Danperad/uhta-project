@@ -5,11 +5,10 @@ import com.vyatsu.lukoilweb.services.ApplicationService
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@CrossOrigin(origins = ["*"])
 @RequestMapping("api/applications")
 class ApplicationController(private val applicationService: ApplicationService) {
-    @GetMapping(produces = ["application/json"])
-    fun getAllApplications() : List<ApplicationModel>{
+    @GetMapping("/",produces = ["application/json"])
+    fun getAllApplications() : Set<ApplicationModel>{
         return applicationService.getAllApplications()
     }
     @GetMapping("{number}", produces = ["application/json"])

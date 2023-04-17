@@ -5,11 +5,10 @@ import com.vyatsu.lukoilweb.services.ConsumableService
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@CrossOrigin(origins = ["*"])
 @RequestMapping("api/consumables")
 class ConsumableController(private val consumableService: ConsumableService) {
-    @GetMapping(produces = ["application/json"])
-    fun getAllDevices(): List<Consumable>{
+    @GetMapping("/",produces = ["application/json"])
+    fun getAllDevices(): Set<Consumable>{
         return consumableService.findAllConsumables()
     }
 
