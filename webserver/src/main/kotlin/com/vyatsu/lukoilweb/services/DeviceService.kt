@@ -2,21 +2,20 @@ package com.vyatsu.lukoilweb.services
 
 import com.vyatsu.lukoilweb.models.Device
 import com.vyatsu.lukoilweb.repositories.MaterialRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class DeviceService(private val materialRepository: MaterialRepository) {
+    val logger : Logger = LoggerFactory.getLogger(DeviceService::class.java)
     fun findAllDevices(): Set<Device> {
-        val materials = materialRepository.findAll()
-        val devices = mutableSetOf<Device>()
-        materials.filter { it.materialType == "Прибор" }.forEach { device ->
-            devices.add(device.convertToDevice())
-        }
-        return devices
+        val materials = materialRepository.findAllByMaterialType("Прибор")
+        logger.info("Getting All Materials with type device")
+        return materials.map { it.convertToDevice() }.toSet()
     }
 
     fun findByNr(nr: Int): Device? {
-        val device = materialRepository.findMaterialByNr(nr) ?: return null
-        return device.convertToDevice()
+        return materialRepository.findMaterialByNr(nr)?.convertToDevice()
     }
 }

@@ -18,7 +18,7 @@ data class Application(
     val period: Long,
     @Column(name = "applications_status")
     val status: String,
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "materials_application",
         joinColumns = [JoinColumn(name = "material_id")],
