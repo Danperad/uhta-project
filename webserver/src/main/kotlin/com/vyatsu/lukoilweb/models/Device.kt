@@ -34,11 +34,11 @@ data class Device(
     @Column(name = "count_in_operation")
     val inOperation: Int = 0,
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
         name = "binding",
-        joinColumns = [JoinColumn(name = "consumables_id")],
-        inverseJoinColumns = [JoinColumn(name = "device_id")]
+        joinColumns = [JoinColumn(name = "device_id")],
+        inverseJoinColumns = [JoinColumn(name = "consumables_id")]
     )
     val consumables: Set<Consumable>
 ) {
