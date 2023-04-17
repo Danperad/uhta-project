@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM arm64v8/eclipse-temurin:17-jre-ubi9-minimal
 
 VOLUME /tmp
 
