@@ -1,7 +1,3 @@
-CREATE DATABASE uhta;
-GO
-USE uhta;
-GO
 CREATE SCHEMA uhta;
 GO
 

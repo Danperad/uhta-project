@@ -34,11 +34,11 @@ data class Consumable(
     @Column(name = "count_in_operation")
     val inOperation: Int = 0,
 
-    @ManyToMany(cascade = [CascadeType.ALL])
+    @ManyToMany
     @JoinTable(
         name = "binding",
-        joinColumns = [JoinColumn(name = "device_id")],
-        inverseJoinColumns = [JoinColumn(name = "consumable_id")]
+        joinColumns = [JoinColumn(name = "consumables_id")],
+        inverseJoinColumns = [JoinColumn(name = "device_id")]
     )
     val devices: Set<Device>
 ) {
