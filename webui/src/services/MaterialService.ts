@@ -1,7 +1,7 @@
 import axios from "axios";
 import Consumable from "../models/Сonsumable";
 
-const ApiUrl = "https://26dd74b6-9bf6-4097-a0e9-701f816e015f.mock.pstmn.io/api/materials/";
+const ApiUrl = `${import.meta.env.VITE_API_URL}/api/consumables/`
 
 class MaterialService {
     getMaterialByNr3(nr3: number) {

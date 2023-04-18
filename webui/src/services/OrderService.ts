@@ -1,7 +1,7 @@
 import axios from "axios";
 import {Order} from "../models";
 
-const ApiUrl = "https://26dd74b6-9bf6-4097-a0e9-701f816e015f.mock.pstmn.io/api/orders/";
+const ApiUrl = `${import.meta.env.VITE_API_URL}/api/applications/`
 
 class OrderService {
     getOrder() {
