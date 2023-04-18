@@ -1,6 +1,3 @@
-CREATE SCHEMA uhta;
-GO
-
 CREATE TABLE uhta.devices
 (
     device_id           int IDENTITY (1, 1),
