@@ -1,8 +1,7 @@
 import axios from "axios";
 import {Material} from "../models";
 
-const ApiUrl = "https://26dd74b6-9bf6-4097-a0e9-701f816e015f.mock.pstmn.io/api/devices/";
-
+const ApiUrl = `${import.meta.env.VITE_API_URL}/api/devices/`
 class DeviceService {
     getDevices() {
         return axios.get(ApiUrl).then(res => {
