@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ApplicationRepository : org.springframework.data.repository.Repository<Application, Int> {
-    fun findAll() : List<Application>
+    fun findAll(): List<Application>
     fun findApplicationByNumber(number: Int): Application?
 }
