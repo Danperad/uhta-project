@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@CrossOrigin
 @RequestMapping("api/consumables")
 class ConsumableController(private val consumableService: ConsumableService) {
     @GetMapping("/",produces = ["application/json"])
