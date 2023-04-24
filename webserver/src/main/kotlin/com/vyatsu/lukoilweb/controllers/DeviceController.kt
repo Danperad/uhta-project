@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = ["*"])
 @RequestMapping("api/devices")
 class DeviceController(private val deviceService: DeviceService) {
     @GetMapping("/",produces = ["application/json"])
