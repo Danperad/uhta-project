@@ -7,6 +7,7 @@ plugins {
 	kotlin("plugin.spring") version "1.7.22"
 	kotlin("plugin.jpa") version "1.7.22"
 	kotlin("plugin.serialization") version "1.7.22"
+	id("org.flywaydb.flyway") version "9.8.1"
 }
 
 group = "com.vyatsu"
@@ -24,20 +25,32 @@ repositories {
 }
 
 dependencies {
+	//springboot
+	implementation("org.springframework.boot:spring-boot-starter-data-rest")
+//	  implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("me.paulschwarz:spring-dotenv:3.0.0")
+
+	//serialization
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+
+	//database
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-data-rest")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
-//	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("me.paulschwarz:spring-dotenv:3.0.0")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+	runtimeOnly("org.flywaydb:flyway-core:9.8.1")
+	runtimeOnly("org.flywaydb:flyway-sqlserver")
+	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
+
+	// excel
+	implementation("org.apache.poi:poi:5.2.3")
+	implementation("org.apache.poi:poi-ooxml:5.2.3")
+	//tests
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-//	testImplementation("org.springframework.security:spring-security-test")
+//	  testImplementation("org.springframework.security:spring-security-test")
 }
 
 tasks.withType<KotlinCompile> {
@@ -50,7 +63,6 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
-
 
 tasks.getByName<Jar>("jar") {
 	enabled = false

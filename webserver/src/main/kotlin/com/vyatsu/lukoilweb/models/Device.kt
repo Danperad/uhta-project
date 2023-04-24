@@ -40,7 +40,7 @@ data class Device(
         joinColumns = [JoinColumn(name = "device_id")],
         inverseJoinColumns = [JoinColumn(name = "consumables_id")]
     )
-    val consumables: Set<Consumable>
+    val consumables: List<Consumable> = listOf()
 ) {
     fun toDeviceModel(): DeviceModel {
         val newConsumables = mutableSetOf<ConsumableModel>()

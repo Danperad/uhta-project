@@ -1,10 +1,11 @@
 package com.vyatsu.lukoilweb.repositories
 
 import com.vyatsu.lukoilweb.models.Device
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface DeviceRepository : org.springframework.data.repository.Repository<Device, Int> {
-    fun findAll() : List<Device>
+interface DeviceRepository : CrudRepository<Device, Int> {
     fun findMaterialByNr(nr: Int) : Device?
+    fun findByCsss(csss: Int) : Device?
 }

@@ -40,7 +40,7 @@ data class Consumable(
         joinColumns = [JoinColumn(name = "consumables_id")],
         inverseJoinColumns = [JoinColumn(name = "device_id")]
     )
-    val devices: Set<Device>
+    val devices: List<Device> = listOf()
 ) {
     fun toConsumableModel(): ConsumableModel {
         return ConsumableModel(id, title, producer, csss, nr, inOperation, inStock)
