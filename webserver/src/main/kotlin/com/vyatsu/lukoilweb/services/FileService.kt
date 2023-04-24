@@ -1,32 +1,51 @@
 package com.vyatsu.lukoilweb.services
 
-import org.apache.poi.ss.usermodel.CellType
+import com.vyatsu.lukoilweb.models.Consumable
+import com.vyatsu.lukoilweb.models.Device
+import com.vyatsu.lukoilweb.repositories.ConsumableRepository
+import com.vyatsu.lukoilweb.repositories.DeviceRepository
+import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class FileService {
-    fun loadResFromFile(file: MultipartFile) : Map<Int, List<String>> {
+class FileService(
+    private val deviceRepository: DeviceRepository,
+    private val consumableRepository: ConsumableRepository
+) {
+    @Transactional
+    fun addToDatabaseFromFile(file: MultipartFile) {
         val workbook = XSSFWorkbook(file.inputStream)
         val sheet = workbook.getSheetAt(0)
-        val map = mutableMapOf<Int, List<String>>()
-        var i = 0
-        sheet.forEach {
-            val list = mutableListOf<String>()
-            it.forEach { cell ->
-                when (cell.cellType){
-                    CellType.STRING -> list.add(cell.stringCellValue)
-                    CellType.NUMERIC -> list.add(cell.numericCellValue.toString())
-                    else -> {}
-                }
-            }
-            map[i] = list.toList()
-            i++
+        val preparedDevices = mutableListOf<Device>()
+        sheet.filter { it.getCell(6).stringCellValue == "Прибор" }.forEach {
+            preparedDevices.add(getDeviceFromRow(it))
         }
-        return map.toMap()
+        deviceRepository.saveAll(preparedDevices)
+        val preparedConsumables = mutableListOf<Consumable>()
+        sheet.filter { it.getCell(6).stringCellValue == "Расходник" }.forEach {
+            preparedConsumables.add(getConsumableFromRow(it))
+        }
+        consumableRepository.saveAll(preparedConsumables)
     }
-    fun createFileFromData() {
 
+    private fun getDeviceFromRow(row: Row): Device {
+        val csss = row.getCell(2).numericCellValue.toInt()
+        val nr3 = row.getCell(3).numericCellValue.toInt()
+        val title = row.getCell(4).stringCellValue
+        val producer = row.getCell(5).stringCellValue
+        return Device(0, csss, nr3, title, producer, "ШТ")
+    }
+
+    private fun getConsumableFromRow(row: Row): Consumable {
+        val csss = row.getCell(2).numericCellValue.toInt()
+        val nr3 = row.getCell(3).numericCellValue.toInt()
+        val title = row.getCell(4).stringCellValue
+        val producer = row.getCell(5).stringCellValue
+        val parent = row.getCell(8).numericCellValue.toInt()
+        val device = deviceRepository.findByCsss(parent) ?: throw Exception()
+        return Consumable(0, csss, nr3, title, producer, "ШТ", devices = listOf(device))
     }
 }
