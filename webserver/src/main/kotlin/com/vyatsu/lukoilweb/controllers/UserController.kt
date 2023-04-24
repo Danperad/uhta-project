@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = ["*"])
 @RequestMapping("api/user")
 class UserController(private val userService: UserService) {
     @PostMapping("auth", produces = ["application/json"])
