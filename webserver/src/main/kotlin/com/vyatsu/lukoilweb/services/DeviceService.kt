@@ -13,7 +13,7 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
         return materials.map { it.toDeviceModel() }.toSet()
     }
 
-    fun findByNr(nr: Int): DeviceModel? {
-        return deviceRepository.findMaterialByNr(nr)?.toDeviceModel()
+    fun findDeviceById(id: Int): DeviceModel? {
+        return deviceRepository.findDeviceById(id)?.toDeviceModel()
     }
 }
