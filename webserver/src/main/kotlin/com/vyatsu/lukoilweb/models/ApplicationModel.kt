@@ -9,5 +9,6 @@ data class ApplicationModel(
     val title: String,
     val period: Long,
     val status: String,
-    val materials: Set<ConsumableModel>
+    val devices: Set<DeviceModel>,
+    val consumables: Set<ConsumableModel>
 )

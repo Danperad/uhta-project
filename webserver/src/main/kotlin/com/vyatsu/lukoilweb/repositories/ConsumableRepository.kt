@@ -1,10 +1,10 @@
 package com.vyatsu.lukoilweb.repositories
 
 import com.vyatsu.lukoilweb.models.Consumable
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ConsumableRepository : org.springframework.data.repository.Repository<Consumable, Int> {
-    fun findAll() : List<Consumable>
+interface ConsumableRepository : CrudRepository<Consumable, Int> {
     fun findMaterialByNr(nr: Int) : Consumable?
 }

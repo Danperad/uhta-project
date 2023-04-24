@@ -20,17 +20,22 @@ data class Application(
     val status: String,
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "materials_application",
-        joinColumns = [JoinColumn(name = "material_id")],
+        name = "devices_application",
+        joinColumns = [JoinColumn(name = "device_id")],
         inverseJoinColumns = [JoinColumn(name = "application_id")]
     )
-    val materials: Set<Device>
-){
-    fun convertToModel() : ApplicationModel{
-        val consumables = mutableSetOf<ConsumableModel>()
-//        materials.forEach {
-//            consumables.add(it.toConsumable(1))
-//        }
-        return ApplicationModel(number, date.time, title, period, status, consumables)
+    val devices: List<Device> = listOf(),
+    @ManyToMany
+    @JoinTable(
+        name = "consumables_application",
+        joinColumns = [JoinColumn(name = "consumables_id")],
+        inverseJoinColumns = [JoinColumn(name = "application_id")]
+    )
+    val consumables: List<Consumable> = listOf()
+) {
+    fun convertToModel(): ApplicationModel {
+        val newDevices = this.devices.map { it.toDeviceModel() }.toSet()
+        val newConsumables = this.consumables.map { it.toConsumableModel() }.toSet()
+        return ApplicationModel(number, date.time, title, period, status, newDevices, newConsumables)
     }
 }
