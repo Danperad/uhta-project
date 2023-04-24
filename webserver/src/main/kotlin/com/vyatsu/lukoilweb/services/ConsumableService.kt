@@ -10,7 +10,7 @@ class ConsumableService(private val consumableRepository: ConsumableRepository) 
         val materials = consumableRepository.findAll()
         return materials.map { it.toConsumableModel() }.toSet()
     }
-    fun findConsumableByNr(nr: Int): ConsumableModel? {
-        return consumableRepository.findMaterialByNr(nr)?.toConsumableModel()
+    fun findConsumableById(id: Int): ConsumableModel? {
+        return consumableRepository.findConsumableById(id)?.toConsumableModel()
     }
 }
