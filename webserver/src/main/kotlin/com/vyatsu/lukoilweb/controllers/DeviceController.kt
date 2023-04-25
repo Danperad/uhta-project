@@ -15,10 +15,10 @@ class DeviceController(private val deviceService: DeviceService) {
     @Cacheable("devices")
     @GetMapping("/", produces = ["application/json"])
     fun getAllDevices(
-        @RequestParam(required = false) start: Int = 0,
-        @RequestParam(required = false) count: Int = 10
+        @RequestParam(required = false) start: Int? = 0,
+        @RequestParam(required = false) count: Int? = 10
     ): ResponseEntity<Set<DeviceModel>> {
-        val devices = deviceService.findAllDevicePage(PageRequest.of(start, count))
+        val devices = deviceService.findAllDevicePage(PageRequest.of(start!!, count!!))
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(devices)
     }
 
