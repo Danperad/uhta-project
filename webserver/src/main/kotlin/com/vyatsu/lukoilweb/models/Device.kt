@@ -50,4 +50,5 @@ data class Device(
 
         return DeviceModel(id, title, producer, csss, nr, inOperation, inStock, newConsumables)
     }
+    fun toDeviceWithoutConsumables() = DeviceModel(id, title, producer, csss, nr, inOperation, inStock, emptySet())
 }
