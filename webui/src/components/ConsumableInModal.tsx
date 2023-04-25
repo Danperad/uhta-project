@@ -62,7 +62,7 @@ export interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'name',
+        id: 'title',
         numeric: false,
         disablePadding: true,
         label: 'Наименование',
@@ -74,7 +74,7 @@ const headCells: readonly HeadCell[] = [
         label: '№R-3',
     },
     {
-        id: 'kccc',
+        id: 'csss',
         numeric: true,
         disablePadding: false,
         label: '№КССС',

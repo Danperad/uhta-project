@@ -1,8 +1,9 @@
 declare type Consumable = {
-    name: string,
+    id: number,
+    title: string,
     producer: string,
-    kccc: number,
-    parentKccc: number,
+    csss: number,
+    parentCsss: number,
     nr3: number,
     inOperation: number,
     inStock: number

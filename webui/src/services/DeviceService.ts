@@ -1,18 +1,18 @@
 import axios from "axios";
-import {Material} from "../models";
+import {Device} from "../models";
 
 const ApiUrl = `${import.meta.env.VITE_API_URL}/api/devices/`
 class DeviceService {
-    getDevices() {
+    getAllDevices() {
         return axios.get(ApiUrl).then(res => {
-            return res.data.devices as Material[];
+            return res.data as Device[];
         })
     }
 
-    getDeviceByNr3(nr3: number){
-        return axios.get(ApiUrl + "bynr?nr3=" + nr3 )
+    getDeviceById(id: number){
+        return axios.get(ApiUrl + id )
             .then((res) => {
-                return res.data as Material;
+                return res.data as Device;
             })
             .catch((error) => {
                 console.log(error);

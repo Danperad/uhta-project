@@ -12,7 +12,7 @@ import {
     Typography
 } from '@mui/material';
 import {style} from '../assets/css/CreateOrderModal';
-import {Material} from "../models";
+import {Device} from "../models";
 import DeviceService from "../services/DeviceService";
 import OrderTable from "./OrderTable";
 import {AddSnackbar} from "../redux/actions/snackbarAction";
@@ -23,7 +23,7 @@ export default function Order() {
     const dispatch = useDispatch<AppDispatch>();
     const {useState} = React;
     const [checked, setChecked] = useState(false);
-    const [materials, setMaterials] = React.useState<Material[]>([]);
+    const [materials, setMaterials] = React.useState<Device[]>([]);
     const [key, setKey] = React.useState<boolean>(false);
     const OrderPerriod = () => (
         <Stack direction="row" spacing={2} sx={{width: '40%'}}>
@@ -38,6 +38,9 @@ export default function Order() {
         </Stack>
     )
 
+    const [dateTimeOt, setDateTimeOt] = React.useState<string>();
+    const [dateTimeDo, setDateTimeDo] = React.useState<string>();
+
     const [openCreateOrderModal, setCreateOrderModalOpen] = React.useState(false);
     const handleOpenCreateOrderModal = () => setCreateOrderModalOpen(true);
     const handleCloseCreateOrderModal = () => {
@@ -46,7 +49,7 @@ export default function Order() {
             setChecked(prev => !prev);
         }
     }
-    const handleChangeChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeChecked = () => {
         setChecked(prev => !prev)
     }
     //Dictionaries
@@ -62,7 +65,7 @@ export default function Order() {
     React.useEffect(() => {
         if (key) return;
         setKey(true);
-        DeviceService.getDevices().then((res: Material[]) => {
+        DeviceService.getAllDevices().then((res: Device[]) => {
             setMaterials(res);
         }).catch(err => console.log(err));
     }, [materials, key])
@@ -184,7 +187,7 @@ export default function Order() {
                                 <Typography mb={2}>Добавление материалов в заявку</Typography>
                                 <Stack direction="row" spacing={2}>
                                     <Autocomplete disablePortal id="combo-box-name-material" size='small'
-                                                  options={materials.map((row) => (row.name))}
+                                                  options={materials.map((row) => (row.title))}
                                                   sx={{width: '26%'}}
                                                   renderInput={(params) => <TextField {...params}
                                                                                       label="Наименование" value={selectedMaterial}

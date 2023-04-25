@@ -4,8 +4,13 @@ import Consumable from "../models/Сonsumable";
 const ApiUrl = `${import.meta.env.VITE_API_URL}/api/consumables/`
 
 class MaterialService {
-    getMaterialByNr3(nr3: number) {
-        return axios.get(ApiUrl + "bynr?nr3=" + nr3)
+    getAllMaterials() {
+        return axios.get(ApiUrl).then(res => {
+            return res.data as Consumable[];
+        })
+    }
+    getMaterialById(id: number) {
+        return axios.get(ApiUrl + id)
             .then((res) => {
                 return res.data as Consumable;
             })

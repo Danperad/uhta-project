@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import {Autocomplete, Box, Button, Paper, Stack, TextField, Typography,} from '@mui/material';
 
 import "../assets/css/Scrollbar.css";
@@ -23,6 +24,13 @@ const Unit = [
     {label: 'М'},
     {label: 'М2'},
 ]
+const Producers = [
+    {label: 'Поставщик'},
+    {label: 'Производитель'},
+    {label: 'Поставка'},
+    {label: 'Товарищ'},
+    {label: 'Человек'},
+]
 
 export default function Device() {
     const dispatch = useDispatch<AppDispatch>();
@@ -39,7 +47,14 @@ export default function Device() {
     const [showDeviceBinding, setShowDeviceBinding] = React.useState(false);
 
     function CheckMaterialType(event: any, value: string) {
+        if (!(value === "Расходник" || value === "Прибор"))
+        {
+            setAutocompleteTypeValue('');
+            return;
+        }
+
         setMaterialType(value);
+        setAutocompleteTypeValue(value);
 
         if (value === "Расходник") {
             setShowDeviceBinding(true)
@@ -51,7 +66,19 @@ export default function Device() {
     }
 
     function CheckMaterialUnit(event: any, value: string) {
+        if (!(value === "ШТ" || value === "УМП" || value === "КМП" || value === "Л"
+            || value === "КГ" || value === "Т" || value === "М" || value === "М2"))
+        {
+            setAutocompleteUnitValue('');
+            return;
+        }
         setMaterialUnit(value);
+        setAutocompleteUnitValue(value);
+    }
+
+    function CheckMaterialProducer(event: any, value: string) {
+        setProducer(value);
+        setAutocompleteProducerValue(value);
     }
 
     const DeviceBinding = () => (
@@ -101,7 +128,8 @@ export default function Device() {
 
     function CheckRequiredFields() {
         return !(materialName === undefined || nr3 === undefined || kccc === undefined ||
-            materialType === undefined || amount === undefined || materialUnit === undefined);
+            materialType === undefined || amount === undefined || materialUnit === undefined ||
+            materialType === "" || materialUnit === "");
     }
 
     function ClearFields() {
@@ -113,7 +141,14 @@ export default function Device() {
         setProducer("");
         setAmount("");
         setMaterialUnit("");
+        setAutocompleteTypeValue("");
+        setAutocompleteUnitValue("");
+        setAutocompleteProducerValue("");
     }
+
+    const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<label>('');
+    const [autocompleteUnitValue, setAutocompleteUnitValue] = useState<label>('');
+    const [autocompleteProducerValue, setAutocompleteProducerValue] = useState<label>('');
 
     return (
         <Box sx={{
@@ -180,11 +215,17 @@ export default function Device() {
                                                inputProps: {min: 1}
                                            }}
                                 />
-                                <TextField id="producer" label="Производитель" variant="outlined" size='small'
-                                           value={producer}
-                                           onChange={(newValue) => setProducer(newValue.target.value)}/>
+
+                                <Autocomplete disablePortal id="combo-box-producer" size='small' options={Producers}
+                                              onInputChange={CheckMaterialProducer} value={autocompleteProducerValue}
+
+                                              renderInput={(params) => <TextField {...params} label="Производитель" required
+                                                                                  value={materialType}
+                                                                                  onChange={(newValue) => setProducer(newValue.target.value)}/>}
+                                />
+
                                 <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
-                                              onInputChange={CheckMaterialType}
+                                              onInputChange={CheckMaterialType} value={autocompleteTypeValue}
 
                                               renderInput={(params) => <TextField {...params} label="Тип" required
                                                                                   value={materialType}
@@ -204,7 +245,7 @@ export default function Device() {
                                            }}
                                 />
                                 <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
-                                              onInputChange={CheckMaterialUnit}
+                                              onInputChange={CheckMaterialUnit} value={autocompleteUnitValue}
                                               renderInput={(params) => <TextField {...params} label="Ед. измерения"
                                                                                   value={materialUnit} required
                                                                                   onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}

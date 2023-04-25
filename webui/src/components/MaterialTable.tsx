@@ -1,18 +1,18 @@
 import {Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import TableRowMaterial from "./TableRowMaterial";
 import React from "react";
-import {Material} from "../models";
+import {Device} from "../models";
 import DeviceService from "../services/DeviceService";
 
 export default function MaterialTable()
 {
-    const [materials, setMaterials] = React.useState<Material[]>([]);
+    const [materials, setMaterials] = React.useState<Device[]>([]);
     const [key, setKey] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         if (key) return;
         setKey(true);
-        DeviceService.getDevices().then((res: Material[]) => {
+        DeviceService.getAllDevices().then((res: Device[]) => {
             setMaterials(res);
         }).catch(err => console.log(err));
     }, [materials, key])

@@ -26,7 +26,7 @@ export default (props: {receivedMaterial: Consumable}) =>
 
     const ParentKcccField = () => (
         <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number' required
-                   style={{width: "14%", marginLeft: "28px"}} value={consumable !== null ? consumable!.parentKccc : ""}
+                   style={{width: "14%", marginLeft: "28px"}} value={consumable !== null ? consumable!.parentCsss : ""}
                    InputProps={{
                        inputProps: {min: 1}
                    }}
@@ -78,9 +78,9 @@ export default (props: {receivedMaterial: Consumable}) =>
                            style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                         <Stack direction="row" spacing={2} sx={{width: '100%'}}>
                             <Typography mb={2}>Редактирование материала:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.name : ""}</Typography>
+                            <Typography color="primary">{consumable !== null ? consumable!.title : ""}</Typography>
                             <Typography mb={2}>№КССС:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.kccc : ""}</Typography>
+                            <Typography color="primary">{consumable !== null ? consumable!.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
                             <Typography color="primary">{consumable !== null ? consumable!.nr3 : ""}</Typography>
                         </Stack>

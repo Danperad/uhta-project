@@ -5,14 +5,14 @@ import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-import {Consumable, Material} from '../models';
+import {Consumable, Device} from '../models';
 import DeviceService from "../services/DeviceService";
 import MaterialService from "../services/MaterialService";
 import ChangeDeviceModal from "./ChangeDeviceModal";
 import ChangeMaterialModal from "./ChangeMaterialModal"
 
-export default function TableRowMaterial(props: { rowMaterial: Material }) {
-    const [material, setMaterial] = useState<Material | null>(null);
+export default function TableRowMaterial(props: { rowMaterial: Device }) {
+    const [material, setMaterial] = useState<Device | null>(null);
     const [consumable, setConsumable] = useState<Consumable | null>(null);
 
     const {rowMaterial} = props;
@@ -20,7 +20,7 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
     const [openChangeDeviceModal, setChangeDeviceModal] = useState(false);
     const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
     const handleOpenEditDeviceModal = (nr3: number) => {
-        DeviceService.getDeviceByNr3(nr3).then((res) => {
+        DeviceService.getDeviceById(nr3).then((res) => {
             if (res === null) return;
             setMaterial(res);
         });
@@ -49,17 +49,17 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
                         {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
                 </TableCell>
-                <TableCell component="th" scope="row" onClick={(e) => {
+                <TableCell component="th" scope="row" onClick={() => {
                     handleOpenEditDeviceModal(rowMaterial.nr3)
                 }}>
-                    {rowMaterial.name}
+                    {rowMaterial.title}
                 </TableCell>
                 <TableCell align="right">{rowMaterial.nr3}</TableCell>
-                <TableCell align="right">{rowMaterial.kccc}</TableCell>
-                <TableCell align="right" onClick={(e) => {
+                <TableCell align="right">{rowMaterial.csss}</TableCell>
+                <TableCell align="right" onClick={() => {
                     handleOpenEditDeviceModal(rowMaterial.nr3)
                 }}>{rowMaterial.inOperation}</TableCell>
-                <TableCell align="right" onClick={(e) => {
+                <TableCell align="right" onClick={() => {
                     handleOpenEditDeviceModal(rowMaterial.nr3)
                 }}>{rowMaterial.inStock}</TableCell>
             </TableRow>
@@ -81,18 +81,18 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rowMaterial.materials.map((materialRow) => (
+                                    {rowMaterial.consumables.map((materialRow) => (
                                         <TableRow>
-                                            <TableCell component="th" scope="row" onClick={(e) => {
+                                            <TableCell component="th" scope="row" onClick={() => {
                                                 handleOpenEditMaterialModal(rowMaterial.nr3)
-                                            }}>{materialRow.name}</TableCell>
+                                            }}>{materialRow.title}</TableCell>
                                             <TableCell>{materialRow.nr3}</TableCell>
-                                            <TableCell>{materialRow.kccc}</TableCell>
-                                            <TableCell align="right" onClick={(e) => {
+                                            <TableCell>{materialRow.csss}</TableCell>
+                                            <TableCell align="right" onClick={() => {
                                                 handleOpenEditMaterialModal(rowMaterial.nr3)
                                             }}
                                                        typeof='number'>{materialRow.inOperation}</TableCell>
-                                            <TableCell align="right" onClick={(e) => {
+                                            <TableCell align="right" onClick={() => {
                                                 handleOpenEditMaterialModal(rowMaterial.nr3)
                                             }}
                                                        typeof='number'>{materialRow.inStock}</TableCell>
