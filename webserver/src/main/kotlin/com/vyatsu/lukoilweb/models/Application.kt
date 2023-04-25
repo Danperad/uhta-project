@@ -34,7 +34,7 @@ data class Application(
     val consumables: List<Consumable> = listOf()
 ) {
     fun convertToModel(): ApplicationModel {
-        val newDevices = this.devices.map { it.toDeviceModel() }.toSet()
+        val newDevices = this.devices.map { it.toDeviceWithoutConsumables() }.toSet()
         val newConsumables = this.consumables.map { it.toConsumableModel() }.toSet()
         return ApplicationModel(number, date.time, title, period, status, newDevices, newConsumables)
     }

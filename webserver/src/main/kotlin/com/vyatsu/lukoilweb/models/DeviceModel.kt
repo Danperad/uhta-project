@@ -11,5 +11,5 @@ data class DeviceModel(
     val nr3: Int,
     val inOperation: Int,
     val inStock: Int,
-    val consumables: MutableSet<ConsumableModel>
+    val consumables: Set<ConsumableModel>
 )
