@@ -42,7 +42,5 @@ data class Consumable(
     )
     val devices: List<Device> = listOf()
 ) {
-    fun toConsumableModel(): ConsumableModel {
-        return ConsumableModel(id, title, producer, csss, nr, inOperation, inStock)
-    }
+    fun toConsumableModel() = ConsumableModel(id, title, producer, csss, nr, inOperation, inStock)
 }

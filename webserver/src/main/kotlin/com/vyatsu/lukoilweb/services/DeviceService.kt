@@ -10,9 +10,10 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
     @Transactional
     fun findAllDevices(): Set<DeviceModel> {
         val materials = deviceRepository.findAll()
-        return materials.map { it.toDeviceModel() }.toSet()
+        return materials.map { it.toDeviceWithoutConsumables() }.toSet()
     }
 
+    @Transactional
     fun findDeviceById(id: Int): DeviceModel? {
         return deviceRepository.findDeviceById(id)?.toDeviceModel()
     }
