@@ -16,9 +16,10 @@ class DeviceController(private val deviceService: DeviceService) {
     @GetMapping("/", produces = ["application/json"])
     fun getAllDevices(
         @RequestParam(required = false) start: Int?,
-        @RequestParam(required = false) count: Int?
+        @RequestParam(required = false) count: Int?,
+        @RequestParam(required = false) search: String?
     ): ResponseEntity<Set<DeviceModel>> {
-        val devices = deviceService.findAllDevicePage(PageRequest.of(start ?: 0, count ?: 10))
+        val devices = deviceService.findAllDevicePage(PageRequest.of(start ?: 0, count ?: 10), search)
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(devices)
     }
 

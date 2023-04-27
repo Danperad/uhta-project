@@ -19,8 +19,13 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
         return deviceRepository.findDeviceByNr(nr)?.toDeviceModel()
     }
     @Transactional
-    fun findAllDevicePage(limit: Pageable): Set<DeviceModel>{
-        return deviceRepository.findAll(limit).map { it.toDeviceModel() }.toSet()
+    fun findAllDevicePage(limit: Pageable, search: String?): Set<DeviceModel>{
+        val devices = if (search == null) {
+            deviceRepository.findAll(limit)
+        } else {
+            deviceRepository.findAll(search)
+        }
+        return devices.map { it.toDeviceModel() }.toSet()
     }
 
     fun saveDevice(deviceModel: DeviceModel) : DeviceModel? {
