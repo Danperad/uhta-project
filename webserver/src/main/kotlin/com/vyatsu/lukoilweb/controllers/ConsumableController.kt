@@ -26,4 +26,14 @@ class ConsumableController(private val consumableService: ConsumableService) {
             ResponseEntity.notFound().build()
         }
     }
+
+    @PostMapping
+    fun saveConsumable(consumableModel: ConsumableModel) : ResponseEntity<ConsumableModel>{
+        val consumable = consumableService.saveConsumable(consumableModel)
+        return if (consumable != null){
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(consumable)
+        } else {
+            ResponseEntity.badRequest().build()
+        }
+    }
 }

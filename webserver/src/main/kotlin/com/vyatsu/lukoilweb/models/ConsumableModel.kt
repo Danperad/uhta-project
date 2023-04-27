@@ -11,4 +11,8 @@ data class ConsumableModel(
     val nr3: Int,
     val inOperation: Int,
     val inStock: Int,
-)
+){
+    fun getConsumable() : Consumable{
+        return Consumable(0,csss,nr3,title, prducer, "ШТ", false, inStock, inOperation)
+    }
+}

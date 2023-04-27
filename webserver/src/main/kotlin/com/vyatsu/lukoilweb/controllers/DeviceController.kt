@@ -32,4 +32,14 @@ class DeviceController(private val deviceService: DeviceService) {
             ResponseEntity.notFound().build()
         }
     }
+
+    @PostMapping
+    fun saveDevice(deviceModel: DeviceModel) : ResponseEntity<DeviceModel?> {
+        val device = deviceService.saveDevice(deviceModel)
+        return if (device != null) {
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(device)
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
 }

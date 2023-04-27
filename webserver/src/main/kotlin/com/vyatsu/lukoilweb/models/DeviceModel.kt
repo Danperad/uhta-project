@@ -12,4 +12,8 @@ data class DeviceModel(
     val inOperation: Int,
     val inStock: Int,
     val consumables: Set<ConsumableModel>
-)
+) {
+    fun getDevice(): Device {
+        return Device(id, csss, nr3, title, prducer, "ШТ", false,inStock, inOperation, consumables.map { it.getConsumable() })
+    }
+}
