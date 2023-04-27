@@ -17,9 +17,9 @@ class ConsumableController(private val consumableService: ConsumableService) {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(consumables)
     }
     @Cacheable("consumable")
-    @GetMapping("{id}", produces = ["application/json"])
-    fun getConsumableById(@PathVariable id: Int): ResponseEntity<ConsumableModel?>{
-        val consumable = consumableService.findConsumableById(id)
+    @GetMapping("{nr}", produces = ["application/json"])
+    fun getConsumableByNr(@PathVariable nr: Int): ResponseEntity<ConsumableModel?>{
+        val consumable = consumableService.findConsumableByNr(nr)
         return if (consumable != null){
             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(consumable)
         } else {

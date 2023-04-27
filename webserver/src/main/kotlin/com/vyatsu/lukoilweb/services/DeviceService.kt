@@ -15,8 +15,8 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
     }
 
     @Transactional
-    fun findDeviceById(id: Int): DeviceModel? {
-        return deviceRepository.findDeviceById(id)?.toDeviceModel()
+    fun findDeviceByNr(nr: Int): DeviceModel? {
+        return deviceRepository.findDeviceByNr(nr)?.toDeviceModel()
     }
     @Transactional
     fun findAllDevicePage(limit: Pageable): Set<DeviceModel>{
