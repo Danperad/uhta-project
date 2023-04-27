@@ -12,8 +12,19 @@ class ConsumableService(private val consumableRepository: ConsumableRepository) 
         val materials = consumableRepository.findAll()
         return materials.map { it.toConsumableModel() }.toSet()
     }
+
     @Transactional
     fun findConsumableById(id: Int): ConsumableModel? {
         return consumableRepository.findConsumableById(id)?.toConsumableModel()
+    }
+
+    @Transactional
+    fun saveConsumable(consumableModel: ConsumableModel): ConsumableModel? {
+        val consumable = consumableModel.getConsumable()
+        return try {
+            consumableRepository.save(consumable).toConsumableModel()
+        } catch (e: Exception){
+            null
+        }
     }
 }
