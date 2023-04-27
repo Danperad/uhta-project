@@ -23,9 +23,9 @@ class DeviceController(private val deviceService: DeviceService) {
     }
 
     @Cacheable("device")
-    @GetMapping("{id}", produces = ["application/json"])
-    fun getDeviceById(@PathVariable id: Int): ResponseEntity<DeviceModel?> {
-        val device = deviceService.findDeviceById(id)
+    @GetMapping("{nr}", produces = ["application/json"])
+    fun getDeviceByNr(@PathVariable nr: Int): ResponseEntity<DeviceModel?> {
+        val device = deviceService.findDeviceByNr(nr)
         return if (device != null) {
             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(device)
         } else {

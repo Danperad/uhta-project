@@ -14,8 +14,8 @@ class ConsumableService(private val consumableRepository: ConsumableRepository) 
     }
 
     @Transactional
-    fun findConsumableById(id: Int): ConsumableModel? {
-        return consumableRepository.findConsumableById(id)?.toConsumableModel()
+    fun findConsumableByNr(nr: Int): ConsumableModel? {
+        return consumableRepository.findConsumableByNr(nr)?.toConsumableModel()
     }
 
     @Transactional
