@@ -34,7 +34,7 @@ class DeviceController(private val deviceService: DeviceService) {
         }
     }
 
-    @PostMapping
+    @PostMapping("/")
     fun saveDevice(deviceModel: DeviceModel) : ResponseEntity<DeviceModel?> {
         val device = deviceService.saveDevice(deviceModel)
         return if (device != null) {
