@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ConsumableRepository : JpaRepository<Consumable, Int> {
+interface ConsumableRepository : JpaRepository<Consumable, Int>, ConsumableRepositoryCustom {
     fun findConsumableByNr(nr: Int) : Consumable?
     fun findConsumableById(id: Int) : Consumable?
 }

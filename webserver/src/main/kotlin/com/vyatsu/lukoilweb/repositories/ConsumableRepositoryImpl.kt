@@ -1,20 +1,19 @@
 package com.vyatsu.lukoilweb.repositories
 
-import com.vyatsu.lukoilweb.models.Device
+import com.vyatsu.lukoilweb.models.Consumable
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 
-
-class DeviceRepositoryImpl : DeviceRepositoryCustom{
+class ConsumableRepositoryImpl : ConsumableRepositoryCustom {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
-    override fun findAll(search: String): Page<Device> {
+    override fun findAll(search: String): Page<Consumable> {
         val cb = entityManager.criteriaBuilder
-        val query = cb.createQuery(Device::class.java)
-        val deviceRoot = query.from(Device::class.java)
-        val newQuery = preparePredicate(query, deviceRoot, search, cb)
+        val query = cb.createQuery(Consumable::class.java)
+        val consumableRoot = query.from(Consumable::class.java)
+        val newQuery = preparePredicate(query, consumableRoot, search, cb)
         val tq = entityManager.createQuery(newQuery)
         return PageImpl(tq.resultList)
     }

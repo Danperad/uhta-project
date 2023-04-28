@@ -9,11 +9,12 @@ data class DeviceModel(
     val prducer: String,
     val csss: Int,
     val nr3: Int,
+    val unitType: String,
     val inOperation: Int,
     val inStock: Int,
     val consumables: Set<ConsumableModel>
 ) {
     fun getDevice(): Device {
-        return Device(id, csss, nr3, title, prducer, "ШТ", false,inStock, inOperation, consumables.map { it.getConsumable() })
+        return Device(id, csss, nr3, title, prducer, unitType, false,inStock, inOperation, consumables.map { it.getConsumable() })
     }
 }
