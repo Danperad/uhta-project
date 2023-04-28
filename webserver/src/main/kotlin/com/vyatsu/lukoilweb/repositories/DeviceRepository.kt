@@ -6,8 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface DeviceRepository : JpaRepository<Device, Int>, DeviceRepositoryCustom {
-    fun findDeviceByNr(nr: Int): Device?
-    fun findDeviceById(id: Int): Device?
-
-    fun findByCsss(csss: Int): Device?
+    fun findDeviceByCsss(csss: Int): Device?
 }

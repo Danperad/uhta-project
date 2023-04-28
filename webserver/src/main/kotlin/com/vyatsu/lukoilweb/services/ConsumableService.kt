@@ -2,6 +2,7 @@ package com.vyatsu.lukoilweb.services
 
 import com.vyatsu.lukoilweb.models.ConsumableModel
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
+import org.hibernate.sql.ast.tree.predicate.Predicate
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -25,8 +26,8 @@ class ConsumableService(private val consumableRepository: ConsumableRepository) 
     }
 
     @Transactional
-    fun findConsumableByNr(nr: Int): ConsumableModel? {
-        return consumableRepository.findConsumableByNr(nr)?.toConsumableModel()
+    fun findConsumableByCsss(csss: Int): ConsumableModel? {
+        return consumableRepository.findConsumableByCsss(csss)?.toConsumableModel()
     }
 
     @Transactional

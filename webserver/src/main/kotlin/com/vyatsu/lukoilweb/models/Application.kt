@@ -5,11 +5,7 @@ import java.util.*
 
 @Entity
 @Table(name = "applications")
-data class Application(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "application_id")
-    val number: Int,
+class Application(
     @Column(name = "application_date")
     val date: Date,
     @Column(name = "title")
@@ -31,11 +27,15 @@ data class Application(
         joinColumns = [JoinColumn(name = "consumables_id")],
         inverseJoinColumns = [JoinColumn(name = "application_id")]
     )
-    val consumables: List<Consumable> = listOf()
+    val consumables: List<Consumable> = listOf(),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "application_id", nullable = false)
+    var number: Int? = null
 ) {
     fun convertToModel(): ApplicationModel {
         val newDevices = this.devices.map { it.toDeviceWithoutConsumables() }.toSet()
         val newConsumables = this.consumables.map { it.toConsumableModelWithoutDevices() }.toSet()
-        return ApplicationModel(number, date.time, title, period, status, newDevices, newConsumables)
+        return ApplicationModel(number!!, date.time, title, period, status, newDevices, newConsumables)
     }
 }

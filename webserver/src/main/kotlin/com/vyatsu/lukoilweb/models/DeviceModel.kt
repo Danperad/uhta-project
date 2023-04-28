@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeviceModel(
-    val id: Int,
+    val id: Int?,
     val title: String,
     val prducer: String,
     val csss: Int,
@@ -15,6 +15,6 @@ data class DeviceModel(
     val consumables: Set<ConsumableModel>
 ) {
     fun getDevice(): Device {
-        return Device(id, csss, nr3, title, prducer, unitType, false,inStock, inOperation, consumables.map { it.getConsumable() })
+        return Device(csss, nr3, title, prducer, unitType, false,inStock, inOperation, consumables.map { it.getConsumable() }, id)
     }
 }
