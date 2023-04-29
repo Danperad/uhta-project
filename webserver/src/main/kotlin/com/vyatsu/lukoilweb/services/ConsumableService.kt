@@ -1,8 +1,8 @@
 package com.vyatsu.lukoilweb.services
 
+import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.ConsumableModel
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
-import org.hibernate.sql.ast.tree.predicate.Predicate
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,7 +16,7 @@ class ConsumableService(private val consumableRepository: ConsumableRepository) 
     }
 
     @Transactional
-    fun findAllConsumablesPage(limit: Pageable, search: String?) : Set<ConsumableModel> {
+    fun findAllConsumablesPage(limit: Pageable, search: String?): Set<ConsumableModel> {
         val consumables = if (search == null) {
             consumableRepository.findAll(limit)
         } else {
@@ -35,7 +35,29 @@ class ConsumableService(private val consumableRepository: ConsumableRepository) 
         val consumable = consumableModel.getConsumable()
         return try {
             consumableRepository.save(consumable).toConsumableModelWithoutDevices()
-        } catch (e: Exception){
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    @Transactional
+    fun deleteConsumable(consumableModel: ConsumableModel): ConsumableModel? {
+        val consumable = consumableRepository.findConsumableByCsss(consumableModel.csss) ?: return null
+        val newConsumable = Consumable(
+            consumable.csss,
+            consumable.nr,
+            consumable.title,
+            consumable.producer,
+            consumable.unitOfMeasurement,
+            true,
+            consumable.inStock,
+            consumable.inOperation,
+            listOf(),
+            consumable.id
+        )
+        return try {
+            consumableRepository.save(newConsumable).toConsumableModelWithoutDevices()
+        } catch (e: Exception) {
             null
         }
     }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ConsumableRepository : JpaRepository<Consumable, Int>, ConsumableRepositoryCustom {
-    fun findConsumableByCsss(nr: Int) : Consumable?
+    fun findConsumableByCsss(csss: Int) : Consumable?
 }
