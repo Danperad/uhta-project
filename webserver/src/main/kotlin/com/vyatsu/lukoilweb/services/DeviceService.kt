@@ -2,6 +2,7 @@ package com.vyatsu.lukoilweb.services
 
 import com.vyatsu.lukoilweb.models.DeviceModel
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -13,7 +14,26 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
         return materials.map { it.toDeviceModel() }.toSet()
     }
 
-    fun findByNr(nr: Int): DeviceModel? {
-        return deviceRepository.findMaterialByNr(nr)?.toDeviceModel()
+    @Transactional
+    fun findDeviceByCsss(nr: Int): DeviceModel? {
+        return deviceRepository.findDeviceByCsss(nr)?.toDeviceModel()
+    }
+    @Transactional
+    fun findAllDevicePage(limit: Pageable, search: String?): Set<DeviceModel>{
+        val devices = if (search == null) {
+            deviceRepository.findAll(limit)
+        } else {
+            deviceRepository.findAll(search)
+        }
+        return devices.map { it.toDeviceModel() }.toSet()
+    }
+
+    fun saveDevice(deviceModel: DeviceModel) : DeviceModel? {
+        val device = deviceModel.getDevice()
+        return try {
+            deviceRepository.save(device).toDeviceModel()
+        } catch (e: Exception){
+            null
+        }
     }
 }

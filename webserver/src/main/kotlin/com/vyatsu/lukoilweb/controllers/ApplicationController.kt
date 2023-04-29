@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@CrossOrigin(origins = ["*"])
 @RequestMapping("api/applications")
 class ApplicationController(private val applicationService: ApplicationService) {
     @GetMapping("/",produces = ["application/json"])

@@ -27,6 +27,7 @@ repositories {
 dependencies {
 	//springboot
 	implementation("org.springframework.boot:spring-boot-starter-data-rest")
+	implementation("org.springframework.boot:spring-boot-starter-cache")
 //	  implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("me.paulschwarz:spring-dotenv:3.0.0")
 

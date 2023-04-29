@@ -4,12 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "consumables")
-data class Consumable(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "consumables_id")
-    val id: Int,
-
+class Consumable(
     @Column(name = "csss")
     val csss: Int,
 
@@ -40,9 +35,15 @@ data class Consumable(
         joinColumns = [JoinColumn(name = "consumables_id")],
         inverseJoinColumns = [JoinColumn(name = "device_id")]
     )
-    val devices: List<DeviceAndConsumable> = listOf()
+    val devices: List<Device> = listOf(),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "consumables_id", nullable = false)
+    var id: Int? = null
 ) {
-    fun toConsumableModel(): ConsumableModel {
-        return ConsumableModel(id, title, producer, csss, nr, inOperation, inStock)
+    fun toConsumableModel() : ConsumableModel{
+        val newDevices = devices.map { it.toDeviceWithoutConsumables() }.toSet()
+        return toConsumableModelWithoutDevices().copy(devices = newDevices)
     }
+    fun toConsumableModelWithoutDevices() = ConsumableModel(id, title, producer, csss, nr,unitOfMeasurement, inOperation, inStock)
 }

@@ -4,12 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "devices")
-data class Device(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "device_id")
-    val id: Int,
-
+class Device(
     @Column(name = "csss")
     val csss: Int,
 
@@ -40,14 +35,16 @@ data class Device(
         joinColumns = [JoinColumn(name = "device_id")],
         inverseJoinColumns = [JoinColumn(name = "consumables_id")]
     )
-    val consumables: List<Consumable> = listOf()
+    val consumables: List<Consumable> = listOf(),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "device_id", nullable = false)
+    var id: Int? = null
 ) {
     fun toDeviceModel(): DeviceModel {
-        val newConsumables = mutableSetOf<ConsumableModel>()
-        consumables.forEach {
-            newConsumables.add(it.toConsumableModel())
-        }
+        val newConsumables = consumables.map { it.toConsumableModelWithoutDevices() }.toSet()
 
-        return DeviceModel(id, title, producer, csss, nr, inOperation, inStock, newConsumables)
+        return toDeviceWithoutConsumables().copy(consumables = newConsumables)
     }
+    fun toDeviceWithoutConsumables() = DeviceModel(id!!, title, producer, csss, nr, unitOfMeasurement, inOperation, inStock, emptySet())
 }
