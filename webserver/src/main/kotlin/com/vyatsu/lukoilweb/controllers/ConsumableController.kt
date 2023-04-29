@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("api/consumables")
 class ConsumableController(private val consumableService: ConsumableService) {
     private val logger = LoggerFactory.getLogger(ConsumableController::class.java)
-    @GetMapping("/", produces = ["application/json"])
+    @GetMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getAllConsumables(
         @RequestParam(required = false) start: Int?,
         @RequestParam(required = false) count: Int?,
@@ -26,7 +27,7 @@ class ConsumableController(private val consumableService: ConsumableService) {
     }
 
     @Cacheable("consumable")
-    @GetMapping("{csss}", produces = ["application/json"])
+    @GetMapping("{csss}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getConsumableByCsss(@PathVariable csss: Int): ResponseEntity<ConsumableModel?> {
         logger.debug("Getting request get consumable with csss=$csss")
         val consumable = consumableService.findConsumableByCsss(csss)
@@ -37,8 +38,8 @@ class ConsumableController(private val consumableService: ConsumableService) {
         }
     }
 
-    @PostMapping("/")
-    fun saveConsumable(consumableModel: ConsumableModel): ResponseEntity<ConsumableModel> {
+    @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun saveConsumable(@RequestBody @Validated consumableModel: ConsumableModel): ResponseEntity<ConsumableModel> {
         logger.debug("Getting request post consumable {}", consumableModel)
         val consumable = consumableService.saveConsumable(consumableModel)
         return if (consumable != null) {
@@ -47,8 +48,8 @@ class ConsumableController(private val consumableService: ConsumableService) {
             ResponseEntity.badRequest().build()
         }
     }
-    @PostMapping("/delete")
-    fun deleteConsumable(consumableModel: ConsumableModel): ResponseEntity<ConsumableModel?> {
+    @PostMapping("/delete", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun deleteConsumable(@RequestBody @Validated consumableModel: ConsumableModel): ResponseEntity<ConsumableModel?> {
         logger.debug("Getting request delete consumable {}", consumableModel)
         val consumable = consumableService.deleteConsumable(consumableModel)
         return if (consumable != null) {

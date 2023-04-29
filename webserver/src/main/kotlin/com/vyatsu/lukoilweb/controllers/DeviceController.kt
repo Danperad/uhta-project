@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -16,7 +17,7 @@ class DeviceController(private val deviceService: DeviceService) {
     private val logger = LoggerFactory.getLogger(DeviceController::class.java)
 
     @Cacheable("devices")
-    @GetMapping("/", produces = ["application/json"])
+    @GetMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getAllDevices(
         @RequestParam(required = false) start: Int?,
         @RequestParam(required = false) count: Int?,
@@ -28,7 +29,7 @@ class DeviceController(private val deviceService: DeviceService) {
     }
 
     @Cacheable("device")
-    @GetMapping("{csss}", produces = ["application/json"])
+    @GetMapping("{csss}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getDeviceByCsss(@PathVariable csss: Int): ResponseEntity<DeviceModel?> {
         logger.debug("Getting request get device with csss=$csss")
         val device = deviceService.findDeviceByCsss(csss)
@@ -39,8 +40,8 @@ class DeviceController(private val deviceService: DeviceService) {
         }
     }
 
-    @PostMapping("/")
-    fun saveDevice(deviceModel: DeviceModel) : ResponseEntity<DeviceModel?> {
+    @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun saveDevice(@RequestBody @Validated deviceModel: DeviceModel) : ResponseEntity<DeviceModel?> {
         logger.debug("Getting request post device {}", deviceModel)
         val device = deviceService.saveDevice(deviceModel)
         return if (device != null) {
@@ -50,8 +51,8 @@ class DeviceController(private val deviceService: DeviceService) {
         }
     }
 
-    @PostMapping("/delete")
-    fun deleteConsumable(deviceModel: DeviceModel): ResponseEntity<DeviceModel?> {
+    @PostMapping("/delete", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun deleteConsumable(@RequestBody @Validated deviceModel: DeviceModel): ResponseEntity<DeviceModel?> {
         logger.debug("Getting request delete device {}", deviceModel)
         val device = deviceService.deleteDevice(deviceModel)
         return if (device != null) {

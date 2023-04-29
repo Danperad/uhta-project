@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class ConsumableModel(
     var id: Int? = null,
     val title: String,
-    val prducer: String,
+    val producer: String,
     val csss: Int,
     val nr3: Int,
     val unitType: String,
@@ -15,6 +15,6 @@ data class ConsumableModel(
     val devices: Set<DeviceModel> = setOf()
 ){
     fun getConsumable() : Consumable{
-        return Consumable(csss,nr3,title, prducer, unitType, false, inStock, inOperation, devices.map { it.getDevice() }, id)
+        return Consumable(csss,nr3,title, producer, unitType, false, inStock, inOperation, devices.map { it.getDevice() }, id)
     }
 }
