@@ -5,22 +5,22 @@ import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-import {Consumable, Material} from '../models';
+import {Consumable, Device} from '../models';
 import DeviceService from "../services/DeviceService";
-import MaterialService from "../services/MaterialService";
+import MaterialService from "../services/ConsumableService";
 import ChangeDeviceModal from "./ChangeDeviceModal";
 import ChangeMaterialModal from "./ChangeMaterialModal"
 
-export default function TableRowMaterial(props: { rowMaterial: Material }) {
-    const [material, setMaterial] = useState<Material | null>(null);
+export default function TableRowMaterial(props: { rowMaterial: Device }) {
+    const [material, setMaterial] = useState<Device | null>(null);
     const [consumable, setConsumable] = useState<Consumable | null>(null);
 
     const {rowMaterial} = props;
     const [open, setOpen] = useState(false);
     const [openChangeDeviceModal, setChangeDeviceModal] = useState(false);
     const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
-    const handleOpenEditDeviceModal = (nr3: number) => {
-        DeviceService.getDeviceByNr3(nr3).then((res) => {
+    const handleOpenEditDeviceModal = (csss: number) => {
+        DeviceService.getDeviceByCsss(csss).then((res) => {
             if (res === null) return;
             setMaterial(res);
         });
@@ -29,8 +29,8 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
     const handleCloseEditDeviceModal = () => {
         setChangeDeviceModal(false);
     }
-    const handleOpenEditMaterialModal = (nr3: number) => {
-        MaterialService.getMaterialByNr3(nr3).then((res) => {
+    const handleOpenEditMaterialModal = (csss: number) => {
+        MaterialService.getConsumableByCsss(csss).then((res) => {
             if (res === null) return;
             setConsumable(res);
         });
@@ -49,18 +49,18 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
                         {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
                 </TableCell>
-                <TableCell component="th" scope="row" onClick={(e) => {
-                    handleOpenEditDeviceModal(rowMaterial.nr3)
+                <TableCell component="th" scope="row" onClick={() => {
+                    handleOpenEditDeviceModal(rowMaterial.csss)
                 }}>
-                    {rowMaterial.name}
+                    {rowMaterial.title}
                 </TableCell>
                 <TableCell align="right">{rowMaterial.nr3}</TableCell>
-                <TableCell align="right">{rowMaterial.kccc}</TableCell>
-                <TableCell align="right" onClick={(e) => {
-                    handleOpenEditDeviceModal(rowMaterial.nr3)
+                <TableCell align="right">{rowMaterial.csss}</TableCell>
+                <TableCell align="right" onClick={() => {
+                    handleOpenEditDeviceModal(rowMaterial.csss)
                 }}>{rowMaterial.inOperation}</TableCell>
-                <TableCell align="right" onClick={(e) => {
-                    handleOpenEditDeviceModal(rowMaterial.nr3)
+                <TableCell align="right" onClick={() => {
+                    handleOpenEditDeviceModal(rowMaterial.csss)
                 }}>{rowMaterial.inStock}</TableCell>
             </TableRow>
             <TableRow>
@@ -81,19 +81,19 @@ export default function TableRowMaterial(props: { rowMaterial: Material }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rowMaterial.materials.map((materialRow) => (
+                                    {rowMaterial.consumables.map((materialRow) => (
                                         <TableRow>
-                                            <TableCell component="th" scope="row" onClick={(e) => {
-                                                handleOpenEditMaterialModal(rowMaterial.nr3)
-                                            }}>{materialRow.name}</TableCell>
+                                            <TableCell component="th" scope="row" onClick={() => {
+                                                handleOpenEditMaterialModal(materialRow.csss)
+                                            }}>{materialRow.title}</TableCell>
                                             <TableCell>{materialRow.nr3}</TableCell>
-                                            <TableCell>{materialRow.kccc}</TableCell>
-                                            <TableCell align="right" onClick={(e) => {
-                                                handleOpenEditMaterialModal(rowMaterial.nr3)
+                                            <TableCell>{materialRow.csss}</TableCell>
+                                            <TableCell align="right" onClick={() => {
+                                                handleOpenEditMaterialModal(materialRow.csss)
                                             }}
                                                        typeof='number'>{materialRow.inOperation}</TableCell>
-                                            <TableCell align="right" onClick={(e) => {
-                                                handleOpenEditMaterialModal(rowMaterial.nr3)
+                                            <TableCell align="right" onClick={() => {
+                                                handleOpenEditMaterialModal(materialRow.csss)
                                             }}
                                                        typeof='number'>{materialRow.inStock}</TableCell>
                                         </TableRow>

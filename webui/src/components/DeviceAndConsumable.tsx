@@ -1,45 +1,63 @@
-import React from 'react';
-import {Autocomplete, Box, Button, Paper, Stack, TextField, Typography,} from '@mui/material';
+import {useState} from 'react';
+import {
+    Autocomplete,
+    Box,
+    Button,
+    Paper,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
 
 import "../assets/css/Scrollbar.css";
 import excelIcon from '../../public/image/excel.svg';
+
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
 import {AddSnackbar} from "../redux/actions/snackbarAction";
 import MaterialTable from "./MaterialTable";
+import DeviceService from "../services/DeviceService";
+import ConsumableService from "../services/ConsumableService";
+import {Device, Consumable} from "../models";
 
 //Dictionaries
-const Type = [
-    {label: 'Прибор'},
-    {label: 'Расходник'},
-]
-const Unit = [
-    {label: 'ШТ'},
-    {label: 'УМП'},
-    {label: 'КМП'},
-    {label: 'Л'},
-    {label: 'КГ'},
-    {label: 'Т'},
-    {label: 'М'},
-    {label: 'М2'},
-]
+const Type = ['Прибор', 'Расходник']
+const Unit = ['ШТ', 'УМП', 'КМП', 'Л', 'КГ', 'Т', 'М', 'М2']
+const Producers = ['Поставщик', 'Производитель', 'Поставка', 'Товарищ', 'Человек']
 
-export default function Device() {
+export default function DeviceAndConsumable() {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [materialName, setMaterialName] = React.useState<string | null>();
-    const [nr3, setNr3] = React.useState<string | null>();
-    const [kccc, setKccc] = React.useState<string | null>();
-    const [parentKccc, setParentKccc] = React.useState<string | null>();
-    const [producer, setProducer] = React.useState<string | null>();
-    const [materialType, setMaterialType] = React.useState<string | null>();
-    const [amount, setAmount] = React.useState<string | null>();
-    const [materialUnit, setMaterialUnit] = React.useState<string | null>();
+    const [materialName, setMaterialName] = useState<string | null>();
+    const [nr3, setNr3] = useState<string | null>();
+    const [kccc, setKccc] = useState<string | null>();
+    const [parentKccc, setParentKccc] = useState<string | null>();
+    const [producer, setProducer] = useState<string | null>();
+    const [materialType, setMaterialType] = useState<string | null>();
+    const [amount, setAmount] = useState<string | null>();
+    const [materialUnit, setMaterialUnit] = useState<string | null>();
 
-    const [showDeviceBinding, setShowDeviceBinding] = React.useState(false);
+    const [showDeviceBinding, setShowDeviceBinding] = useState(false);
+
+    const [parentDevices, setParentDevices] = useState<Device[]>([]);
+
+    const [showMaterialTable, setShowMaterialTable] = useState(false);
+
+    const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<string>('');
+    const [autocompleteUnitValue, setAutocompleteUnitValue] = useState<string>('');
+    const [autocompleteProducerValue, setAutocompleteProducerValue] = useState<string>('');
+
+    const [search, setSearch] = useState<string>('');
 
     function CheckMaterialType(event: any, value: string) {
+        if (!(value === "Расходник" || value === "Прибор")) {
+            setShowDeviceBinding(false)
+            setAutocompleteTypeValue('');
+            return;
+        }
+
         setMaterialType(value);
+        setAutocompleteTypeValue(value);
 
         if (value === "Расходник") {
             setShowDeviceBinding(true)
@@ -51,11 +69,22 @@ export default function Device() {
     }
 
     function CheckMaterialUnit(event: any, value: string) {
+        if (!(value === "ШТ" || value === "УМП" || value === "КМП" || value === "Л"
+            || value === "КГ" || value === "Т" || value === "М" || value === "М2")) {
+            setAutocompleteUnitValue('');
+            return;
+        }
         setMaterialUnit(value);
+        setAutocompleteUnitValue(value);
+    }
+
+    function CheckMaterialProducer(event: any, value: string) {
+        setProducer(value);
+        setAutocompleteProducerValue(value);
     }
 
     const DeviceBinding = () => (
-        <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number' required
+        <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number'
                    value={parentKccc} onChange={(newValue) => setParentKccc(newValue.target.value)}
                    InputProps={{
                        inputProps: {min: 1}
@@ -67,24 +96,74 @@ export default function Device() {
         const check = CheckRequiredFields();
 
         if (check && materialType === "Прибор") {
-            dispatch(AddSnackbar({
-                messageText: "Прибор успешно добавлен!",
-                messageType: "success",
-                key: +new Date()
-            }))
+            const newDevice : Device = {
+                id: 0,
+                title: materialName!,
+                producer: producer!,
+                csss: parseInt(kccc!),
+                nr3: parseInt(nr3!),
+                unitType: materialUnit!,
+                inOperation: 0,
+                inStock: parseInt(amount!),
+                consumables: []
+            }
+            DeviceService.saveDevice(newDevice).then((res) => {
+                if (res === null) return;
+                dispatch(AddSnackbar({
+                    messageText: "Прибор успешно добавлен!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+
+            }).catch(e =>{
+                dispatch(AddSnackbar({
+                    messageText: "Неудалось добавить!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+                console.log(e)
+            });
             ClearFields();
-        } else if (check && materialType === "Расходник" && (parentKccc === undefined || parentKccc === null)) {
-            dispatch(AddSnackbar({
-                messageText: "Материал не добавлен! Укажите КССС привязку.",
-                messageType: "error",
-                key: +new Date()
-            }))
-        } else if (check && materialType === "Расходник" && (parentKccc !== undefined || true)) {
-            dispatch(AddSnackbar({
-                messageText: "Материал успешно добавлен!",
-                messageType: "success",
-                key: +new Date()
-            }))
+        }
+        else if (check && materialType === "Расходник") {
+            if(parentKccc !== '' || parentKccc !== undefined)
+            {
+                const tmp: Device[] = [];
+
+                DeviceService.getDeviceByCsss(parseInt(parentKccc!)).then((res) => {
+                    if (res === null) return;
+                    tmp.push(res)
+                });
+                setParentDevices(tmp)
+            }
+            const newConsumable : Consumable = {
+                id: 0,
+                title: materialName!,
+                producer: producer!,
+                csss: parseInt(kccc!),
+                nr3: parseInt(nr3!),
+                unitType: materialUnit!,
+                inOperation: 0,
+                inStock: parseInt(amount!),
+                devices: parentDevices!
+
+            }
+            ConsumableService.saveConsumable(newConsumable).then((res) => {
+                if (res === null) return;
+                dispatch(AddSnackbar({
+                    messageText: "Материал успешно добавлен!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+            }).catch(e => {
+                dispatch(AddSnackbar({
+                    messageText: "Неудалось добавить!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+                console.log(e)
+            });
+
             ClearFields();
         } else {
             dispatch(AddSnackbar({
@@ -96,12 +175,15 @@ export default function Device() {
 
     };
 
-    const [showMaterialTable, setShowMaterialTable] = React.useState(false);
-    const handleShowMaterialTable = () => setShowMaterialTable(true);
+    const handleShowMaterialTable = () => {
+        setShowMaterialTable(true);
+    }
 
     function CheckRequiredFields() {
         return !(materialName === undefined || nr3 === undefined || kccc === undefined ||
-            materialType === undefined || amount === undefined || materialUnit === undefined);
+            materialType === undefined || amount === undefined || materialUnit === undefined ||
+            materialName === "" || nr3 === "" || kccc === "" ||
+            materialType === "" || amount === "" || materialUnit === "");
     }
 
     function ClearFields() {
@@ -113,6 +195,10 @@ export default function Device() {
         setProducer("");
         setAmount("");
         setMaterialUnit("");
+        setAutocompleteTypeValue("");
+        setAutocompleteUnitValue("");
+        setAutocompleteProducerValue("");
+        setParentDevices([]);
     }
 
     return (
@@ -141,13 +227,15 @@ export default function Device() {
                         <Typography mb={1}>Приборы и расходники</Typography>
                         <Stack direction="row" spacing={1}>
                             <TextField sx={{width: '40%'}} id="search" label="Поиск" variant="outlined" size='small'
-                                       type="search"/>
+                                       type="search" value={search} onChange={(newValue) => setSearch(newValue.target.value)}/>
                             <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
+
                         </Stack>
                     </Paper>
                 </Box>
                 <Box sx={{gridArea: 'main', height: "80vh"}}>
-                    {showMaterialTable ? <MaterialTable/> : null}
+                    {showMaterialTable ? <MaterialTable search={search}/> : null}
+                    {/*<MaterialTable/>*/}
                 </Box>
                 <Box sx={{gridArea: 'sidebar', height: "76vh"}}>
                     <Paper
@@ -180,11 +268,17 @@ export default function Device() {
                                                inputProps: {min: 1}
                                            }}
                                 />
-                                <TextField id="producer" label="Производитель" variant="outlined" size='small'
-                                           value={producer}
-                                           onChange={(newValue) => setProducer(newValue.target.value)}/>
+
+                                <Autocomplete disablePortal id="combo-box-producer" size='small' options={Producers}
+                                              onInputChange={CheckMaterialProducer} value={autocompleteProducerValue}
+
+                                              renderInput={(params) => <TextField {...params} label="Производитель"
+                                                                                  value={materialType}
+                                                                                  onChange={(newValue) => setProducer(newValue.target.value)}/>}
+                                />
+
                                 <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
-                                              onInputChange={CheckMaterialType}
+                                              onInputChange={CheckMaterialType} value={autocompleteTypeValue}
 
                                               renderInput={(params) => <TextField {...params} label="Тип" required
                                                                                   value={materialType}
@@ -196,15 +290,12 @@ export default function Device() {
                                 <TextField id="amount-material" label="Количество" variant="outlined" size='small'
                                            type="number" required
                                            value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
-                                           InputLabelProps={{
-                                               shrink: true,
-                                           }}
                                            InputProps={{
                                                inputProps: {min: 1}
                                            }}
                                 />
                                 <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
-                                              onInputChange={CheckMaterialUnit}
+                                              onInputChange={CheckMaterialUnit} value={autocompleteUnitValue}
                                               renderInput={(params) => <TextField {...params} label="Ед. измерения"
                                                                                   value={materialUnit} required
                                                                                   onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}

@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 
 import {
     Box,
@@ -18,16 +18,16 @@ import {
 } from "@mui/material";
 
 import style from "../assets/css/ChangeDeviceModal.module.css"
-import {Material} from '../models';
+import {Device} from '../models';
 import {AddSnackbar} from "../redux/actions/snackbarAction";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
 
-export default (props: { receivedMaterial: Material }) => {
+export default (props: { receivedMaterial: Device }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const [material, setMaterial] = useState<Material | null>(null);
+    const [material, setMaterial] = useState<Device | null>(null);
     const [checked, setChecked] = useState(false);
-    const handleChangeChecked = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeChecked = () => {
         setChecked(prev => !prev)
     }
 
@@ -40,7 +40,7 @@ export default (props: { receivedMaterial: Material }) => {
         />
     )
 
-    function changeMaterialInOperation(newValue: number, material: Material) {
+    function changeMaterialInOperation(newValue: number, material: Device) {
         if (newValue >= 0) {
             if (newValue < material.inOperation && material.inOperation - 1 >= 0) {
                 setMaterial({...material, inOperation: material.inOperation - 1})
@@ -59,7 +59,7 @@ export default (props: { receivedMaterial: Material }) => {
         }
     }
 
-    function changeMaterialInStock(newValue: number, material: Material) {
+    function changeMaterialInStock(newValue: number, material: Device) {
         if (newValue >= 0) {
             if (newValue > material.inStock) {
                 setMaterial({...material, inStock: material.inStock + 1})
@@ -85,9 +85,9 @@ export default (props: { receivedMaterial: Material }) => {
                            style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                         <Stack direction="row" spacing={2} sx={{width: '100%'}}>
                             <Typography mb={2}>Редактирование прибора:</Typography>
-                            <Typography color="primary">{material !== null ? material!.name : ""}</Typography>
+                            <Typography color="primary">{material !== null ? material!.title : ""}</Typography>
                             <Typography mb={2}>№КССС:</Typography>
-                            <Typography color="primary">{material !== null ? material!.kccc : ""}</Typography>
+                            <Typography color="primary">{material !== null ? material!.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
                             <Typography color="primary">{material !== null ? material!.nr3 : ""}</Typography>
                         </Stack>
@@ -137,18 +137,18 @@ export default (props: { receivedMaterial: Material }) => {
                                         <TableCell align="right">Количество на складе</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                {material?.materials.length !== 0 ? (
+                                {material?.consumables.length !== 0 ? (
                                     <TableBody>
-                                        {material?.materials.map((row) => (
+                                        {material?.consumables.map((row) => (
                                             <TableRow
                                                 key={row.nr3}
                                                 sx={{'&:last-child td, &:last-child th': {border: 0}}}
                                             >
                                                 <TableCell component="th" scope="row">
-                                                    {row.name}
+                                                    {row.title}
                                                 </TableCell>
                                                 <TableCell align="right">{row.nr3}</TableCell>
-                                                <TableCell align="right">{row.kccc}</TableCell>
+                                                <TableCell align="right">{row.csss}</TableCell>
                                                 <TableCell align="right">{row.inOperation}</TableCell>
                                                 <TableCell align="right">{row.inStock}</TableCell>
                                             </TableRow>

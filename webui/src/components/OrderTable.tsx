@@ -1,6 +1,6 @@
 import React from "react";
-import {Order} from "../models";
-import OrderService from "../services/OrderService";
+import {Applications} from "../models";
+import OrderService from "../services/ApplicationService";
 import {
     Button,
     Paper,
@@ -15,13 +15,13 @@ import {
 } from "@mui/material";
 
 export default function MaterialTable() {
-    const [orders, setOrders] = React.useState<Order[]>([]);
+    const [orders, setOrders] = React.useState<Applications[]>([]);
     const [key, setKey] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         if (key) return;
         setKey(true);
-        OrderService.getOrder().then((res: Order[]) => {
+        OrderService.getAllApplications().then((res: Applications[]) => {
             setOrders(res);
         }).catch(err => console.log(err));
     }, [orders, key])

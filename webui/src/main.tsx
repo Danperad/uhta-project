@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import SideBar from './components/SideBar';
-import Device from './components/Device';
+import DeviceAndConsumable from './components/DeviceAndConsumable';
 import Order from './components/Order';
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
@@ -71,7 +71,7 @@ if (domNode !== null) {
                             <Stack direction="row" spacing={1} height="100vh">
                                 <SideBar/>
                                 <Routes>
-                                    <Route path={"device"} element={<Device/>}/>
+                                    <Route path={"device"} element={<DeviceAndConsumable/>}/>
                                     <Route path={"order"} element={<Order/>}/>
                                 </Routes>
                                 <SnackbarViewer/>
