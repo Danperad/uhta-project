@@ -22,15 +22,15 @@ class ConsumableService {
         return axios.get(ApiUrl + csss)
             .then((res) => {
                 return res.data as Consumable;
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 console.log(error);
                 return null
             });
     }
     saveConsumable(consumable: Consumable){
-        return axios.post(ApiUrl + consumable, )
+        return axios.post(ApiUrl, consumable)
             .then((res) => {
+                if (res.status % 100 !== 2) return []
                 const consumables : Consumable[] = res.data;
                 return consumables;
             }).catch((error) => {
