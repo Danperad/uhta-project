@@ -3,12 +3,16 @@ package com.vyatsu.lukoilweb.services
 import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.ConsumableModel
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
+import com.vyatsu.lukoilweb.repositories.DeviceRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class ConsumableService(private val consumableRepository: ConsumableRepository) {
+class ConsumableService(
+    private val consumableRepository: ConsumableRepository,
+    private val deviceRepository: DeviceRepository
+) {
     @Transactional
     fun findAllConsumables(): Set<ConsumableModel> {
         val materials = consumableRepository.findAll()
@@ -32,7 +36,23 @@ class ConsumableService(private val consumableRepository: ConsumableRepository) 
 
     @Transactional
     fun saveConsumable(consumableModel: ConsumableModel): ConsumableModel? {
-        val consumable = consumableModel.getConsumable()
+        var consumable = consumableModel.getConsumable()
+        if (consumableModel.devices.isNotEmpty()) {
+            val devices =
+                consumableModel.devices.mapNotNull { deviceRepository.findDeviceByCsss(it.csss) }.toList()
+            consumable = Consumable(
+                consumable.csss,
+                consumable.nr,
+                consumable.title,
+                consumable.producer,
+                consumable.unitOfMeasurement,
+                consumable.isDeleted,
+                consumable.inStock,
+                consumable.inOperation,
+                devices,
+                consumable.id
+            )
+        }
         return try {
             consumableRepository.save(consumable).toConsumableModelWithoutDevices()
         } catch (e: Exception) {
