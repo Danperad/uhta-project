@@ -2,7 +2,7 @@ import React from 'react';
 import { useSnackbar } from 'notistack';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
-import {AddSnackbar, RemoveSnackbar} from "../redux/actions/snackbarAction";
+import { RemoveSnackbar} from "../redux/actions/snackbarAction";
 import "../assets/css/Snackbar.css";
 
 function SnackbarViewer(){

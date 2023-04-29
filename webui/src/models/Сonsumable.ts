@@ -1,11 +1,14 @@
+import Device from "./Device";
+
 declare type Consumable = {
     id: number,
     title: string,
     producer: string,
     csss: number,
-    parentCsss: number,
     nr3: number,
+    unitType: string,
     inOperation: number,
-    inStock: number
+    inStock: number,
+    devices: Device[]
 }
 export default Consumable;

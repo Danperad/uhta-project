@@ -7,7 +7,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import {Consumable, Device} from '../models';
 import DeviceService from "../services/DeviceService";
-import MaterialService from "../services/MaterialService";
+import MaterialService from "../services/ConsumableService";
 import ChangeDeviceModal from "./ChangeDeviceModal";
 import ChangeMaterialModal from "./ChangeMaterialModal"
 
@@ -19,8 +19,8 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
     const [open, setOpen] = useState(false);
     const [openChangeDeviceModal, setChangeDeviceModal] = useState(false);
     const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
-    const handleOpenEditDeviceModal = (nr3: number) => {
-        DeviceService.getDeviceById(nr3).then((res) => {
+    const handleOpenEditDeviceModal = (csss: number) => {
+        DeviceService.getDeviceByCsss(csss).then((res) => {
             if (res === null) return;
             setMaterial(res);
         });
@@ -29,8 +29,8 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
     const handleCloseEditDeviceModal = () => {
         setChangeDeviceModal(false);
     }
-    const handleOpenEditMaterialModal = (nr3: number) => {
-        MaterialService.getMaterialByNr3(nr3).then((res) => {
+    const handleOpenEditMaterialModal = (csss: number) => {
+        MaterialService.getConsumableByCsss(csss).then((res) => {
             if (res === null) return;
             setConsumable(res);
         });
@@ -50,17 +50,17 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row" onClick={() => {
-                    handleOpenEditDeviceModal(rowMaterial.nr3)
+                    handleOpenEditDeviceModal(rowMaterial.csss)
                 }}>
                     {rowMaterial.title}
                 </TableCell>
                 <TableCell align="right">{rowMaterial.nr3}</TableCell>
                 <TableCell align="right">{rowMaterial.csss}</TableCell>
                 <TableCell align="right" onClick={() => {
-                    handleOpenEditDeviceModal(rowMaterial.nr3)
+                    handleOpenEditDeviceModal(rowMaterial.csss)
                 }}>{rowMaterial.inOperation}</TableCell>
                 <TableCell align="right" onClick={() => {
-                    handleOpenEditDeviceModal(rowMaterial.nr3)
+                    handleOpenEditDeviceModal(rowMaterial.csss)
                 }}>{rowMaterial.inStock}</TableCell>
             </TableRow>
             <TableRow>
@@ -84,16 +84,16 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                                     {rowMaterial.consumables.map((materialRow) => (
                                         <TableRow>
                                             <TableCell component="th" scope="row" onClick={() => {
-                                                handleOpenEditMaterialModal(rowMaterial.nr3)
+                                                handleOpenEditMaterialModal(materialRow.csss)
                                             }}>{materialRow.title}</TableCell>
                                             <TableCell>{materialRow.nr3}</TableCell>
                                             <TableCell>{materialRow.csss}</TableCell>
                                             <TableCell align="right" onClick={() => {
-                                                handleOpenEditMaterialModal(rowMaterial.nr3)
+                                                handleOpenEditMaterialModal(materialRow.csss)
                                             }}
                                                        typeof='number'>{materialRow.inOperation}</TableCell>
                                             <TableCell align="right" onClick={() => {
-                                                handleOpenEditMaterialModal(rowMaterial.nr3)
+                                                handleOpenEditMaterialModal(materialRow.csss)
                                             }}
                                                        typeof='number'>{materialRow.inStock}</TableCell>
                                         </TableRow>

@@ -6,6 +6,7 @@ declare type Device = {
     producer: string,
     csss: number,
     nr3: number,
+    unitType: string,
     inOperation: number,
     inStock: number,
     consumables: Consumable[]
