@@ -6,7 +6,7 @@ import jakarta.persistence.PersistenceContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 
-
+@Suppress("unused")
 class DeviceRepositoryImpl : DeviceRepositoryCustom{
     @PersistenceContext
     private lateinit var entityManager: EntityManager

@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(origins = ["*"])
 @RequestMapping("api/applications")
 class ApplicationController(private val applicationService: ApplicationService) {
-    @GetMapping("/",produces = ["application/json"])
+    @GetMapping("/",produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getAllApplications() : ResponseEntity<Set<ApplicationModel>>{
         val applications = applicationService.getAllApplications()
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(applications)
     }
-    @GetMapping("{number}", produces = ["application/json"])
+    @GetMapping("{number}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getApplicationByNumber(@PathVariable number: Int) : ResponseEntity<ApplicationModel?>{
         val application = applicationService.getApplicationById(number)
         return if (application != null) {

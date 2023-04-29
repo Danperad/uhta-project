@@ -1,3 +1,5 @@
+-- noinspection SqlResolveForFile
+
 EXEC sp_rename 'uhta.pf_materials_application', pf_devices_application, 'OBJECT'
 GO
 
