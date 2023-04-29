@@ -1,5 +1,3 @@
--- noinspection SqlResolveForFile
-
 alter table uhta.consumables
     add constraint u_consumable_csss
         unique (csss)
