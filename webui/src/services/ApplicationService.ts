@@ -1,7 +1,7 @@
 import axios from "axios";
 import {Application} from "../models";
 
-const ApiUrl = `${import.meta.env.VITE_API_URL}/api/applications`
+const ApiUrl = `${import.meta.env.VITE_API_URL}/api/applications/`
 
 class ApplicationService {
     getAllApplications() {
