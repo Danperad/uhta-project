@@ -24,6 +24,15 @@ export default (props: { receivedMaterial: Consumable }) => {
     const [materialTitle, setMaterialTitle] = useState<string | null>();
     const [kccc, setKccc] = useState<string | null>();
     const [amount, setAmount] = useState<string | null>();
+
+    const [materials, setMaterials] = useState<Device[]>([]);
+    const [key, setKey] = useState<boolean>(false);
+    const [autocompleteTitleValue, setAutocompleteTitleValue] = useState<string>('');
+
+    const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<string>('');
+    const [materialType, setMaterialType] = useState<string | null>();
+    const [title, setTitle] = useState<string[]>();
+
     const handleChangeChecked = () => {
         setChecked(prev => !prev)
     }
@@ -58,34 +67,22 @@ export default (props: { receivedMaterial: Consumable }) => {
         }
     }
 
-    const [materials, setMaterials] = useState<Device[]>([]);
-    const [key, setKey] = useState<boolean>(false);
-
-    const [autocompleteTitleValue, setAutocompleteTitleValue] = useState<string>('');
-
     function CheckMaterialTitle(event: any, value: string) {
-        // for(var i = 0; i < materials.length; i++)
-        // {
-        //     if(value === materials[i].title)
-        //     {
-        //         setMaterialTitle(value);
-        //         setAutocompleteTitleValue(value);
-        //     }
-        //     else {
-        //         setAutocompleteTitleValue('');
-        //         return
-        //     }
-        // }
-        if (value !== 'Шнур асбестовый ШАП-02 ГОСТ 1779-83')
-            setAutocompleteTitleValue('');
+        for(var i = 0; i < materials.length; i++)
+        {
+            if(value === materials[i].title)
+            {
+                setMaterialTitle(value);
+                setAutocompleteTitleValue(value);
+            }
+            else {
+                setAutocompleteTitleValue('');
+                return
+            }
+        }
     }
 
-    const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<string>('');
-    const [materialType, setMaterialType] = useState<string | null>();
-    const [title, setTitle] = useState<string[]>();
-
     useEffect(() => {
-        //setChecked(prev => !prev);
         const tmp: string[] = [];
 
         setMaterialTitle('');
@@ -140,14 +137,6 @@ export default (props: { receivedMaterial: Consumable }) => {
                             <Typography mb={2}>КССС привязки материала к приборам:</Typography>
                             <Stack spacing={1}>
                                 <Stack direction="row" width='100%' spacing={1}>
-                                    {/*<Autocomplete disablePortal id="combo-box-type" size='small' options={title!}
-                                                  onInputChange={CheckMaterialType} value={autocompleteTypeValue}
-
-                                                  renderInput={(params) => <TextField {...params} label="Тип" required
-                                                                                      value={materialType}
-                                                                                      onChange={(newValue) => setMaterialType(newValue.target.value)}/>}
-                                                  style={{width: '30%'}}
-                                    />*/}
                                     <Autocomplete disablePortal id="combo-box-title" size='small' options={materials}
                                                   isOptionEqualToValue={(materials, value) => materials.id === value.id}
                                                   getOptionLabel={(option) => option.title}

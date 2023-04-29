@@ -39,6 +39,16 @@ export default function DeviceAndConsumable() {
 
     const [showDeviceBinding, setShowDeviceBinding] = useState(false);
 
+    const [parentDevices, setParentDevices] = useState<Device[]>([]);
+
+    const [showMaterialTable, setShowMaterialTable] = useState(false);
+
+    const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<string>('');
+    const [autocompleteUnitValue, setAutocompleteUnitValue] = useState<string>('');
+    const [autocompleteProducerValue, setAutocompleteProducerValue] = useState<string>('');
+
+    const [search, setSearch] = useState<string>('');
+
     function CheckMaterialType(event: any, value: string) {
         if (!(value === "Расходник" || value === "Прибор")) {
             setShowDeviceBinding(false)
@@ -81,7 +91,6 @@ export default function DeviceAndConsumable() {
                    }}
         />
     )
-    const [parentDevices, setParentDevices] = useState<Device[]>([]);
 
     const addNewMaterial = () => {
         const check = CheckRequiredFields();
@@ -101,16 +110,19 @@ export default function DeviceAndConsumable() {
             DeviceService.saveDevice(newDevice).then((res) => {
                 if (res === null) return;
                 dispatch(AddSnackbar({
+                    messageText: "Прибор успешно добавлен!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+
+            }).catch(e =>{
+                dispatch(AddSnackbar({
                     messageText: "Неудалось добавить!",
                     messageType: "error",
                     key: +new Date()
                 }))
+                console.log(e)
             });
-            dispatch(AddSnackbar({
-                messageText: "Прибор успешно добавлен!",
-                messageType: "success",
-                key: +new Date()
-            }))
             ClearFields();
         }
         else if (check && materialType === "Расходник") {
@@ -139,16 +151,19 @@ export default function DeviceAndConsumable() {
             ConsumableService.saveConsumable(newConsumable).then((res) => {
                 if (res === null) return;
                 dispatch(AddSnackbar({
+                    messageText: "Материал успешно добавлен!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+            }).catch(e => {
+                dispatch(AddSnackbar({
                     messageText: "Неудалось добавить!",
                     messageType: "error",
                     key: +new Date()
                 }))
+                console.log(e)
             });
-            dispatch(AddSnackbar({
-                messageText: "Материал успешно добавлен!",
-                messageType: "success",
-                key: +new Date()
-            }))
+
             ClearFields();
         } else {
             dispatch(AddSnackbar({
@@ -159,8 +174,6 @@ export default function DeviceAndConsumable() {
         }
 
     };
-
-    const [showMaterialTable, setShowMaterialTable] = useState(false);
 
     const handleShowMaterialTable = () => {
         setShowMaterialTable(true);
@@ -187,14 +200,6 @@ export default function DeviceAndConsumable() {
         setAutocompleteProducerValue("");
         setParentDevices([]);
     }
-
-    const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<string>('');
-    const [autocompleteUnitValue, setAutocompleteUnitValue] = useState<string>('');
-    const [autocompleteProducerValue, setAutocompleteProducerValue] = useState<string>('');
-
-
-
-    const [search, setSearch] = useState<string>('');
 
     return (
         <Box sx={{

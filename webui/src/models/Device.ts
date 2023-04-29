@@ -1,4 +1,4 @@
-import Consumable from './Сonsumable';
+import Consumable from './Consumable';
 
 declare type Device = {
     id: number,

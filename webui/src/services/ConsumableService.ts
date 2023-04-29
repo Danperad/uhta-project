@@ -1,5 +1,5 @@
 import axios from "axios";
-import Consumable from "../models/Сonsumable";
+import Consumable from "../models/Consumable";
 
 interface LooseObject{
     [key: string] : any

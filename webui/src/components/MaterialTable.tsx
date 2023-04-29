@@ -29,6 +29,11 @@ export default (props: MaterialTableProps) => {
     const [consumables, setConsumables] = useState<Consumable[]>([]);
     const [key, setKey] = useState<boolean>(false);
 
+    const [value, setValue] = useState(0);
+
+    const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
+    const [consumable, setConsumable] = useState<Consumable | null>(null);
+
     interface TabPanelProps {
         children?: ReactNode;
         index: number;
@@ -62,12 +67,10 @@ export default (props: MaterialTableProps) => {
         };
     }
 
-    const [value, setValue] = useState(0);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
-    const [consumable, setConsumable] = useState<Consumable | null>(null);
+
     const handleOpenEditMaterialModal = (csss: number) => {
         MaterialService.getConsumableByCsss(csss).then((res) => {
             if (res === null) return;
