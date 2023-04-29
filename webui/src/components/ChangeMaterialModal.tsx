@@ -27,7 +27,7 @@ export default (props: { receivedMaterial: Consumable }) => {
 
     const [materials, setMaterials] = useState<Device[]>([]);
     const [key, setKey] = useState<boolean>(false);
-    const [autocompleteTitleValue, setAutocompleteTitleValue] = useState<string>('');
+    const [autocompleteTitleValue, setAutocompleteTitleValue] = useState<Device | null>(null);
 
     const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<string>('');
     const [materialType, setMaterialType] = useState<string | null>();
@@ -73,10 +73,10 @@ export default (props: { receivedMaterial: Consumable }) => {
             if(value === materials[i].title)
             {
                 setMaterialTitle(value);
-                setAutocompleteTitleValue(value);
+                setAutocompleteTitleValue(materials[i]);
             }
             else {
-                setAutocompleteTitleValue('');
+                setAutocompleteTitleValue(null);
                 return
             }
         }
