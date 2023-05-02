@@ -23,15 +23,16 @@ class DeviceService {
             .then((res) => {
                 return res.data as Device;
             })
-            .catch((error) => {
+            .catch(error => {
                 console.log(error);
                 return null
             });
     }
 
     saveDevice(device: Device){
-        return axios.post(ApiUrl + device, )
+        return axios.post(ApiUrl, device)
             .then((res) => {
+                if (res.status % 100 !== 2) return []
                 const devices : Device[] = res.data;
                 return devices;
             }).catch((error) => {
