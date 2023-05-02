@@ -19,7 +19,7 @@ class DeviceRepositoryImpl : DeviceRepositoryCustom {
             cb.isFalse(deviceRoot.get("isDeleted"))
         )
         val tq = entityManager.createQuery(query)
-        tq.setFirstResult((limit.pageNumber - 1) * limit.pageSize)
+        tq.setFirstResult(limit.pageNumber * limit.pageSize)
         tq.setMaxResults(limit.pageSize)
         return PageImpl(tq.resultList)
     }
@@ -30,7 +30,7 @@ class DeviceRepositoryImpl : DeviceRepositoryCustom {
         val deviceRoot = query.from(Device::class.java)
         val newQuery = preparePredicate(query, deviceRoot, search, cb)
         val tq = entityManager.createQuery(newQuery)
-        tq.setFirstResult((limit.pageNumber - 1) * limit.pageSize)
+        tq.setFirstResult(limit.pageNumber * limit.pageSize)
         tq.setMaxResults(limit.pageSize)
         return PageImpl(tq.resultList)
     }
