@@ -17,7 +17,7 @@ class ConsumableRepositoryImpl : ConsumableRepositoryCustom {
         val consumableRoot = query.from(Consumable::class.java)
         query.where(cb.isFalse(consumableRoot.get("isDeleted")))
         val tq = entityManager.createQuery(query)
-        tq.setFirstResult((limit.pageNumber - 1) * limit.pageSize)
+        tq.setFirstResult(limit.pageNumber * limit.pageSize)
         tq.setMaxResults(limit.pageSize)
         return PageImpl(tq.resultList)
     }
@@ -28,7 +28,7 @@ class ConsumableRepositoryImpl : ConsumableRepositoryCustom {
         val consumableRoot = query.from(Consumable::class.java)
         val newQuery = preparePredicate(query, consumableRoot, search, cb)
         val tq = entityManager.createQuery(newQuery)
-        tq.setFirstResult((limit.pageNumber - 1) * limit.pageSize)
+        tq.setFirstResult(limit.pageNumber * limit.pageSize)
         tq.setMaxResults(limit.pageSize)
         return PageImpl(tq.resultList)
     }
