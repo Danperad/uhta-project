@@ -1,5 +1,6 @@
 import axios from "axios";
 import {Device} from "../models";
+import {DeviceLoaded} from "../redux/actions/deviceAction";
 
 const ApiUrl = `${import.meta.env.VITE_API_URL}/api/devices/`
 interface LooseObject{
@@ -14,7 +15,7 @@ class DeviceService {
            params["search"] = search
         }
         return axios.get(ApiUrl, {params: params}).then(res => {
-            return res.data as Device[];
+            return DeviceLoaded(res.data);
         })
     }
 

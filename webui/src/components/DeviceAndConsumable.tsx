@@ -1,13 +1,5 @@
 import {useState} from 'react';
-import {
-    Autocomplete,
-    Box,
-    Button,
-    Paper,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import {Autocomplete, Box, Button, Paper, Stack, TextField, Typography,} from '@mui/material';
 
 import "../assets/css/Scrollbar.css";
 import excelIcon from '../../public/image/excel.svg';
@@ -18,7 +10,8 @@ import {AddSnackbar} from "../redux/actions/snackbarAction";
 import MaterialTable from "./MaterialTable";
 import DeviceService from "../services/DeviceService";
 import ConsumableService from "../services/ConsumableService";
-import {Device, Consumable} from "../models";
+import {Consumable, Device} from "../models";
+import MaterialService from "../services/ConsumableService";
 
 //Dictionaries
 const Type = ['Прибор', 'Расходник']
@@ -96,7 +89,7 @@ export default function DeviceAndConsumable() {
         const check = CheckRequiredFields();
 
         if (check && materialType === "Прибор") {
-            const newDevice : Device = {
+            const newDevice: Device = {
                 id: 0,
                 title: materialName!,
                 producer: producer!,
@@ -114,8 +107,10 @@ export default function DeviceAndConsumable() {
                     messageType: "success",
                     key: +new Date()
                 }))
-
-            }).catch(e =>{
+                DeviceService.getAllDevices().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+            }).catch(e => {
                 dispatch(AddSnackbar({
                     messageText: "Неудалось добавить!",
                     messageType: "error",
@@ -124,10 +119,8 @@ export default function DeviceAndConsumable() {
                 console.log(e)
             });
             ClearFields();
-        }
-        else if (check && materialType === "Расходник") {
-            if(parentKccc !== '' || parentKccc !== undefined)
-            {
+        } else if (check && materialType === "Расходник") {
+            if (parentKccc !== '' || parentKccc !== undefined) {
                 const tmp: Device[] = [];
 
                 DeviceService.getDeviceByCsss(parseInt(parentKccc!)).then((res) => {
@@ -136,7 +129,7 @@ export default function DeviceAndConsumable() {
                 });
                 setParentDevices(tmp)
             }
-            const newConsumable : Consumable = {
+            const newConsumable: Consumable = {
                 id: 0,
                 title: materialName!,
                 producer: producer!,
@@ -155,6 +148,9 @@ export default function DeviceAndConsumable() {
                     messageType: "success",
                     key: +new Date()
                 }))
+                MaterialService.getAllConsumables().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
             }).catch(e => {
                 dispatch(AddSnackbar({
                     messageText: "Неудалось добавить!",
@@ -176,6 +172,12 @@ export default function DeviceAndConsumable() {
     };
 
     const handleShowMaterialTable = () => {
+        DeviceService.getAllDevices(search).then((res) => {
+            dispatch(res);
+        }).catch(err => console.log(err));
+        MaterialService.getAllConsumables(search).then((res) => {
+            dispatch(res);
+        }).catch(err => console.log(err));
         setShowMaterialTable(true);
     }
 
@@ -227,7 +229,8 @@ export default function DeviceAndConsumable() {
                         <Typography mb={1}>Приборы и расходники</Typography>
                         <Stack direction="row" spacing={1}>
                             <TextField sx={{width: '40%'}} id="search" label="Поиск" variant="outlined" size='small'
-                                       type="search" value={search} onChange={(newValue) => setSearch(newValue.target.value)}/>
+                                       type="search" value={search}
+                                       onChange={(newValue) => setSearch(newValue.target.value)}/>
                             <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
 
                         </Stack>
@@ -235,84 +238,87 @@ export default function DeviceAndConsumable() {
                 </Box>
                 <Box sx={{gridArea: 'main', height: "80vh"}}>
                     {showMaterialTable ? <MaterialTable search={search}/> : null}
-                    {/*<MaterialTable/>*/}
                 </Box>
-                <Box sx={{gridArea: 'sidebar', height: "76vh"}}>
-                    <Paper
-                        style={{
-                            padding: "20px",
-                            textAlign: "center",
-                            height: '100%'
-                        }}>
-                        <Stack
-                            justifyContent="space-between"
-                            alignItems="center"
-                            spacing={2}
-                            style={{height: '100%'}}
-                        >
-                            <Stack spacing={2}>
-                                <Typography>Добавление</Typography>
-                                <TextField id="add-material-name" label="Наименование" variant="outlined" size='small'
-                                           required
-                                           value={materialName}
-                                           onChange={(newValue) => setMaterialName(newValue.target.value)}/>
-                                <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number" required
-                                           value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
-                                           InputProps={{
-                                               inputProps: {min: 1}
-                                           }}
-                                />
-                                <TextField id="nr3" label="№R-3" variant="outlined" size='small' type="number" required
-                                           value={nr3} onChange={(newValue) => setNr3(newValue.target.value)}
-                                           InputProps={{
-                                               inputProps: {min: 1}
-                                           }}
-                                />
+                    <Box sx={{gridArea: 'sidebar', height: "76vh"}} component="form">
+                        <Paper
+                            style={{
+                                padding: "20px",
+                                textAlign: "center",
+                                height: '100%'
+                            }}>
+                            <Stack
+                                justifyContent="space-between"
+                                alignItems="center"
+                                spacing={2}
+                                style={{height: '100%'}}
+                            >
+                                <Stack spacing={2}>
+                                    <Typography>Добавление</Typography>
+                                    <TextField id="add-material-name" label="Наименование" variant="outlined"
+                                               size='small'
+                                               required
+                                               value={materialName}
+                                               onChange={(newValue) => setMaterialName(newValue.target.value)}/>
+                                    <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number"
+                                               required
+                                               value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
+                                               InputProps={{
+                                                   inputProps: {min: 1}
+                                               }}
+                                    />
+                                    <TextField id="nr3" label="№R-3" variant="outlined" size='small' type="number"
+                                               required
+                                               value={nr3} onChange={(newValue) => setNr3(newValue.target.value)}
+                                               InputProps={{
+                                                   inputProps: {min: 1}
+                                               }}
+                                    />
 
-                                <Autocomplete disablePortal id="combo-box-producer" size='small' options={Producers}
-                                              onInputChange={CheckMaterialProducer} value={autocompleteProducerValue}
+                                    <Autocomplete disablePortal id="combo-box-producer" size='small' options={Producers}
+                                                  onInputChange={CheckMaterialProducer}
+                                                  value={autocompleteProducerValue}
 
-                                              renderInput={(params) => <TextField {...params} label="Производитель"
-                                                                                  value={materialType}
-                                                                                  onChange={(newValue) => setProducer(newValue.target.value)}/>}
-                                />
+                                                  renderInput={(params) => <TextField {...params} label="Производитель"
+                                                                                      value={materialType}
+                                                                                      onChange={(newValue) => setProducer(newValue.target.value)}/>}
+                                    />
 
-                                <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
-                                              onInputChange={CheckMaterialType} value={autocompleteTypeValue}
+                                    <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
+                                                  onInputChange={CheckMaterialType} value={autocompleteTypeValue}
 
-                                              renderInput={(params) => <TextField {...params} label="Тип" required
-                                                                                  value={materialType}
-                                                                                  onChange={(newValue) => setMaterialType(newValue.target.value)}/>}
-                                />
+                                                  renderInput={(params) => <TextField {...params} label="Тип" required
+                                                                                      value={materialType}
+                                                                                      onChange={(newValue) => setMaterialType(newValue.target.value)}/>}
+                                    />
 
-                                {showDeviceBinding ? <DeviceBinding/> : null}
+                                    {showDeviceBinding ? <DeviceBinding/> : null}
 
-                                <TextField id="amount-material" label="Количество" variant="outlined" size='small'
-                                           type="number" required
-                                           value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
-                                           InputProps={{
-                                               inputProps: {min: 1}
-                                           }}
-                                />
-                                <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
-                                              onInputChange={CheckMaterialUnit} value={autocompleteUnitValue}
-                                              renderInput={(params) => <TextField {...params} label="Ед. измерения"
-                                                                                  value={materialUnit} required
-                                                                                  onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
-                                />
+                                    <TextField id="amount-material" label="Количество" variant="outlined" size='small'
+                                               type="number" required
+                                               value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
+                                               InputProps={{
+                                                   inputProps: {min: 1}
+                                               }}
+                                    />
+                                    <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
+                                                  onInputChange={CheckMaterialUnit} value={autocompleteUnitValue}
+                                                  renderInput={(params) => <TextField {...params} label="Ед. измерения"
+                                                                                      value={materialUnit} required
+                                                                                      onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
+                                    />
+                                </Stack>
+                                <Stack direction='row' spacing={1} justifyContent='center'>
+                                    <Button variant="contained"
+                                            endIcon={<img src={excelIcon} style={{width: "20px"}} alt="excel"></img>}>
+                                        Загрузить
+                                    </Button>
+                                    <Button variant="contained" onClick={() => {
+                                        addNewMaterial()
+                                    }}>Добавить</Button>
+                                </Stack>
                             </Stack>
-                            <Stack direction='row' spacing={1} justifyContent='center'>
-                                <Button variant="contained"
-                                        endIcon={<img src={excelIcon} style={{width: "20px"}} alt="excel"></img>}>
-                                    Загрузить
-                                </Button>
-                                <Button variant="contained" onClick={() => {
-                                    addNewMaterial()
-                                }}>Добавить</Button>
-                            </Stack>
-                        </Stack>
-                    </Paper>
-                </Box>
+                        </Paper>
+                    </Box>
             </Box>
         </Box>
     )

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 import {
     Box,
@@ -25,7 +25,7 @@ import {AppDispatch} from "../redux/store";
 
 export default (props: { receivedMaterial: Device }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const [material, setMaterial] = useState<Device | null>(null);
+    const [device, setDevice] = useState<Device>(props.receivedMaterial);
     const [checked, setChecked] = useState(false);
     const handleChangeChecked = () => {
         setChecked(prev => !prev)
@@ -40,14 +40,14 @@ export default (props: { receivedMaterial: Device }) => {
         />
     )
 
-    function changeMaterialInOperation(newValue: number, material: Device) {
+    function changeMaterialInOperation(newValue: number) {
         if (newValue >= 0) {
-            if (newValue < material.inOperation && material.inOperation - 1 >= 0) {
-                setMaterial({...material, inOperation: material.inOperation - 1})
+            if (newValue < device.inOperation && device.inOperation - 1 >= 0) {
+                setDevice({...device, inOperation: device.inOperation - 1})
                 return;
             }
-            if (newValue > material.inOperation && material.inStock - 1 >= 0) {
-                setMaterial({...material, inOperation: material.inOperation + 1, inStock: material.inStock - 1})
+            if (newValue > device.inOperation && device.inStock - 1 >= 0) {
+                setDevice({...device, inOperation: device.inOperation + 1, inStock: device.inStock - 1})
             } else {
                 dispatch(AddSnackbar({
                     messageText: "Приборы на складе закончились!",
@@ -59,20 +59,16 @@ export default (props: { receivedMaterial: Device }) => {
         }
     }
 
-    function changeMaterialInStock(newValue: number, material: Device) {
+    function changeMaterialInStock(newValue: number) {
         if (newValue >= 0) {
-            if (newValue > material.inStock) {
-                setMaterial({...material, inStock: material.inStock + 1})
+            if (newValue > device.inStock) {
+                setDevice({...device, inStock: device.inStock + 1})
             }
-            if (newValue < material.inStock) {
-                setMaterial({...material, inStock: material.inStock - 1})
+            if (newValue < device.inStock) {
+                setDevice({...device, inStock: device.inStock - 1})
             }
         }
     }
-
-    useEffect(() => {
-        setMaterial(props.receivedMaterial);
-    },)
 
     return (
         <Box className={style.modalStyle}>
@@ -85,11 +81,11 @@ export default (props: { receivedMaterial: Device }) => {
                            style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                         <Stack direction="row" spacing={2} sx={{width: '100%'}}>
                             <Typography mb={2}>Редактирование прибора:</Typography>
-                            <Typography color="primary">{material !== null ? material!.title : ""}</Typography>
+                            <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
                             <Typography mb={2}>№КССС:</Typography>
-                            <Typography color="primary">{material !== null ? material!.csss : ""}</Typography>
+                            <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
-                            <Typography color="primary">{material !== null ? material!.nr3 : ""}</Typography>
+                            <Typography color="primary">{device !== null ? device!.nr3 : ""}</Typography>
                         </Stack>
                         <Stack direction="row" spacing={2}>
                             <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
@@ -101,8 +97,8 @@ export default (props: { receivedMaterial: Device }) => {
 
                             <TextField id="inOperationMaterial" variant="outlined" size='small' type="number"
                                        style={{width: "10%"}}
-                                       value={material !== null ? material!.inOperation : ""}
-                                       onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value), material!)}
+                                       value={device !== null ? device!.inOperation : ""}
+                                       onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                                        InputLabelProps={{
                                            shrink: true,
                                        }}
@@ -112,8 +108,8 @@ export default (props: { receivedMaterial: Device }) => {
                             <Typography mb={2}>Количество на складе:</Typography>
                             <TextField id="inStockMaterial" variant="outlined" size='small' type="number"
                                        style={{marginLeft: "65px", width: "10%"}}
-                                       value={material !== null ? material!.inStock : 0}
-                                       onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value), material!)}
+                                       value={device !== null ? device!.inStock : 0}
+                                       onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
                                        InputLabelProps={{
                                            shrink: true,
                                        }}
@@ -137,9 +133,9 @@ export default (props: { receivedMaterial: Device }) => {
                                         <TableCell align="right">Количество на складе</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                {material?.consumables.length !== 0 ? (
+                                {device?.consumables.length !== 0 ? (
                                     <TableBody>
-                                        {material?.consumables.map((row) => (
+                                        {device?.consumables.map((row) => (
                                             <TableRow
                                                 key={row.nr3}
                                                 sx={{'&:last-child td, &:last-child th': {border: 0}}}
