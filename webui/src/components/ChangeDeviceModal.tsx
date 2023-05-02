@@ -112,7 +112,7 @@ export default (props: { receivedMaterial: Device }) => {
                             <Typography mb={2}>Количество на складе:</Typography>
                             <TextField id="inStockMaterial" variant="outlined" size='small' type="number"
                                        style={{marginLeft: "65px", width: "10%"}}
-                                       value={material !== null ? material!.inStock : ""}
+                                       value={material !== null ? material!.inStock : 0}
                                        onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value), material!)}
                                        InputLabelProps={{
                                            shrink: true,

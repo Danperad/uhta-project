@@ -29,8 +29,6 @@ export default (props: { receivedMaterial: Consumable }) => {
     const [key, setKey] = useState<boolean>(false);
     const [autocompleteTitleValue, setAutocompleteTitleValue] = useState<Device | null>(null);
 
-    const [autocompleteTypeValue, setAutocompleteTypeValue] = useState<string>('');
-    const [materialType, setMaterialType] = useState<string | null>();
     const [title, setTitle] = useState<string[]>();
 
     const handleChangeChecked = () => {
@@ -75,10 +73,6 @@ export default (props: { receivedMaterial: Consumable }) => {
                 setMaterialTitle(value);
                 setAutocompleteTitleValue(materials[i]);
             }
-            else {
-                setAutocompleteTitleValue(null);
-                return
-            }
         }
     }
 
@@ -95,7 +89,7 @@ export default (props: { receivedMaterial: Consumable }) => {
             setTitle(tmp);
         }).catch(err => console.log(err));
 
-    }, [materials, key])
+    }, [materials, key, consumable, title])
 
     return (
         <Box className={style.modalStyle}>
@@ -135,7 +129,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                     <div className='section' style={{height: '70%', width: '102.6%'}}>
                         <Paper style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                             <Typography mb={2}>КССС привязки материала к приборам:</Typography>
-                            <Stack spacing={1}>
+                            <Stack spacing={2}>
                                 <Stack direction="row" width='100%' spacing={1}>
                                     <Autocomplete disablePortal id="combo-box-title" size='small' options={materials}
                                                   isOptionEqualToValue={(materials, value) => materials.id === value.id}
@@ -165,17 +159,13 @@ export default (props: { receivedMaterial: Consumable }) => {
                                     <Button variant="contained">добавить</Button>
                                 </Stack>
                                 <div>
-                                    {consumable?.devices.length !== 0 ? (
-
+                                    {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0  ? (
                                         consumable!.devices.map((row: Device) => (
                                             <Stack direction="row" width='100%' spacing={1}>
                                                 <TextField id="title" label="Наименование" variant="outlined"
                                                            size='small'
-                                                           type="number"
+                                                           type="string"
                                                            value={row.title}
-                                                           InputProps={{
-                                                               inputProps: {min: 1}
-                                                           }}
                                                            style={{width: '30%'}}
                                                 />
                                                 <TextField id="kccc" label="КССС" variant="outlined" size='small'
@@ -190,9 +180,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                                                            size='small'
                                                            type="number"
                                                            value={row.inOperation}
-                                                           InputProps={{
-                                                               inputProps: {min: 1}
-                                                           }}
+                                                           onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value), consumable!)}
                                                 />
                                                 <Button variant="outlined">отвязать</Button>
 
