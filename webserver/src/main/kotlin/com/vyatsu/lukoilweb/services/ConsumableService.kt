@@ -31,7 +31,8 @@ class ConsumableService(
     @Transactional
     fun saveConsumable(consumableModel: ConsumableModel): ConsumableModel? {
         var consumable = consumableModel.getConsumable()
-        if (consumable.id == null && consumableRepository.findConsumableByCsss(consumable.csss) != null) return null
+        val csssConsumable = consumableRepository.findConsumableByCsss(consumable.csss)
+        if ((consumable.id == null || consumable.id == 0) && csssConsumable != null) return null
         if (consumableModel.devices.isNotEmpty()) {
             val devices =
                 consumableModel.devices.map { deviceRepository.findDeviceByCsss(it.csss) }

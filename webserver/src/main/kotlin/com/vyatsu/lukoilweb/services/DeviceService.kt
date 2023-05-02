@@ -31,7 +31,8 @@ class DeviceService(
     @Transactional
     fun saveDevice(deviceModel: DeviceModel): DeviceModel? {
         var device = deviceModel.getDevice()
-        if (device.id == null && deviceRepository.findDeviceByCsss(device.csss) != null) return null
+        val csssDevice = deviceRepository.findDeviceByCsss(device.csss)
+        if ((device.id == null || device.id == 0) && csssDevice != null) return null
         if (deviceModel.consumables.isNotEmpty()) {
             val consumables =
                 deviceModel.consumables.map { consumableRepository.findConsumableByCsss(it.csss) }
