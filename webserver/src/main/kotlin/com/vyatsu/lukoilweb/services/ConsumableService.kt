@@ -31,9 +31,11 @@ class ConsumableService(
     @Transactional
     fun saveConsumable(consumableModel: ConsumableModel): ConsumableModel? {
         var consumable = consumableModel.getConsumable()
+        if (consumable.id == null && consumableRepository.findConsumableByCsss(consumable.csss) != null) return null
         if (consumableModel.devices.isNotEmpty()) {
             val devices =
-                consumableModel.devices.mapNotNull { deviceRepository.findDeviceByCsss(it.csss) }.toList()
+                consumableModel.devices.map { deviceRepository.findDeviceByCsss(it.csss) }
+            if (devices.any {it == null}) return null
             consumable = Consumable(
                 consumable.csss,
                 consumable.nr,
@@ -43,7 +45,7 @@ class ConsumableService(
                 consumable.isDeleted,
                 consumable.inStock,
                 consumable.inOperation,
-                devices,
+                devices.mapNotNull { it },
                 consumable.id
             )
         }
@@ -60,7 +62,7 @@ class ConsumableService(
         return try {
             consumableRepository.delete(consumable)
             true
-        } catch (e: Exception){
+        } catch (e: Exception) {
             false
         }
     }
