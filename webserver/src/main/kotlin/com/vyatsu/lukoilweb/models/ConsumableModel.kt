@@ -15,6 +15,6 @@ data class ConsumableModel(
     val devices: Set<DeviceModel> = setOf()
 ){
     fun getConsumable() : Consumable{
-        return Consumable(csss,nr3,title, producer, unitType, false, inStock, inOperation, devices.map { it.getDevice() }, id)
+        return Consumable(csss,nr3,title, producer, unitType, false, inStock, inOperation, devices.map { it.getDevice() }.toMutableList(), id)
     }
 }

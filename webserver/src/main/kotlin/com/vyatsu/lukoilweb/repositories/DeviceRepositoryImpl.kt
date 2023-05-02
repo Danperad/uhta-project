@@ -46,6 +46,10 @@ class DeviceRepositoryImpl : DeviceRepositoryCustom {
             )
         )
         val tq = entityManager.createQuery(query)
-        return tq.singleResult
+        return try {
+            tq.singleResult
+        } catch (e: Exception){
+            null
+        }
     }
 }
