@@ -35,7 +35,7 @@ begin
         begin
             UPDATE uhta.devices SET is_deleted = 1 where device_id = (select deleted.device_id from deleted)
 --             UPDATE uhta.binding SET is_deleted = 1 where device_id = deleted.device_id
-            DELETE FROM uhta.binding WHERE device_id = deleted.device_id
+            DELETE FROM uhta.binding WHERE device_id = (select deleted.device_id from deleted)
         end
 end
 go
@@ -53,7 +53,7 @@ begin
         begin
             UPDATE uhta.consumables SET is_deleted = 1 where consumables_id = (select deleted.consumables_id from deleted)
 --             UPDATE uhta.binding SET is_deleted = 1 where consumables_id = deleted.consumables_id
-            DELETE FROM uhta.binding WHERE consumables_id = deleted.consumables_id
+            DELETE FROM uhta.binding WHERE consumables_id = (select deleted.consumables_id from deleted)
         end
 end
 go
