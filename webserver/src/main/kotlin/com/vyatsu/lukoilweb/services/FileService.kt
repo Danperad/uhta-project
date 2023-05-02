@@ -46,6 +46,6 @@ class FileService(
         val producer = row.getCell(5).stringCellValue
         val parent = row.getCell(8).numericCellValue.toInt()
         val device = deviceRepository.findDeviceByCsss(parent) ?: throw Exception()
-        return Consumable(csss, nr3, title, producer, "ШТ", devices = listOf(device))
+        return Consumable(csss, nr3, title, producer, "ШТ", devices = mutableListOf(device))
     }
 }
