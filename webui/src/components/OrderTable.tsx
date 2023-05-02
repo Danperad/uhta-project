@@ -1,5 +1,5 @@
 import React from "react";
-import {Applications} from "../models";
+import {Application} from "../models";
 import OrderService from "../services/ApplicationService";
 import {
     Button,
@@ -15,13 +15,13 @@ import {
 } from "@mui/material";
 
 export default function MaterialTable() {
-    const [orders, setOrders] = React.useState<Applications[]>([]);
+    const [orders, setOrders] = React.useState<Application[]>([]);
     const [key, setKey] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         if (key) return;
         setKey(true);
-        OrderService.getAllApplications().then((res: Applications[]) => {
+        OrderService.getAllApplications().then((res: Application[]) => {
             setOrders(res);
         }).catch(err => console.log(err));
     }, [orders, key])
@@ -48,7 +48,7 @@ export default function MaterialTable() {
                                     sx={{'&:last-child td, &:last-child th': {border: 0}}}
                                 >
                                     <TableCell>{row.number}</TableCell>
-                                    <TableCell align="left">{row.name}</TableCell>
+                                    <TableCell align="left">{row.title}</TableCell>
                                     <TableCell align="center">{row.date.toString()}</TableCell>
                                     <TableCell align="center">{row.status}</TableCell>
                                     <TableCell align="center"><Button
