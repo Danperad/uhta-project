@@ -66,7 +66,7 @@ export default (props: { receivedMaterial: Consumable }) => {
     }
 
     function CheckMaterialTitle(event: any, value: string) {
-        for(var i = 0; i <= materials.length; i++)
+        for(var i = 0; i < materials.length; i++)
         {
             if(value === materials[i].title)
             {
