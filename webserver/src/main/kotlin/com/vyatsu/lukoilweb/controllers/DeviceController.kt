@@ -52,11 +52,11 @@ class DeviceController(private val deviceService: DeviceService) {
     }
 
     @PostMapping("/delete", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun deleteConsumable(@RequestBody @Validated deviceModel: DeviceModel): ResponseEntity<DeviceModel?> {
-        logger.debug("Getting request delete device {}", deviceModel)
-        val device = deviceService.deleteDevice(deviceModel)
-        return if (device != null) {
-            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(device)
+    fun deleteConsumable(@RequestParam csss: Int): ResponseEntity<Boolean> {
+        logger.debug("Getting request delete device with csss=$csss")
+        val device = deviceService.deleteDevice(csss)
+        return if (device) {
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(true)
         } else {
             ResponseEntity.badRequest().build()
         }

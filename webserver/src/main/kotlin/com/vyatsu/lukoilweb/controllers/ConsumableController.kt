@@ -49,11 +49,11 @@ class ConsumableController(private val consumableService: ConsumableService) {
         }
     }
     @PostMapping("/delete", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun deleteConsumable(@RequestBody @Validated consumableModel: ConsumableModel): ResponseEntity<ConsumableModel?> {
-        logger.debug("Getting request delete consumable {}", consumableModel)
-        val consumable = consumableService.deleteConsumable(consumableModel)
-        return if (consumable != null) {
-            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(consumable)
+    fun deleteConsumable(@RequestParam csss: Int): ResponseEntity<Boolean> {
+        logger.debug("Getting request delete consumable with csss=$csss")
+        val consumable = consumableService.deleteConsumable(csss)
+        return if (consumable) {
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(true)
         } else {
             ResponseEntity.badRequest().build()
         }

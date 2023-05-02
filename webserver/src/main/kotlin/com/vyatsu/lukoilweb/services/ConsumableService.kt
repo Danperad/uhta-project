@@ -14,17 +14,11 @@ class ConsumableService(
     private val deviceRepository: DeviceRepository
 ) {
     @Transactional
-    fun findAllConsumables(): Set<ConsumableModel> {
-        val materials = consumableRepository.findAll()
-        return materials.map { it.toConsumableModelWithoutDevices() }.toSet()
-    }
-
-    @Transactional
     fun findAllConsumablesPage(limit: Pageable, search: String?): Set<ConsumableModel> {
         val consumables = if (search == null) {
             consumableRepository.findAll(limit)
         } else {
-            consumableRepository.findAll(search)
+            consumableRepository.findAll(limit, search)
         }
         return consumables.map { it.toConsumableModel() }.toSet()
     }
@@ -61,24 +55,13 @@ class ConsumableService(
     }
 
     @Transactional
-    fun deleteConsumable(consumableModel: ConsumableModel): ConsumableModel? {
-        val consumable = consumableRepository.findConsumableByCsss(consumableModel.csss) ?: return null
-        val newConsumable = Consumable(
-            consumable.csss,
-            consumable.nr,
-            consumable.title,
-            consumable.producer,
-            consumable.unitOfMeasurement,
-            true,
-            consumable.inStock,
-            consumable.inOperation,
-            listOf(),
-            consumable.id
-        )
+    fun deleteConsumable(csss: Int): Boolean {
+        val consumable = consumableRepository.findConsumableByCsss(csss) ?: return false
         return try {
-            consumableRepository.save(newConsumable).toConsumableModelWithoutDevices()
-        } catch (e: Exception) {
-            null
+            consumableRepository.delete(consumable)
+            true
+        } catch (e: Exception){
+            false
         }
     }
 }

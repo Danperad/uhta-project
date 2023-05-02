@@ -14,12 +14,6 @@ class DeviceService(
     private val consumableRepository: ConsumableRepository
 ) {
     @Transactional
-    fun findAllDevices(): Set<DeviceModel> {
-        val materials = deviceRepository.findAll()
-        return materials.map { it.toDeviceModel() }.toSet()
-    }
-
-    @Transactional
     fun findDeviceByCsss(nr: Int): DeviceModel? {
         return deviceRepository.findDeviceByCsss(nr)?.toDeviceModel()
     }
@@ -29,7 +23,7 @@ class DeviceService(
         val devices = if (search == null) {
             deviceRepository.findAll(limit)
         } else {
-            deviceRepository.findAll(search)
+            deviceRepository.findAll(limit, search)
         }
         return devices.map { it.toDeviceModel() }.toSet()
     }
@@ -61,24 +55,13 @@ class DeviceService(
     }
 
     @Transactional
-    fun deleteDevice(deviceModel: DeviceModel): DeviceModel? {
-        val device = deviceRepository.findDeviceByCsss(deviceModel.csss) ?: return null
-        val newDevice = Device(
-            device.csss,
-            device.nr,
-            device.title,
-            device.producer,
-            device.unitOfMeasurement,
-            true,
-            device.inStock,
-            device.inOperation,
-            listOf(),
-            device.id
-        )
+    fun deleteDevice(csss: Int): Boolean {
+        val device = deviceRepository.findDeviceByCsss(csss) ?: return false
         return try {
-            deviceRepository.save(newDevice).toDeviceWithoutConsumables()
-        } catch (e: Exception) {
-            null
+            deviceRepository.delete(device)
+            true
+        }catch (e: Exception){
+            false
         }
     }
 }
