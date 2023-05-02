@@ -34,9 +34,6 @@ class ConsumableService(
         val csssConsumable = consumableRepository.findConsumableByCsss(consumable.csss)
         if ((consumable.id == null || consumable.id == 0) && csssConsumable != null) return null
         if (consumableModel.devices.isNotEmpty()) {
-            val devices =
-                consumableModel.devices.map { deviceRepository.findDeviceByCsss(it.csss) }
-            if (devices.any {it == null}) return null
             consumable = Consumable(
                 consumable.csss,
                 consumable.nr,
@@ -46,9 +43,13 @@ class ConsumableService(
                 consumable.isDeleted,
                 consumable.inStock,
                 consumable.inOperation,
-                devices.mapNotNull { it },
+                consumable.devices,
                 consumable.id
             )
+            val devices =
+                consumableModel.devices.map { deviceRepository.findDeviceByCsss(it.csss) }
+            if (devices.any {it == null}) return null
+            consumable.devices.addAll(devices.mapNotNull { it })
         }
         return try {
             consumableRepository.save(consumable).toConsumableModelWithoutDevices()

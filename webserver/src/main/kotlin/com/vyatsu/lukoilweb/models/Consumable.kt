@@ -35,12 +35,12 @@ class Consumable(
         joinColumns = [JoinColumn(name = "consumables_id")],
         inverseJoinColumns = [JoinColumn(name = "device_id")],
     )
-    val devices: List<Device> = listOf(),
+    val devices: MutableList<Device> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "consumables_id", nullable = false)
     var id: Int? = null
-) {
+) : Material {
     fun toConsumableModel() : ConsumableModel{
         val newDevices = devices.map { it.toDeviceWithoutConsumables() }.toSet()
         return toConsumableModelWithoutDevices().copy(devices = newDevices)
