@@ -237,7 +237,7 @@ export default function DeviceAndConsumable() {
                     </Paper>
                 </Box>
                 <Box sx={{gridArea: 'main', height: "80vh"}}>
-                    {showMaterialTable ? <MaterialTable search={search}/> : null}
+                    {showMaterialTable && <MaterialTable/>}
                 </Box>
                     <Box sx={{gridArea: 'sidebar', height: "76vh"}} component="form">
                         <Paper
