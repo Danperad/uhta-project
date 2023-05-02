@@ -14,20 +14,19 @@ import {
     Tabs
 } from "@mui/material";
 import TableRowMaterial from "./TableRowMaterial";
-import {ReactNode, SyntheticEvent, useEffect, useState} from "react";
-import {Consumable, Device} from "../models";
-import DeviceService from "../services/DeviceService";
+import {ReactNode, SyntheticEvent, useState} from "react";
+import {Consumable} from "../models";
 import MaterialService from "../services/ConsumableService";
 import ChangeMaterialModal from "./ChangeMaterialModal";
+import { RootState} from "../redux/store";
+import { useSelector} from "react-redux";
 
 export interface MaterialTableProps {
     search: string;
 }
 
-export default (props: MaterialTableProps) => {
-    const [materials, setMaterials] = useState<Device[]>([]);
-    const [consumables, setConsumables] = useState<Consumable[]>([]);
-    const [key, setKey] = useState<boolean>(false);
+export default () => {
+    const state = useSelector((state: RootState) => state);
 
     const [value, setValue] = useState(0);
 
@@ -82,17 +81,6 @@ export default (props: MaterialTableProps) => {
         setChangeMaterialModal(false);
     }
 
-    useEffect(() => {
-        if (key) return;
-        setKey(true);
-        DeviceService.getAllDevices(props.search).then((res: Device[]) => {
-            setMaterials(res);
-        }).catch(err => console.log(err));
-        MaterialService.getAllConsumables(props.search).then((rez: Consumable[]) => {
-            setConsumables(rez);
-        }).catch(err => console.log(err));
-    }, [materials, consumables, key])
-
     return (
         <Paper style={{height: '100%'}}>
             <Box sx={{borderBottom: 1, borderColor: 'divider', width: '100%'}}>
@@ -103,7 +91,7 @@ export default (props: MaterialTableProps) => {
             </Box>
             <TabPanel value={value} index={0}>
 
-                {materials.length !== 0 ? (
+                {state.devices.length !== 0 ? (
                     <TableContainer component={Paper}>
                         <Table aria-label="material table" sx={{width: '100%'}}>
                             <TableHead>
@@ -119,7 +107,7 @@ export default (props: MaterialTableProps) => {
 
                             <TableBody>
 
-                                {materials.map((row) => (
+                                {state.devices.map((row) => (
                                     <TableRowMaterial key={row.nr3} rowMaterial={row}/>
                                 ))}
 
@@ -137,7 +125,7 @@ export default (props: MaterialTableProps) => {
             </TabPanel>
             <TabPanel value={value} index={1}>
                 
-                {consumables.length !== 0 ? (
+                {state.consumables.length !== 0 ? (
                     <TableContainer component={Paper}>
                         <Table sx={{minWidth: 650}} aria-label="simple table">
                             <TableHead>
@@ -150,7 +138,7 @@ export default (props: MaterialTableProps) => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {consumables.map((materialRow) => (
+                                {state.consumables.map((materialRow) => (
                                     <TableRow
                                         key={materialRow.title}
                                         sx={{'&:last-child td, &:last-child th': {border: 0}}}

@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {Box, Collapse, Modal, Table, TableBody, TableCell, TableHead, TableRow, Typography} from '@mui/material';
 
 import IconButton from '@mui/material/IconButton';
@@ -12,34 +12,50 @@ import ChangeDeviceModal from "./ChangeDeviceModal";
 import ChangeMaterialModal from "./ChangeMaterialModal"
 
 export default function TableRowMaterial(props: { rowMaterial: Device }) {
-    const [material, setMaterial] = useState<Device | null>(null);
+    const [device, setDevice] = useState<Device | null>(null);
     const [consumable, setConsumable] = useState<Consumable | null>(null);
 
     const {rowMaterial} = props;
     const [open, setOpen] = useState(false);
     const [openChangeDeviceModal, setChangeDeviceModal] = useState(false);
-    const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
+    const [openChangeConsumableModal, setChangeConsumableModal] = useState(false);
     const handleOpenEditDeviceModal = (csss: number) => {
         DeviceService.getDeviceByCsss(csss).then((res) => {
             if (res === null) return;
-            setMaterial(res);
+            setDevice(res);
         });
-        setChangeDeviceModal(true);
     }
     const handleCloseEditDeviceModal = () => {
-        setChangeDeviceModal(false);
+        setDevice(null);
     }
     const handleOpenEditMaterialModal = (csss: number) => {
         MaterialService.getConsumableByCsss(csss).then((res) => {
             if (res === null) return;
             setConsumable(res);
         });
-        setChangeMaterialModal(true);
     }
-    const handleCloseEditMaterialModal = () => {
-        setChangeMaterialModal(false);
+    const handleCloseEditConsumableModal = () => {
+        setConsumable(null);
     }
 
+    useEffect(() => {
+        if(device !== null)
+        {
+            setChangeDeviceModal(true);
+        }
+        else{
+            setChangeDeviceModal(false);
+        }
+    },[device])
+    useEffect(() => {
+        if(consumable !== null)
+        {
+            setChangeConsumableModal(true);
+        }
+        else{
+            setChangeConsumableModal(false);
+        }
+    },[consumable])
 
     return (
         <Fragment>
@@ -110,11 +126,11 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <ChangeDeviceModal receivedMaterial={material!}/>
+                <ChangeDeviceModal receivedMaterial={device!}/>
             </Modal>
             <Modal
-                open={openChangeMaterialModal}
-                onClose={handleCloseEditMaterialModal}
+                open={openChangeConsumableModal}
+                onClose={handleCloseEditConsumableModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >

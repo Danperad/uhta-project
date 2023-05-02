@@ -1,5 +1,6 @@
 import axios from "axios";
 import Consumable from "../models/Consumable";
+import {ConsumableLoaded} from "../redux/actions/consumableAction";
 
 interface LooseObject{
     [key: string] : any
@@ -15,7 +16,7 @@ class ConsumableService {
             params["search"] = search
         }
         return axios.get(ApiUrl, {params: params}).then(res => {
-            return res.data as Consumable[];
+            return ConsumableLoaded(res.data);
         })
     }
     getConsumableByCsss(csss: number) {

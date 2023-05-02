@@ -10,39 +10,35 @@ import {
     Typography
 } from "@mui/material";
 import style from "../assets/css/ChangeDeviceModal.module.css";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Consumable, Device} from '../models';
 import {AddSnackbar} from "../redux/actions/snackbarAction";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
-import DeviceService from "../services/DeviceService";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
 
 export default (props: { receivedMaterial: Consumable }) => {
+    const state = useSelector((state: RootState) => state);
     const dispatch = useDispatch<AppDispatch>();
-    const [consumable, setConsumable] = useState<Consumable | null>(null);
+    const [consumable, setConsumable] = useState<Consumable>(props.receivedMaterial);
     const [checked, setChecked] = useState(true);
     const [materialTitle, setMaterialTitle] = useState<string | null>();
     const [kccc, setKccc] = useState<string | null>();
     const [amount, setAmount] = useState<string | null>();
 
-    const [materials, setMaterials] = useState<Device[]>([]);
-    const [key, setKey] = useState<boolean>(false);
     const [autocompleteTitleValue, setAutocompleteTitleValue] = useState<Device | null>(null);
-
-    const [title, setTitle] = useState<string[]>();
 
     const handleChangeChecked = () => {
         setChecked(prev => !prev)
     }
 
-    function changeMaterialInOperation(newValue: number, material: Consumable) {
+    function changeMaterialInOperation(newValue: number) {
         if (newValue >= 0) {
-            if (newValue < material.inOperation && material.inOperation - 1 >= 0) {
-                setConsumable({...material, inOperation: material.inOperation - 1})
+            if (newValue < consumable.inOperation && consumable.inOperation - 1 >= 0) {
+                setConsumable({...consumable, inOperation: consumable.inOperation - 1})
                 return;
             }
-            if (newValue > material.inOperation && material.inStock - 1 >= 0) {
-                setConsumable({...material, inOperation: material.inOperation + 1, inStock: material.inStock - 1})
+            if (newValue > consumable.inOperation && consumable.inStock - 1 >= 0) {
+                setConsumable({...consumable, inOperation: consumable.inOperation + 1, inStock: consumable.inStock - 1})
             } else {
                 dispatch(AddSnackbar({
                     messageText: "Приборы на складе закончились!",
@@ -54,42 +50,27 @@ export default (props: { receivedMaterial: Consumable }) => {
         }
     }
 
-    function changeMaterialInStock(newValue: number, material: Consumable) {
+    function changeMaterialInStock(newValue: number) {
         if (newValue >= 0) {
-            if (newValue > material.inStock) {
-                setConsumable({...material, inStock: material.inStock + 1})
+            if (newValue > consumable.inStock) {
+                setConsumable({...consumable, inStock: consumable.inStock + 1})
             }
-            if (newValue < material.inStock) {
-                setConsumable({...material, inStock: material.inStock - 1})
+            if (newValue < consumable.inStock) {
+                setConsumable({...consumable, inStock: consumable.inStock - 1})
             }
         }
     }
 
     function CheckMaterialTitle(event: any, value: string) {
-        for(var i = 0; i < materials.length; i++)
+        for(var i = 0; i < state.devices.length; i++)
         {
-            if(value === materials[i].title)
+            if(value === state.devices[i].title)
             {
                 setMaterialTitle(value);
-                setAutocompleteTitleValue(materials[i]);
+                setAutocompleteTitleValue(state.devices[i]);
             }
         }
     }
-
-    useEffect(() => {
-        const tmp: string[] = [];
-
-        setMaterialTitle('');
-        setConsumable(props.receivedMaterial);
-        if (key) return;
-        setKey(true);
-        DeviceService.getAllDevices().then((res: Device[]) => {
-            setMaterials(res);
-            res.forEach((d) => tmp.push(d.title))
-            setTitle(tmp);
-        }).catch(err => console.log(err));
-
-    }, [materials, key, consumable, title])
 
     return (
         <Box className={style.modalStyle}>
@@ -116,7 +97,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                             <TextField id="inStockMaterial" variant="outlined" size='small' type="number"
                                        style={{marginLeft: "10px", width: "10%"}}
                                        value={consumable !== null ? consumable!.inStock : ""}
-                                       onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value), consumable!)}
+                                       onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
                                        InputLabelProps={{
                                            shrink: true,
                                        }}
@@ -131,7 +112,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                             <Typography mb={2}>КССС привязки материала к приборам:</Typography>
                             <Stack spacing={2}>
                                 <Stack direction="row" width='100%' spacing={1}>
-                                    <Autocomplete disablePortal id="combo-box-title" size='small' options={materials}
+                                    <Autocomplete disablePortal id="combo-box-title" size='small' options={state.devices}
                                                   isOptionEqualToValue={(materials, value) => materials.id === value.id}
                                                   getOptionLabel={(option) => option.title}
                                                   onInputChange={CheckMaterialTitle} value={autocompleteTitleValue}
@@ -159,7 +140,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                                     <Button variant="contained">добавить</Button>
                                 </Stack>
                                 <div>
-                                    {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0  ? (
+                                    {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0  && (
                                         consumable!.devices.map((row: Device) => (
                                             <Stack direction="row" width='100%' spacing={1}>
                                                 <TextField id="title" label="Наименование" variant="outlined"
@@ -180,15 +161,12 @@ export default (props: { receivedMaterial: Consumable }) => {
                                                            size='small'
                                                            type="number"
                                                            value={row.inOperation}
-                                                           onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value), consumable!)}
+                                                           onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                                                 />
                                                 <Button variant="outlined">отвязать</Button>
 
                                             </Stack>
                                         ))
-
-                                    ) : (
-                                        <div></div>
                                     )}
                                 </div>
                             </Stack>
