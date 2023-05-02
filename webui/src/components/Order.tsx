@@ -12,19 +12,17 @@ import {
     Typography
 } from '@mui/material';
 import {style} from '../assets/css/CreateOrderModal';
-import {Device} from "../models";
 import DeviceService from "../services/DeviceService";
 import OrderTable from "./OrderTable";
 import {AddSnackbar} from "../redux/actions/snackbarAction";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
 
 export default function Order() {
+    const state = useSelector((state: RootState) => state);
     const dispatch = useDispatch<AppDispatch>();
     const {useState} = React;
     const [checked, setChecked] = useState(false);
-    const [materials, setMaterials] = React.useState<Device[]>([]);
-    const [key, setKey] = React.useState<boolean>(false);
     const OrderPerriod = () => (
         <Stack direction="row" spacing={2} sx={{width: '40%'}}>
             <TextField id="interval" label="Интервал" variant="outlined" size='small' type="number"
@@ -63,12 +61,10 @@ export default function Order() {
     ]
 
     React.useEffect(() => {
-        if (key) return;
-        setKey(true);
-        DeviceService.getAllDevices().then((res: Device[]) => {
-            setMaterials(res);
+        DeviceService.getAllDevices().then((res) => {
+            dispatch(res);
         }).catch(err => console.log(err));
-    }, [materials, key])
+    }, [])
 
     const [showOrderTable, setShowOrderTable] = React.useState(false);
     const handleShowOrderTable = () => setShowOrderTable(true);
@@ -187,7 +183,7 @@ export default function Order() {
                                 <Typography mb={2}>Добавление материалов в заявку</Typography>
                                 <Stack direction="row" spacing={2}>
                                     <Autocomplete disablePortal id="combo-box-name-material" size='small'
-                                                  options={materials.map((row) => (row.title))}
+                                                  options={state.devices.map((row) => (row.title))}
                                                   sx={{width: '26%'}}
                                                   renderInput={(params) => <TextField {...params}
                                                                                       label="Наименование" value={selectedMaterial}
