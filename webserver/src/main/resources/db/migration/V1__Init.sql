@@ -31,6 +31,7 @@ CREATE TABLE uhta.binding
     binding_id     int IDENTITY (1,1),
     device_id      int NOT NULL,
     consumables_id int NOT NULL,
+    count          int NOT NULL DEFAULT 0,
     CONSTRAINT pk_binding PRIMARY KEY (binding_id),
     CONSTRAINT fk_material_device FOREIGN KEY (device_id) REFERENCES uhta.devices (device_id),
     CONSTRAINT fk_material_consumable FOREIGN KEY (consumables_id) REFERENCES uhta.consumables (consumables_id),
@@ -56,14 +57,24 @@ CREATE TABLE uhta.applications
     CONSTRAINT pk_application PRIMARY KEY (application_id)
 );
 
-CREATE TABLE uhta.materials_application
+CREATE TABLE uhta.devices_application
 (
-    device_id    int NOT NULL,
+    device_id      int NOT NULL,
     application_id int NOT NULL,
     material_count int NOT NULL,
-    CONSTRAINT pf_materials_application PRIMARY KEY (device_id, application_id),
+    CONSTRAINT pk_device_application PRIMARY KEY (device_id, application_id),
     CONSTRAINT fk_device_application_device FOREIGN KEY (device_id) REFERENCES uhta.devices (device_id),
     CONSTRAINT fk_device_application_application FOREIGN KEY (application_id) REFERENCES uhta.applications (application_id)
+);
+
+CREATE TABLE uhta.consumables_application
+(
+    consumables_id int NOT NULL,
+    application_id int NOT NULL,
+    material_count int NOT NULL,
+    CONSTRAINT pf_consumables_application PRIMARY KEY (consumables_id, application_id),
+    CONSTRAINT fk_consumable_application_consumable FOREIGN KEY (consumables_id) REFERENCES uhta.consumables (consumables_id),
+    CONSTRAINT fk_consumable_application_application FOREIGN KEY (application_id) REFERENCES uhta.applications (application_id)
 );
 
 CREATE TABLE uhta.users

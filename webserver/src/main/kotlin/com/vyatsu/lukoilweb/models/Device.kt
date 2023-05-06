@@ -46,5 +46,20 @@ class Device(
 
         return toDeviceWithoutConsumables().copy(consumables = newConsumables)
     }
-    fun toDeviceWithoutConsumables() = DeviceModel(id!!, title, producer, csss, nr, unitOfMeasurement, inOperation, inStock, emptySet())
+
+    fun toDeviceWithoutConsumables() =
+        DeviceModel(id!!, title, producer, csss, nr, unitOfMeasurement, inOperation, inStock, emptySet())
+
+    fun copy(
+        csss: Int = this.csss,
+        nr: Int = this.nr,
+        title: String = this.title,
+        producer: String = this.producer,
+        unitOfMeasurement: String = this.unitOfMeasurement,
+        isDeleted: Boolean = this.isDeleted,
+        inStock: Int = this.inStock,
+        inOperation: Int = this.inOperation,
+        consumables: MutableList<Consumable> = this.consumables,
+        id: Int? = this.id
+    ) = Device(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation, consumables, id)
 }

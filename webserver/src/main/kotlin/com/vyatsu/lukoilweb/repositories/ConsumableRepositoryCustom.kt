@@ -5,9 +5,5 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface ConsumableRepositoryCustom {
-    fun findAll(limit: Pageable) : Page<Consumable>
-
-    fun findAll(limit: Pageable, search: String) : Page<Consumable>
-    fun findConsumableByCsss(csss: Int) : Consumable?
-
+    fun findAllBySearch(limit: Pageable, search: String) : Page<Consumable>
 }

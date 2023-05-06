@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://${SQLSERVER_URL};database=${SQLSERVER_DATABASE};encrypt=true;trustServerCertificate=true
+    username: sa
+    password: ${SQLSERVER_PASSWORD}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        default_schema: uhta
+        format_sql: true
+    open-in-view: false
+    show-sql: true
+  flyway:
+    schemas: uhta
+    create-schemas: true
+    enabled: true
+
+server:
+  port: 8081
+logging:
+  file:
+    path: "./logs"
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

@@ -46,4 +46,16 @@ class Consumable(
         return toConsumableModelWithoutDevices().copy(devices = newDevices)
     }
     fun toConsumableModelWithoutDevices() = ConsumableModel(id, title, producer, csss, nr,unitOfMeasurement, inOperation, inStock)
+    fun copy(
+        csss: Int = this.csss,
+        nr: Int = this.nr,
+        title: String = this.title,
+        producer: String = this.producer,
+        unitOfMeasurement: String = this.unitOfMeasurement,
+        isDeleted: Boolean = this.isDeleted,
+        inStock: Int = this.inStock,
+        inOperation: Int = this.inOperation,
+        devices: MutableList<Device> = this.devices,
+        id: Int? = this.id
+    ) = Consumable(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation, devices, id)
 }
