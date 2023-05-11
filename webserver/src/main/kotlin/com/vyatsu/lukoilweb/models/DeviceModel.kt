@@ -20,7 +20,7 @@ data class DeviceModel(
             nr3,
             title,
             producer,
-            UnitTypes.valueOf(unitType),
+            UnitTypeConverter().convertToEntityAttribute(unitType),
             false,
             inStock,
             inOperation,
