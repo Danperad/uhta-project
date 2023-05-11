@@ -30,6 +30,7 @@ export default () => {
 
     const [value, setValue] = useState(0);
 
+    const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
     const [consumable, setConsumable] = useState<Consumable | null>(null);
     const [openChangeConsumableModal, setChangeConsumableModal] = useState(false);
 
