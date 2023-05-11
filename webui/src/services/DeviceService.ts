@@ -41,6 +41,23 @@ class DeviceService {
                 return [];
             });
     }
+    deleteDeviceByCsss(csss: number){
+        const params : LooseObject = {}
+        params['csss'] = csss
+        return axios.post(`${ApiUrl}delete`, {},{params: params})
+            .then((res) => {
+                return res.data as boolean
+            })
+    }
+
+    changeDeviceByCsss(csss: number){
+        const params : LooseObject = {}
+        params['csss'] = csss
+        return axios.post(`${ApiUrl}change`, {},{params: params})
+            .then((res) => {
+                return res.data as boolean
+            })
+    }
 
 }
 

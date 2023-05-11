@@ -1,4 +1,4 @@
-import React from 'react';
+import {useEffect} from 'react';
 import { useSnackbar } from 'notistack';
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
@@ -10,7 +10,7 @@ function SnackbarViewer(){
     const dispatch = useDispatch();
     const state = useSelector((state: RootState) => state.snackBar);
 
-    React.useEffect(() => {
+    useEffect(() => {
         state.forEach((s) => {
             enqueueSnackbar(s.messageText, {
                 key: s.key,
@@ -18,7 +18,7 @@ function SnackbarViewer(){
                 onExited: () => {dispatch(RemoveSnackbar(s))},
             })
         })
-    },[state, enqueueSnackbar, dispatch])
+    },[state])
 
     return <></>;
 }

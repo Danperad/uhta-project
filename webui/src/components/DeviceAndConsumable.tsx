@@ -15,7 +15,7 @@ import MaterialService from "../services/ConsumableService";
 
 //Dictionaries
 const Type = ['Прибор', 'Расходник']
-const Unit = ['ШТ', 'УМП', 'КМП', 'Л', 'КГ', 'Т', 'М', 'М2']
+const Unit = ['ШТ', 'УПК', 'КМП', 'РУЛ', 'КГ', 'Т', 'М', 'М2']
 const Producers = ['Поставщик', 'Производитель', 'Поставка', 'Товарищ', 'Человек']
 
 export default function DeviceAndConsumable() {
@@ -62,7 +62,7 @@ export default function DeviceAndConsumable() {
     }
 
     function CheckMaterialUnit(event: any, value: string) {
-        if (!(value === "ШТ" || value === "УМП" || value === "КМП" || value === "Л"
+        if (!(value === "ШТ" || value === "УПК" || value === "КМП" || value === "РУЛ"
             || value === "КГ" || value === "Т" || value === "М" || value === "М2")) {
             setAutocompleteUnitValue('');
             return;
@@ -110,6 +110,7 @@ export default function DeviceAndConsumable() {
                 DeviceService.getAllDevices().then((res) => {
                     dispatch(res);
                 }).catch(err => console.log(err));
+
             }).catch(e => {
                 dispatch(AddSnackbar({
                     messageText: "Неудалось добавить!",
@@ -121,13 +122,10 @@ export default function DeviceAndConsumable() {
             ClearFields();
         } else if (check && materialType === "Расходник") {
             if (parentKccc !== '' || parentKccc !== undefined) {
-                const tmp: Device[] = [];
-
                 DeviceService.getDeviceByCsss(parseInt(parentKccc!)).then((res) => {
                     if (res === null) return;
-                    tmp.push(res)
+                    setParentDevices([res])
                 });
-                setParentDevices(tmp)
             }
             const newConsumable: Consumable = {
                 id: 0,

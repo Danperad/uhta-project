@@ -3,8 +3,7 @@ import {useState} from "react";
 import {
     Box,
     Button,
-    Checkbox,
-    FormControlLabel,
+    Modal,
     Paper,
     Stack,
     Table,
@@ -18,36 +17,103 @@ import {
 } from "@mui/material";
 
 import style from "../assets/css/ChangeDeviceModal.module.css"
+import styl from "../assets/css/ChildModalDeleteMaterial.module.css"
 import {Device} from '../models';
 import {AddSnackbar} from "../redux/actions/snackbarAction";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
+import DeviceService from "../services/DeviceService";
 
 export default (props: { receivedMaterial: Device }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const [device, setDevice] = useState<Device>(props.receivedMaterial);
-    const [checked, setChecked] = useState(false);
-    const handleChangeChecked = () => {
-        setChecked(prev => !prev)
+    const [device, setDevice] = useState<Device | null>(props.receivedMaterial);
+    const [openChildModal, setOpenChildModal] = useState(false);
+
+    const handleClose = () => {
+        setOpenChildModal(false);
+    };
+
+    const saveChange = () => {
+        DeviceService.saveDevice(device!).then(res => {
+            if (res) {
+                setOpenChildModal(false);
+                setDevice(null)
+                dispatch(AddSnackbar({
+                    messageText: "Прибор успешно изменен!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+                DeviceService.getAllDevices().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+            } else {
+                dispatch(AddSnackbar({
+                    messageText: "Не удалось изменить прибор!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+            }
+        })
+    }
+    const deleteDevice = () => {
+        DeviceService.deleteDeviceByCsss(device!.csss).then(res => {
+            if (res) {
+                setOpenChildModal(false);
+                setDevice(null)
+                dispatch(AddSnackbar({
+                    messageText: "Прибор успешно удален!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+                DeviceService.getAllDevices().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+
+            }
+            else {
+                dispatch(AddSnackbar({
+                    messageText: "Не удалось удалить прибор!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+            }
+        })
     }
 
-    const ParentKcccField = () => (
-        <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number' required
-                   style={{width: "14%", marginLeft: "28px"}}
-                   InputProps={{
-                       inputProps: {min: 1}
-                   }}
-        />
-    )
+    function ChildModal() {
+        return (
+            <Modal
+                open={openChildModal}
+                onClose={handleClose}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box className={styl.childModalStyle}>
+                    <Typography>Вы точно хотите удалить прибор? </Typography>
+                    <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
+                    <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
+                        <Typography>№КССС:</Typography>
+                        <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
+                        <Typography mb={2}>№R-3:</Typography>
+                        <Typography color="primary">{device !== null ? device!.nr3 : ""}</Typography>
+                    </Stack>
+                    <Stack direction='row' justifyContent="space-between" m={8}>
+                        <Button onClick={handleClose} variant="contained">Отмена</Button>
+                        <Button onClick={deleteDevice} variant="contained">Удалить</Button>
+                    </Stack>
+                </Box>
+            </Modal>
+        );
+    }
 
     function changeMaterialInOperation(newValue: number) {
         if (newValue >= 0) {
-            if (newValue < device.inOperation && device.inOperation - 1 >= 0) {
-                setDevice({...device, inOperation: device.inOperation - 1})
+            if (newValue < device!.inOperation && device!.inOperation - 1 >= 0) {
+                setDevice({...device!, inOperation: device!.inOperation - 1})
                 return;
             }
-            if (newValue > device.inOperation && device.inStock - 1 >= 0) {
-                setDevice({...device, inOperation: device.inOperation + 1, inStock: device.inStock - 1})
+            if (newValue > device!.inOperation && device!.inStock - 1 >= 0) {
+                setDevice({...device!, inOperation: device!.inOperation + 1, inStock: device!.inStock - 1})
             } else {
                 dispatch(AddSnackbar({
                     messageText: "Приборы на складе закончились!",
@@ -61,11 +127,11 @@ export default (props: { receivedMaterial: Device }) => {
 
     function changeMaterialInStock(newValue: number) {
         if (newValue >= 0) {
-            if (newValue > device.inStock) {
-                setDevice({...device, inStock: device.inStock + 1})
+            if (newValue > device!.inStock) {
+                setDevice({...device!, inStock: device!.inStock + 1})
             }
-            if (newValue < device.inStock) {
-                setDevice({...device, inStock: device.inStock - 1})
+            if (newValue < device!.inStock) {
+                setDevice({...device!, inStock: device!.inStock - 1})
             }
         }
     }
@@ -86,11 +152,6 @@ export default (props: { receivedMaterial: Device }) => {
                             <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
                             <Typography color="primary">{device !== null ? device!.nr3 : ""}</Typography>
-                        </Stack>
-                        <Stack direction="row" spacing={2}>
-                            <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
-                                              label="Расходный материал"/>
-                            {checked ? <ParentKcccField/> : null}
                         </Stack>
                         <Stack direction="row" spacing={2} mt={1}>
                             <Typography mb={2}>Количество в эксплуатации:</Typography>
@@ -133,7 +194,7 @@ export default (props: { receivedMaterial: Device }) => {
                                         <TableCell align="right">Количество на складе</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                {device?.consumables.length !== 0 ? (
+                                {device?.consumables.length !== 0 && (
                                     <TableBody>
                                         {device?.consumables.map((row) => (
                                             <TableRow
@@ -150,8 +211,6 @@ export default (props: { receivedMaterial: Device }) => {
                                             </TableRow>
                                         ))}
                                     </TableBody>
-                                ) : (
-                                    <div></div>
                                 )}
                             </Table>
                         </TableContainer>
@@ -160,10 +219,11 @@ export default (props: { receivedMaterial: Device }) => {
                 </div>
                 <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                     <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                        <Button variant="contained">Удалить прибор</Button>
-                        <Button variant="contained">Сохранить изменения</Button>
+                        <Button variant="contained" onClick={ () => setOpenChildModal(true)}>Удалить прибор</Button>
+                        <Button variant="contained" onClick={saveChange}>Сохранить изменения</Button>
                     </Stack>
                 </Paper>
+                <ChildModal/>
             </Stack>
         </Box>
     )

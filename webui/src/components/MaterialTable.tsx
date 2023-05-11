@@ -14,7 +14,7 @@ import {
     Tabs
 } from "@mui/material";
 import TableRowMaterial from "./TableRowMaterial";
-import {ReactNode, SyntheticEvent, useState} from "react";
+import {ReactNode, SyntheticEvent, useEffect, useState} from "react";
 import {Consumable} from "../models";
 import MaterialService from "../services/ConsumableService";
 import ChangeMaterialModal from "./ChangeMaterialModal";
@@ -30,8 +30,8 @@ export default () => {
 
     const [value, setValue] = useState(0);
 
-    const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
     const [consumable, setConsumable] = useState<Consumable | null>(null);
+    const [openChangeConsumableModal, setChangeConsumableModal] = useState(false);
 
     interface TabPanelProps {
         children?: ReactNode;
@@ -77,9 +77,19 @@ export default () => {
         });
         setChangeMaterialModal(true);
     }
-    const handleCloseEditMaterialModal = () => {
-        setChangeMaterialModal(false);
+    const handleCloseEditConsumableModal = () => {
+        setConsumable(null);
     }
+
+    useEffect(() => {
+        if(consumable !== null)
+        {
+            setChangeConsumableModal(true);
+        }
+        else{
+            setChangeConsumableModal(false);
+        }
+    },[consumable])
 
     return (
         <Paper style={{height: '100%'}}>
@@ -167,8 +177,8 @@ export default () => {
 
             </TabPanel>
             <Modal
-                open={openChangeMaterialModal}
-                onClose={handleCloseEditMaterialModal}
+                open={openChangeConsumableModal}
+                onClose={handleCloseEditConsumableModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >

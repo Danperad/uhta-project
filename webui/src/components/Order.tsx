@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
     Autocomplete,
     Box,
@@ -21,8 +21,8 @@ import {AppDispatch, RootState} from "../redux/store";
 export default function Order() {
     const state = useSelector((state: RootState) => state);
     const dispatch = useDispatch<AppDispatch>();
-    const {useState} = React;
     const [checked, setChecked] = useState(false);
+    const [key, setKey] = useState(false);
     const OrderPerriod = () => (
         <Stack direction="row" spacing={2} sx={{width: '40%'}}>
             <TextField id="interval" label="Интервал" variant="outlined" size='small' type="number"
@@ -36,10 +36,10 @@ export default function Order() {
         </Stack>
     )
 
-    const [dateTimeOt, setDateTimeOt] = React.useState<string>();
-    const [dateTimeDo, setDateTimeDo] = React.useState<string>();
+    const [dateTimeOt, setDateTimeOt] = useState<string>();
+    const [dateTimeDo, setDateTimeDo] = useState<string>();
 
-    const [openCreateOrderModal, setCreateOrderModalOpen] = React.useState(false);
+    const [openCreateOrderModal, setCreateOrderModalOpen] = useState(false);
     const handleOpenCreateOrderModal = () => setCreateOrderModalOpen(true);
     const handleCloseCreateOrderModal = () => {
         setCreateOrderModalOpen(false);
@@ -60,17 +60,20 @@ export default function Order() {
         {label: 'Внешний'},
     ]
 
-    React.useEffect(() => {
+
+    useEffect(() => {
+        if(key) return
+        setKey(true)
         DeviceService.getAllDevices().then((res) => {
             dispatch(res);
         }).catch(err => console.log(err));
     }, [])
 
-    const [showOrderTable, setShowOrderTable] = React.useState(false);
+    const [showOrderTable, setShowOrderTable] = useState(false);
     const handleShowOrderTable = () => setShowOrderTable(true);
 
-    const [selectedMaterial, setSelectedMaterial] = React.useState<string | null>();
-    const [materialAmount, setMaterialAmount] = React.useState<string | null>();
+    const [selectedMaterial, setSelectedMaterial] = useState<string | null>();
+    const [materialAmount, setMaterialAmount] = useState<string | null>();
     const addMaterial = () => {
         console.log(selectedMaterial);
         console.log(materialAmount);
