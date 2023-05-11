@@ -15,7 +15,7 @@ class Consumable(
     val title: String,
 
     @Column(name = "producer")
-    val producer: String,
+    val producer: String?,
 
     @Column(name = "unit_of_measurement")
     @Convert(converter = UnitTypeConverter::class)
@@ -51,7 +51,7 @@ class Consumable(
         csss: Int = this.csss,
         nr: Int = this.nr,
         title: String = this.title,
-        producer: String = this.producer,
+        producer: String? = this.producer,
         unitOfMeasurement: UnitTypes = this.unitOfMeasurement,
         isDeleted: Boolean = this.isDeleted,
         inStock: Int = this.inStock,

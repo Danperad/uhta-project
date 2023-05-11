@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class DeviceModel(
     val id: Int?,
     val title: String,
-    val producer: String,
+    val producer: String?,
     val csss: Int,
     val nr3: Int,
     val unitType: String,
