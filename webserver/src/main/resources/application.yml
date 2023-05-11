@@ -24,6 +24,8 @@ logging:
     path: "./logs"
   level:
     org:
+      springframework:
+        web: DEBUG
       hibernate:
         SQL: DEBUG
         type:

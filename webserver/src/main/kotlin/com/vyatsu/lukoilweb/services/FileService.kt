@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 class FileService(
     private val deviceRepository: DeviceRepository,
-    private val consumableRepository: ConsumableRepository
+    private val consumableRepository: ConsumableRepository,
+    private val deviceService: DeviceService,
+    private val consumableService: ConsumableService
 ) {
     @Transactional
     fun addToDatabaseFromFile(file: MultipartFile) {
@@ -24,12 +26,12 @@ class FileService(
         sheet.filter { it.getCell(6).stringCellValue == "Прибор" }.forEach {
             preparedDevices.add(getDeviceFromRow(it))
         }
-        deviceRepository.saveAll(preparedDevices)
+        preparedDevices.forEach { deviceService.saveDevice(it.toDeviceModel()) }
         val preparedConsumables = mutableListOf<Consumable>()
         sheet.filter { it.getCell(6).stringCellValue == "Расходник" }.forEach {
             preparedConsumables.add(getConsumableFromRow(it))
         }
-        consumableRepository.saveAll(preparedConsumables)
+        preparedConsumables.forEach { consumableService.saveConsumable(it.toConsumableModel()) }
     }
 
     private fun getDeviceFromRow(row: Row): Device {

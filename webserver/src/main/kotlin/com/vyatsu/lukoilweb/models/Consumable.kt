@@ -30,7 +30,7 @@ class Consumable(
     @Column(name = "count_in_operation")
     val inOperation: Int = 0,
 
-    @ManyToMany(cascade = [CascadeType.ALL])
+    @ManyToMany
     @JoinTable(
         name = "binding",
         joinColumns = [JoinColumn(name = "consumables_id")],
