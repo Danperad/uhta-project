@@ -18,7 +18,8 @@ class Device(
     val producer: String,
 
     @Column(name = "unit_of_measurement")
-    val unitOfMeasurement: String,
+    @Convert(converter = UnitTypeConverter::class)
+    val unitOfMeasurement: UnitTypes,
 
     @Column(name = "is_deleted")
     val isDeleted: Boolean = false,
@@ -48,14 +49,14 @@ class Device(
     }
 
     fun toDeviceWithoutConsumables() =
-        DeviceModel(id!!, title, producer, csss, nr, unitOfMeasurement, inOperation, inStock, emptySet())
+        DeviceModel(id!!, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, emptySet())
 
     fun copy(
         csss: Int = this.csss,
         nr: Int = this.nr,
         title: String = this.title,
         producer: String = this.producer,
-        unitOfMeasurement: String = this.unitOfMeasurement,
+        unitOfMeasurement: UnitTypes = this.unitOfMeasurement,
         isDeleted: Boolean = this.isDeleted,
         inStock: Int = this.inStock,
         inOperation: Int = this.inOperation,

@@ -2,6 +2,7 @@ package com.vyatsu.lukoilweb.services
 
 import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.Device
+import com.vyatsu.lukoilweb.models.UnitTypes
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
 import org.apache.poi.ss.usermodel.Row
@@ -36,7 +37,7 @@ class FileService(
         val nr3 = row.getCell(3).numericCellValue.toInt()
         val title = row.getCell(4).stringCellValue
         val producer = row.getCell(5).stringCellValue
-        return Device(csss, nr3, title, producer, "ШТ")
+        return Device(csss, nr3, title, producer, UnitTypes.PC)
     }
 
     private fun getConsumableFromRow(row: Row): Consumable {
@@ -46,6 +47,6 @@ class FileService(
         val producer = row.getCell(5).stringCellValue
         val parent = row.getCell(8).numericCellValue.toInt()
         val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(parent) ?: throw Exception()
-        return Consumable(csss, nr3, title, producer, "ШТ", devices = mutableListOf(device))
+        return Consumable(csss, nr3, title, producer, UnitTypes.PC, devices = mutableListOf(device))
     }
 }

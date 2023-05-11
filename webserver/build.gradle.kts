@@ -48,7 +48,7 @@ dependencies {
 	implementation("org.apache.poi:poi:5.2.3")
 	implementation("org.apache.poi:poi-ooxml:5.2.3")
 	//tests
-	testRuntimeOnly("com.h2database:h2")
+	testImplementation("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 //	  testImplementation("org.springframework.security:spring-security-test")
 }

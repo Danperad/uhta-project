@@ -20,7 +20,7 @@ data class DeviceModel(
             nr3,
             title,
             producer,
-            unitType,
+            UnitTypes.valueOf(unitType),
             false,
             inStock,
             inOperation,
