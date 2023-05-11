@@ -7,5 +7,6 @@ enum class UnitTypes(val value: String) {
     UPC("УПК"),
     KG("КГ"),
     T("Т"),
-    M2("М2")
+    M2("М2"),
+    RUL("РУЛ")
 }
