@@ -3,7 +3,6 @@ package com.vyatsu.lukoilweb.controllers
 import com.vyatsu.lukoilweb.models.ConsumableModel
 import com.vyatsu.lukoilweb.services.ConsumableService
 import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -26,7 +25,6 @@ class ConsumableController(private val consumableService: ConsumableService) {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(consumables)
     }
 
-    @Cacheable("consumable")
     @GetMapping("{csss}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getConsumableByCsss(@PathVariable csss: Int): ResponseEntity<ConsumableModel?> {
         logger.debug("Getting request get consumable with csss=$csss")

@@ -3,7 +3,6 @@ package com.vyatsu.lukoilweb.controllers
 import com.vyatsu.lukoilweb.models.DeviceModel
 import com.vyatsu.lukoilweb.services.DeviceService
 import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("api/devices")
 class DeviceController(private val deviceService: DeviceService) {
     private val logger = LoggerFactory.getLogger(DeviceController::class.java)
-
-    @Cacheable("devices")
     @GetMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getAllDevices(
         @RequestParam(required = false) start: Int?,
@@ -28,7 +25,6 @@ class DeviceController(private val deviceService: DeviceService) {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(devices)
     }
 
-    @Cacheable("device")
     @GetMapping("{csss}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getDeviceByCsss(@PathVariable csss: Int): ResponseEntity<DeviceModel?> {
         logger.debug("Getting request get device with csss=$csss")

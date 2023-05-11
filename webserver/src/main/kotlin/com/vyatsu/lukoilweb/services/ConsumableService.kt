@@ -50,8 +50,7 @@ class ConsumableService(
         val consumable =
             consumableRepository.findConsumableByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true) ?: return false
         return try {
-            consumableRepository.save(consumable)
-            true
+            consumableRepository.save(consumable).isDeleted
         } catch (e: Exception) {
             false
         }
