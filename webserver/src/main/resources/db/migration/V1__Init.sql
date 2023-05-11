@@ -4,12 +4,13 @@ CREATE TABLE uhta.devices
     csss                int           NOT NULL,
     nr_3                int           NOT NULL,
     title               nvarchar(100) NOT NULL,
-    producer            nvarchar(100) NOT NULL,
-    unit_of_measurement nvarchar(3)   NOT NULL CHECK ( unit_of_measurement IN (N'ШТ', N'КМП', N'М', N'УПК', N'КГ', N'Т', N'М2') ),
+    producer            nvarchar(100) NULL,
+    unit_of_measurement nvarchar(3)   NOT NULL,
     is_deleted          bit           NOT NULL DEFAULT (0),
     count_in_stock      int           NOT NULL DEFAULT (0),
     count_in_operation  int           NOT NULL DEFAULT (0),
-    CONSTRAINT pk_device PRIMARY KEY (device_id)
+    CONSTRAINT pk_device PRIMARY KEY (device_id),
+    CONSTRAINT c_device_unit CHECK (unit_of_measurement IN (N'ШТ', N'КМП', N'М', N'УПК', N'КГ', N'Т', N'М2', N'РУЛ'))
 );
 
 CREATE TABLE uhta.consumables
@@ -18,12 +19,13 @@ CREATE TABLE uhta.consumables
     csss                int           NOT NULL,
     nr_3                int           NOT NULL,
     title               nvarchar(100) NOT NULL,
-    producer            nvarchar(100) NOT NULL,
-    unit_of_measurement nvarchar(3)   NOT NULL CHECK ( unit_of_measurement IN (N'ШТ', N'КМП', N'М', N'УПК', N'КГ', N'Т', N'М2') ),
+    producer            nvarchar(100) NULL,
+    unit_of_measurement nvarchar(3)   NOT NULL,
     is_deleted          bit           NOT NULL DEFAULT (0),
     count_in_stock      int           NOT NULL DEFAULT (0),
     count_in_operation  int           NOT NULL DEFAULT (0),
-    CONSTRAINT pk_consumables PRIMARY KEY (consumables_id)
+    CONSTRAINT pk_consumables PRIMARY KEY (consumables_id),
+    CONSTRAINT c_consumable_unit CHECK (unit_of_measurement IN (N'ШТ', N'КМП', N'М', N'УПК', N'КГ', N'Т', N'М2', N'РУЛ'))
 );
 
 CREATE TABLE uhta.binding

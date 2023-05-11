@@ -2,7 +2,6 @@ package com.vyatsu.lukoilweb.models
 
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
-import java.util.NoSuchElementException
 
 @Converter
 class UnitTypeConverter : AttributeConverter<UnitTypes, String> {
@@ -19,6 +18,7 @@ class UnitTypeConverter : AttributeConverter<UnitTypes, String> {
             "КГ" -> UnitTypes.KG
             "Т" -> UnitTypes.T
             "М2" -> UnitTypes.M2
+            "РУЛ" -> UnitTypes.RUL
             else -> throw NoSuchElementException()
         }
     }
