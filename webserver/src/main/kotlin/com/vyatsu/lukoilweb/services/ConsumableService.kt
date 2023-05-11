@@ -1,6 +1,5 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.ConsumableModel
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
@@ -16,39 +15,27 @@ class ConsumableService(
     @Transactional
     fun findAllConsumablesPage(limit: Pageable, search: String?): Set<ConsumableModel> {
         val consumables = if (search == null) {
-            consumableRepository.findAll(limit)
+            consumableRepository.findAllByIsDeletedFalse(limit)
         } else {
-            consumableRepository.findAll(limit, search)
+            consumableRepository.findAllBySearch(limit, search)
         }
         return consumables.map { it.toConsumableModel() }.toSet()
     }
 
     @Transactional
     fun findConsumableByCsss(csss: Int): ConsumableModel? {
-        return consumableRepository.findConsumableByCsss(csss)?.toConsumableModel()
+        return consumableRepository.findConsumableByCsssAndIsDeletedFalse(csss)?.toConsumableModel()
     }
 
     @Transactional
     fun saveConsumable(consumableModel: ConsumableModel): ConsumableModel? {
-        var consumable = consumableModel.getConsumable()
-        val csssConsumable = consumableRepository.findConsumableByCsss(consumable.csss)
+        val consumable = consumableModel.getConsumable()
+        val csssConsumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(consumable.csss)
         if ((consumable.id == null || consumable.id == 0) && csssConsumable != null) return null
         if (consumableModel.devices.isNotEmpty()) {
-            consumable = Consumable(
-                consumable.csss,
-                consumable.nr,
-                consumable.title,
-                consumable.producer,
-                consumable.unitOfMeasurement,
-                consumable.isDeleted,
-                consumable.inStock,
-                consumable.inOperation,
-                consumable.devices,
-                consumable.id
-            )
             val devices =
-                consumableModel.devices.map { deviceRepository.findDeviceByCsss(it.csss) }
-            if (devices.any {it == null}) return null
+                consumableModel.devices.map { deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.csss) }
+            if (devices.any { it == null }) return null
             consumable.devices.addAll(devices.mapNotNull { it })
         }
         return try {
@@ -60,9 +47,10 @@ class ConsumableService(
 
     @Transactional
     fun deleteConsumable(csss: Int): Boolean {
-        val consumable = consumableRepository.findConsumableByCsss(csss) ?: return false
+        val consumable =
+            consumableRepository.findConsumableByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true) ?: return false
         return try {
-            consumableRepository.delete(consumable)
+            consumableRepository.save(consumable)
             true
         } catch (e: Exception) {
             false

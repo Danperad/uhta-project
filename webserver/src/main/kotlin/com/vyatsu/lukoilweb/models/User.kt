@@ -16,7 +16,8 @@ class User(
     @Column(name = "middle_name")
     val middleName: String?,
     @Column(name = "user_role")
-    val role: String,
+    @Convert(converter = RoleConverter::class)
+    val role: Roles,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)

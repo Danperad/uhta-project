@@ -3,10 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "3.0.3"
 	id("io.spring.dependency-management") version "1.1.0"
-	kotlin("jvm") version "1.7.22"
-	kotlin("plugin.spring") version "1.7.22"
-	kotlin("plugin.jpa") version "1.7.22"
-	kotlin("plugin.serialization") version "1.7.22"
+	kotlin("jvm") version "1.8.21"
+	kotlin("plugin.spring") version "1.8.21"
+	kotlin("plugin.jpa") version "1.8.21"
+	kotlin("plugin.serialization") version "1.8.21"
 	id("org.flywaydb.flyway") version "9.8.1"
 }
 
@@ -43,13 +43,12 @@ dependencies {
 	runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
 	runtimeOnly("org.flywaydb:flyway-core:9.8.1")
 	runtimeOnly("org.flywaydb:flyway-sqlserver")
-	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
 
 	// excel
 	implementation("org.apache.poi:poi:5.2.3")
 	implementation("org.apache.poi:poi-ooxml:5.2.3")
 	//tests
+	testImplementation("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 //	  testImplementation("org.springframework.security:spring-security-test")
 }

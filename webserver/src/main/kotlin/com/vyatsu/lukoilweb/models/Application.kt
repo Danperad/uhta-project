@@ -2,6 +2,8 @@ package com.vyatsu.lukoilweb.models
 
 import jakarta.persistence.*
 import java.util.*
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 @Entity
 @Table(name = "applications")
@@ -11,9 +13,10 @@ class Application(
     @Column(name = "title")
     val title: String,
     @Column(name = "application_period")
-    val period: Long,
+    val period: Duration,
     @Column(name = "applications_status")
-    val status: String,
+    @Convert(converter = ApplicationStatusConverter::class)
+    val status: ApplicationStatuses,
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "devices_application",
@@ -36,6 +39,6 @@ class Application(
     fun convertToModel(): ApplicationModel {
         val newDevices = this.devices.map { it.toDeviceWithoutConsumables() }.toSet()
         val newConsumables = this.consumables.map { it.toConsumableModelWithoutDevices() }.toSet()
-        return ApplicationModel(number!!, date.time, title, period, status, newDevices, newConsumables)
+        return ApplicationModel(number!!, date.time, title, period.toLong(DurationUnit.SECONDS), status.value, newDevices, newConsumables)
     }
 }
