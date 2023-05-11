@@ -28,7 +28,3 @@ logging:
         web: DEBUG
       hibernate:
         SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE

@@ -49,8 +49,7 @@ class DeviceService(
     fun deleteDevice(csss: Int): Boolean {
         val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true) ?: return false
         return try {
-            deviceRepository.save(device)
-            true
+            deviceRepository.save(device).isDeleted
         } catch (e: Exception) {
             false
         }
