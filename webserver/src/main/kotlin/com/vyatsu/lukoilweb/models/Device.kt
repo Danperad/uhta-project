@@ -4,12 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "devices")
-data class Device(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "device_id")
-    val id: Int,
-
+class Device(
     @Column(name = "csss")
     val csss: Int,
 
@@ -20,10 +15,11 @@ data class Device(
     val title: String,
 
     @Column(name = "producer")
-    val producer: String,
+    val producer: String?,
 
     @Column(name = "unit_of_measurement")
-    val unitOfMeasurement: String,
+    @Convert(converter = UnitTypeConverter::class)
+    val unitOfMeasurement: UnitTypes,
 
     @Column(name = "is_deleted")
     val isDeleted: Boolean = false,
@@ -40,15 +36,31 @@ data class Device(
         joinColumns = [JoinColumn(name = "device_id")],
         inverseJoinColumns = [JoinColumn(name = "consumables_id")]
     )
-    val consumables: List<Consumable> = listOf()
-) {
+    val consumables: MutableList<Consumable> = mutableListOf(),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "device_id", nullable = false)
+    var id: Int? = null
+) : Material {
     fun toDeviceModel(): DeviceModel {
-        val newConsumables = mutableSetOf<ConsumableModel>()
-        consumables.forEach {
-            newConsumables.add(it.toConsumableModel())
-        }
+        val newConsumables = consumables.map { it.toConsumableModelWithoutDevices() }.toSet()
 
-        return DeviceModel(id, title, producer, csss, nr, inOperation, inStock, newConsumables)
+        return toDeviceWithoutConsumables().copy(consumables = newConsumables)
     }
-    fun toDeviceWithoutConsumables() = DeviceModel(id, title, producer, csss, nr, inOperation, inStock, emptySet())
+
+    fun toDeviceWithoutConsumables() =
+        DeviceModel(id!!, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, emptySet())
+
+    fun copy(
+        csss: Int = this.csss,
+        nr: Int = this.nr,
+        title: String = this.title,
+        producer: String? = this.producer,
+        unitOfMeasurement: UnitTypes = this.unitOfMeasurement,
+        isDeleted: Boolean = this.isDeleted,
+        inStock: Int = this.inStock,
+        inOperation: Int = this.inOperation,
+        consumables: MutableList<Consumable> = this.consumables,
+        id: Int? = this.id
+    ) = Device(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation, consumables, id)
 }

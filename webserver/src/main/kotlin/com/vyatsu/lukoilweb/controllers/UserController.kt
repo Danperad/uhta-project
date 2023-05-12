@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @CrossOrigin(origins = ["*"])
 @RequestMapping("api/user")
 class UserController(private val userService: UserService) {
-    @PostMapping("auth", produces = ["application/json"])
+    @PostMapping("auth", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun authUser(authModel: AuthModel) : ResponseEntity<UserModel?> {
         val user = userService.getAuth(authModel)
         return if (user != null){

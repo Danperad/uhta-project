@@ -4,11 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "users")
-data class User(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    val id: Int,
+class User(
     @Column(name = "user_login")
     val login: String,
     @Column(name = "user_password")
@@ -20,7 +16,12 @@ data class User(
     @Column(name = "middle_name")
     val middleName: String?,
     @Column(name = "user_role")
-    val role: String
+    @Convert(converter = RoleConverter::class)
+    val role: Roles,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false)
+    var id: Int? = null
 ) {
-    fun toUserModel() = UserModel(id, login, lastName, firstName, middleName)
+    fun toUserModel() = UserModel(id!!, login, lastName, firstName, middleName)
 }

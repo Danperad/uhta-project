@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
     Autocomplete,
     Box,
@@ -12,33 +12,22 @@ import {
     Typography
 } from '@mui/material';
 import {style} from '../assets/css/CreateOrderModal';
-import {Material} from "../models";
 import DeviceService from "../services/DeviceService";
 import OrderTable from "./OrderTable";
 import {AddSnackbar} from "../redux/actions/snackbarAction";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
 
 export default function Order() {
+    const state = useSelector((state: RootState) => state);
     const dispatch = useDispatch<AppDispatch>();
-    const {useState} = React;
     const [checked, setChecked] = useState(false);
-    const [materials, setMaterials] = React.useState<Material[]>([]);
-    const [key, setKey] = React.useState<boolean>(false);
-    const OrderPerriod = () => (
-        <Stack direction="row" spacing={2} sx={{width: '40%'}}>
-            <TextField id="interval" label="Интервал" variant="outlined" size='small' type="number"
-                       InputProps={{
-                           inputProps: {min: 1}
-                       }}
-            />
-            <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit} sx={{width: '40%'}}
-                          renderInput={(params) => <TextField {...params} label="Ед. измерения"/>}
-            />
-        </Stack>
-    )
+    const [key, setKey] = useState(false);
 
-    const [openCreateOrderModal, setCreateOrderModalOpen] = React.useState(false);
+    const [dateTimeOt, setDateTimeOt] = useState<string>();
+    const [dateTimeDo, setDateTimeDo] = useState<string>();
+
+    const [openCreateOrderModal, setCreateOrderModalOpen] = useState(false);
     const handleOpenCreateOrderModal = () => setCreateOrderModalOpen(true);
     const handleCloseCreateOrderModal = () => {
         setCreateOrderModalOpen(false);
@@ -46,7 +35,7 @@ export default function Order() {
             setChecked(prev => !prev);
         }
     }
-    const handleChangeChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeChecked = () => {
         setChecked(prev => !prev)
     }
     //Dictionaries
@@ -59,24 +48,15 @@ export default function Order() {
         {label: 'Внешний'},
     ]
 
-    React.useEffect(() => {
-        if (key) return;
-        setKey(true);
-        DeviceService.getDevices().then((res: Material[]) => {
-            setMaterials(res);
-        }).catch(err => console.log(err));
-    }, [materials, key])
-
-    const [showOrderTable, setShowOrderTable] = React.useState(false);
+    const [showOrderTable, setShowOrderTable] = useState(false);
     const handleShowOrderTable = () => setShowOrderTable(true);
 
-    const [selectedMaterial, setSelectedMaterial] = React.useState<string | null>();
-    const [materialAmount, setMaterialAmount] = React.useState<string | null>();
+    const [selectedMaterial, setSelectedMaterial] = useState<string | null>();
+    const [materialAmount, setMaterialAmount] = useState<string | null>();
     const addMaterial = () => {
         console.log(selectedMaterial);
         console.log(materialAmount);
-        if(selectedMaterial === null || selectedMaterial === undefined)
-        {
+        if (selectedMaterial === null || selectedMaterial === undefined) {
             dispatch(AddSnackbar({
                 messageText: "Материал не выбран!",
                 messageType: "error",
@@ -84,8 +64,7 @@ export default function Order() {
             }))
             return
         }
-        if(materialAmount === null || materialAmount === undefined)
-        {
+        if (materialAmount === null || materialAmount === undefined) {
             dispatch(AddSnackbar({
                 messageText: "Не задано количество!",
                 messageType: "error",
@@ -101,6 +80,15 @@ export default function Order() {
         setSelectedMaterial(null);
         setMaterialAmount(null);
     }
+
+    useEffect(() => {
+        if (key) return
+        setKey(true)
+        DeviceService.getAllDevices().then((res) => {
+            dispatch(res);
+        }).catch(err => console.log(err));
+    }, [])
+
 
     return (
         <Box sx={{
@@ -179,15 +167,28 @@ export default function Order() {
                                     />
                                     <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
                                                       label="Период"/>
-                                    {checked ? <OrderPerriod/> : null}
+                                    {checked && <Stack direction="row" spacing={2} sx={{width: '40%'}}>
+                                        <TextField id="interval" label="Интервал" variant="outlined" size='small'
+                                                   type="number"
+                                                   InputProps={{
+                                                       inputProps: {min: 1}
+                                                   }}
+                                        />
+                                        <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
+                                                      sx={{width: '40%'}}
+                                                      renderInput={(params) => <TextField {...params}
+                                                                                          label="Ед. измерения"/>}
+                                        />
+                                    </Stack>}
                                 </Stack>
                                 <Typography mb={2}>Добавление материалов в заявку</Typography>
                                 <Stack direction="row" spacing={2}>
                                     <Autocomplete disablePortal id="combo-box-name-material" size='small'
-                                                  options={materials.map((row) => (row.name))}
+                                                  options={state.devices.map((row) => (row.title))}
                                                   sx={{width: '26%'}}
                                                   renderInput={(params) => <TextField {...params}
-                                                                                      label="Наименование" value={selectedMaterial}
+                                                                                      label="Наименование"
+                                                                                      value={selectedMaterial}
                                                                                       onChange={(newValue) => setSelectedMaterial(newValue.target.value)}/>}
                                     />
                                     <TextField id="amount-material" label="Количество" variant="outlined" size='small'

@@ -1,6 +1,6 @@
-import React from "react";
-import {Order} from "../models";
-import OrderService from "../services/OrderService";
+import {useEffect, useState} from "react";
+import {Application} from "../models";
+import OrderService from "../services/ApplicationService";
 import {
     Button,
     Paper,
@@ -15,16 +15,16 @@ import {
 } from "@mui/material";
 
 export default function MaterialTable() {
-    const [orders, setOrders] = React.useState<Order[]>([]);
-    const [key, setKey] = React.useState<boolean>(false);
+    const [orders, setOrders] = useState<Application[]>([]);
+    const [key, setKey] = useState<boolean>(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (key) return;
         setKey(true);
-        OrderService.getOrder().then((res: Order[]) => {
+        OrderService.getAllApplications().then((res: Application[]) => {
             setOrders(res);
         }).catch(err => console.log(err));
-    }, [orders, key])
+    }, [])
 
     return (
         <div className='section' style={{height: '100%', width: '100%'}}>
@@ -48,7 +48,7 @@ export default function MaterialTable() {
                                     sx={{'&:last-child td, &:last-child th': {border: 0}}}
                                 >
                                     <TableCell>{row.number}</TableCell>
-                                    <TableCell align="left">{row.name}</TableCell>
+                                    <TableCell align="left">{row.title}</TableCell>
                                     <TableCell align="center">{row.date.toString()}</TableCell>
                                     <TableCell align="center">{row.status}</TableCell>
                                     <TableCell align="center"><Button

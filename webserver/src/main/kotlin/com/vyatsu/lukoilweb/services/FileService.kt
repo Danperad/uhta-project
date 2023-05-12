@@ -2,6 +2,7 @@ package com.vyatsu.lukoilweb.services
 
 import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.Device
+import com.vyatsu.lukoilweb.models.UnitTypes
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
 import org.apache.poi.ss.usermodel.Row
@@ -13,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 class FileService(
     private val deviceRepository: DeviceRepository,
-    private val consumableRepository: ConsumableRepository
+    private val consumableRepository: ConsumableRepository,
+    private val deviceService: DeviceService,
+    private val consumableService: ConsumableService
 ) {
     @Transactional
     fun addToDatabaseFromFile(file: MultipartFile) {
@@ -23,12 +26,12 @@ class FileService(
         sheet.filter { it.getCell(6).stringCellValue == "Прибор" }.forEach {
             preparedDevices.add(getDeviceFromRow(it))
         }
-        deviceRepository.saveAll(preparedDevices)
+        preparedDevices.forEach { deviceService.saveDevice(it.toDeviceModel()) }
         val preparedConsumables = mutableListOf<Consumable>()
         sheet.filter { it.getCell(6).stringCellValue == "Расходник" }.forEach {
             preparedConsumables.add(getConsumableFromRow(it))
         }
-        consumableRepository.saveAll(preparedConsumables)
+        preparedConsumables.forEach { consumableService.saveConsumable(it.toConsumableModel()) }
     }
 
     private fun getDeviceFromRow(row: Row): Device {
@@ -36,7 +39,7 @@ class FileService(
         val nr3 = row.getCell(3).numericCellValue.toInt()
         val title = row.getCell(4).stringCellValue
         val producer = row.getCell(5).stringCellValue
-        return Device(0, csss, nr3, title, producer, "ШТ")
+        return Device(csss, nr3, title, producer, UnitTypes.PC)
     }
 
     private fun getConsumableFromRow(row: Row): Consumable {
@@ -45,7 +48,7 @@ class FileService(
         val title = row.getCell(4).stringCellValue
         val producer = row.getCell(5).stringCellValue
         val parent = row.getCell(8).numericCellValue.toInt()
-        val device = deviceRepository.findByCsss(parent) ?: throw Exception()
-        return Consumable(0, csss, nr3, title, producer, "ШТ", devices = listOf(device))
+        val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(parent) ?: throw Exception()
+        return Consumable(csss, nr3, title, producer, UnitTypes.PC, devices = mutableListOf(device))
     }
 }

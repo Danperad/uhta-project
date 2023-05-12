@@ -1,10 +1,9 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import {useState} from "react";
 
 import {
     Box,
     Button,
-    Checkbox,
-    FormControlLabel,
+    Modal,
     Paper,
     Stack,
     Table,
@@ -18,36 +17,77 @@ import {
 } from "@mui/material";
 
 import style from "../assets/css/ChangeDeviceModal.module.css"
-import {Material} from '../models';
+import styl from "../assets/css/ChildModalDeleteMaterial.module.css"
+import {Device} from '../models';
 import {AddSnackbar} from "../redux/actions/snackbarAction";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
+import DeviceService from "../services/DeviceService";
 
-export default (props: { receivedMaterial: Material }) => {
+function ChangeDeviceModal(props: { receivedMaterial: Device }) {
     const dispatch = useDispatch<AppDispatch>();
-    const [material, setMaterial] = useState<Material | null>(null);
-    const [checked, setChecked] = useState(false);
-    const handleChangeChecked = (event: ChangeEvent<HTMLInputElement>) => {
-        setChecked(prev => !prev)
+    const [device, setDevice] = useState<Device | null>(props.receivedMaterial);
+    const [openChildModal, setOpenChildModal] = useState(false);
+
+    const handleClose = () => {
+        setOpenChildModal(false);
+    };
+
+    const saveChange = () => {
+        DeviceService.saveDevice(device!).then(res => {
+            if (res) {
+                setOpenChildModal(false);
+                setDevice(null)
+                dispatch(AddSnackbar({
+                    messageText: "Прибор успешно изменен!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+                DeviceService.getAllDevices().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+            } else {
+                dispatch(AddSnackbar({
+                    messageText: "Не удалось изменить прибор!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+            }
+        })
+    }
+    const deleteDevice = () => {
+        DeviceService.deleteDeviceByCsss(device!.csss).then(res => {
+            if (res) {
+                setOpenChildModal(false);
+                setDevice(null)
+                dispatch(AddSnackbar({
+                    messageText: "Прибор успешно удален!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+                DeviceService.getAllDevices().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+
+            }
+            else {
+                dispatch(AddSnackbar({
+                    messageText: "Не удалось удалить прибор!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+            }
+        })
     }
 
-    const ParentKcccField = () => (
-        <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number' required
-                   style={{width: "14%", marginLeft: "28px"}}
-                   InputProps={{
-                       inputProps: {min: 1}
-                   }}
-        />
-    )
-
-    function changeMaterialInOperation(newValue: number, material: Material) {
+    function changeMaterialInOperation(newValue: number) {
         if (newValue >= 0) {
-            if (newValue < material.inOperation && material.inOperation - 1 >= 0) {
-                setMaterial({...material, inOperation: material.inOperation - 1})
+            if (newValue < device!.inOperation && device!.inOperation - 1 >= 0) {
+                setDevice({...device!, inOperation: device!.inOperation - 1})
                 return;
             }
-            if (newValue > material.inOperation && material.inStock - 1 >= 0) {
-                setMaterial({...material, inOperation: material.inOperation + 1, inStock: material.inStock - 1})
+            if (newValue > device!.inOperation && device!.inStock - 1 >= 0) {
+                setDevice({...device!, inOperation: device!.inOperation + 1, inStock: device!.inStock - 1})
             } else {
                 dispatch(AddSnackbar({
                     messageText: "Приборы на складе закончились!",
@@ -59,20 +99,16 @@ export default (props: { receivedMaterial: Material }) => {
         }
     }
 
-    function changeMaterialInStock(newValue: number, material: Material) {
+    function changeMaterialInStock(newValue: number) {
         if (newValue >= 0) {
-            if (newValue > material.inStock) {
-                setMaterial({...material, inStock: material.inStock + 1})
+            if (newValue > device!.inStock) {
+                setDevice({...device!, inStock: device!.inStock + 1})
             }
-            if (newValue < material.inStock) {
-                setMaterial({...material, inStock: material.inStock - 1})
+            if (newValue < device!.inStock) {
+                setDevice({...device!, inStock: device!.inStock - 1})
             }
         }
     }
-
-    useEffect(() => {
-        setMaterial(props.receivedMaterial);
-    },)
 
     return (
         <Box className={style.modalStyle}>
@@ -85,24 +121,19 @@ export default (props: { receivedMaterial: Material }) => {
                            style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                         <Stack direction="row" spacing={2} sx={{width: '100%'}}>
                             <Typography mb={2}>Редактирование прибора:</Typography>
-                            <Typography color="primary">{material !== null ? material!.name : ""}</Typography>
+                            <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
                             <Typography mb={2}>№КССС:</Typography>
-                            <Typography color="primary">{material !== null ? material!.kccc : ""}</Typography>
+                            <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
-                            <Typography color="primary">{material !== null ? material!.nr3 : ""}</Typography>
-                        </Stack>
-                        <Stack direction="row" spacing={2}>
-                            <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
-                                              label="Расходный материал"/>
-                            {checked ? <ParentKcccField/> : null}
+                            <Typography color="primary">{device !== null ? device!.nr3 : ""}</Typography>
                         </Stack>
                         <Stack direction="row" spacing={2} mt={1}>
                             <Typography mb={2}>Количество в эксплуатации:</Typography>
 
                             <TextField id="inOperationMaterial" variant="outlined" size='small' type="number"
                                        style={{width: "10%"}}
-                                       value={material !== null ? material!.inOperation : ""}
-                                       onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value), material!)}
+                                       value={device !== null ? device!.inOperation : ""}
+                                       onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                                        InputLabelProps={{
                                            shrink: true,
                                        }}
@@ -112,8 +143,8 @@ export default (props: { receivedMaterial: Material }) => {
                             <Typography mb={2}>Количество на складе:</Typography>
                             <TextField id="inStockMaterial" variant="outlined" size='small' type="number"
                                        style={{marginLeft: "65px", width: "10%"}}
-                                       value={material !== null ? material!.inStock : ""}
-                                       onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value), material!)}
+                                       value={device !== null ? device!.inStock : 0}
+                                       onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
                                        InputLabelProps={{
                                            shrink: true,
                                        }}
@@ -137,25 +168,23 @@ export default (props: { receivedMaterial: Material }) => {
                                         <TableCell align="right">Количество на складе</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                {material?.materials.length !== 0 ? (
+                                {device?.consumables.length !== 0 && (
                                     <TableBody>
-                                        {material?.materials.map((row) => (
+                                        {device?.consumables.map((row) => (
                                             <TableRow
                                                 key={row.nr3}
                                                 sx={{'&:last-child td, &:last-child th': {border: 0}}}
                                             >
                                                 <TableCell component="th" scope="row">
-                                                    {row.name}
+                                                    {row.title}
                                                 </TableCell>
                                                 <TableCell align="right">{row.nr3}</TableCell>
-                                                <TableCell align="right">{row.kccc}</TableCell>
+                                                <TableCell align="right">{row.csss}</TableCell>
                                                 <TableCell align="right">{row.inOperation}</TableCell>
                                                 <TableCell align="right">{row.inStock}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
-                                ) : (
-                                    <div></div>
                                 )}
                             </Table>
                         </TableContainer>
@@ -164,11 +193,34 @@ export default (props: { receivedMaterial: Material }) => {
                 </div>
                 <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                     <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                        <Button variant="contained">Удалить прибор</Button>
-                        <Button variant="contained">Сохранить изменения</Button>
+                        <Button variant="contained" onClick={ () => setOpenChildModal(true)}>Удалить прибор</Button>
+                        <Button variant="contained" onClick={saveChange}>Сохранить изменения</Button>
                     </Stack>
                 </Paper>
+                <Modal
+                    open={openChildModal}
+                    onClose={handleClose}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                >
+                    <Box className={styl.childModalStyle}>
+                        <Typography>Вы точно хотите удалить прибор? </Typography>
+                        <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
+                        <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
+                            <Typography>№КССС:</Typography>
+                            <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
+                            <Typography mb={2}>№R-3:</Typography>
+                            <Typography color="primary">{device !== null ? device!.nr3 : ""}</Typography>
+                        </Stack>
+                        <Stack direction='row' justifyContent="space-between" m={8}>
+                            <Button onClick={handleClose} variant="contained">Отмена</Button>
+                            <Button onClick={deleteDevice} variant="contained">Удалить</Button>
+                        </Stack>
+                    </Box>
+                </Modal>
             </Stack>
         </Box>
     )
 }
+
+export default ChangeDeviceModal;

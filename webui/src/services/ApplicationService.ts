@@ -1,19 +1,19 @@
 import axios from "axios";
-import {Order} from "../models";
+import {Application} from "../models";
 
 const ApiUrl = `${import.meta.env.VITE_API_URL}/api/applications/`
 
-class OrderService {
-    getOrder() {
+class ApplicationService {
+    getAllApplications() {
         return axios.get(ApiUrl).then(res => {
-            return res.data.orders as Order[];
+            return res.data.orders as Application[];
         })
     }
 
-    getOrderByNumber(num: number){
-        return axios.get(ApiUrl + "bynum?num=" + num )
+    getApplicationByNumber(num: number){
+        return axios.get(ApiUrl + "/" + num )
             .then((res) => {
-                return res.data as Order;
+                return res.data as Application;
             })
             .catch((error) => {
                 console.log(error);
@@ -23,4 +23,4 @@ class OrderService {
 
 }
 
-export default new OrderService();
+export default new ApplicationService();

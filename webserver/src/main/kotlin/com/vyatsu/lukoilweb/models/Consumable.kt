@@ -4,12 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "consumables")
-data class Consumable(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "consumables_id")
-    val id: Int,
-
+class Consumable(
     @Column(name = "csss")
     val csss: Int,
 
@@ -20,10 +15,11 @@ data class Consumable(
     val title: String,
 
     @Column(name = "producer")
-    val producer: String,
+    val producer: String?,
 
     @Column(name = "unit_of_measurement")
-    val unitOfMeasurement: String,
+    @Convert(converter = UnitTypeConverter::class)
+    val unitOfMeasurement: UnitTypes,
 
     @Column(name = "is_deleted")
     val isDeleted: Boolean = false,
@@ -38,9 +34,29 @@ data class Consumable(
     @JoinTable(
         name = "binding",
         joinColumns = [JoinColumn(name = "consumables_id")],
-        inverseJoinColumns = [JoinColumn(name = "device_id")]
+        inverseJoinColumns = [JoinColumn(name = "device_id")],
     )
-    val devices: List<Device> = listOf()
-) {
-    fun toConsumableModel() = ConsumableModel(id, title, producer, csss, nr, inOperation, inStock)
+    val devices: MutableList<Device> = mutableListOf(),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "consumables_id", nullable = false)
+    var id: Int? = null
+) : Material {
+    fun toConsumableModel() : ConsumableModel{
+        val newDevices = devices.map { it.toDeviceWithoutConsumables() }.toSet()
+        return toConsumableModelWithoutDevices().copy(devices = newDevices)
+    }
+    fun toConsumableModelWithoutDevices() = ConsumableModel(id, title, producer, csss, nr,unitOfMeasurement.value, inOperation, inStock)
+    fun copy(
+        csss: Int = this.csss,
+        nr: Int = this.nr,
+        title: String = this.title,
+        producer: String? = this.producer,
+        unitOfMeasurement: UnitTypes = this.unitOfMeasurement,
+        isDeleted: Boolean = this.isDeleted,
+        inStock: Int = this.inStock,
+        inOperation: Int = this.inOperation,
+        devices: MutableList<Device> = this.devices,
+        id: Int? = this.id
+    ) = Consumable(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation, devices, id)
 }
