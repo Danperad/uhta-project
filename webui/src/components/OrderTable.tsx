@@ -1,4 +1,4 @@
-import React from "react";
+import {useEffect, useState} from "react";
 import {Application} from "../models";
 import OrderService from "../services/ApplicationService";
 import {
@@ -15,16 +15,16 @@ import {
 } from "@mui/material";
 
 export default function MaterialTable() {
-    const [orders, setOrders] = React.useState<Application[]>([]);
-    const [key, setKey] = React.useState<boolean>(false);
+    const [orders, setOrders] = useState<Application[]>([]);
+    const [key, setKey] = useState<boolean>(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (key) return;
         setKey(true);
         OrderService.getAllApplications().then((res: Application[]) => {
             setOrders(res);
         }).catch(err => console.log(err));
-    }, [orders, key])
+    }, [])
 
     return (
         <div className='section' style={{height: '100%', width: '100%'}}>
