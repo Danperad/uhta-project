@@ -80,32 +80,6 @@ function ChangeDeviceModal(props: { receivedMaterial: Device }) {
         })
     }
 
-    function ChildModal() {
-        return (
-            <Modal
-                open={openChildModal}
-                onClose={handleClose}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-            >
-                <Box className={styl.childModalStyle}>
-                    <Typography>Вы точно хотите удалить прибор? </Typography>
-                    <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
-                    <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
-                        <Typography>№КССС:</Typography>
-                        <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
-                        <Typography mb={2}>№R-3:</Typography>
-                        <Typography color="primary">{device !== null ? device!.nr3 : ""}</Typography>
-                    </Stack>
-                    <Stack direction='row' justifyContent="space-between" m={8}>
-                        <Button onClick={handleClose} variant="contained">Отмена</Button>
-                        <Button onClick={deleteDevice} variant="contained">Удалить</Button>
-                    </Stack>
-                </Box>
-            </Modal>
-        );
-    }
-
     function changeMaterialInOperation(newValue: number) {
         if (newValue >= 0) {
             if (newValue < device!.inOperation && device!.inOperation - 1 >= 0) {
@@ -223,7 +197,27 @@ function ChangeDeviceModal(props: { receivedMaterial: Device }) {
                         <Button variant="contained" onClick={saveChange}>Сохранить изменения</Button>
                     </Stack>
                 </Paper>
-                <ChildModal/>
+                <Modal
+                    open={openChildModal}
+                    onClose={handleClose}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                >
+                    <Box className={styl.childModalStyle}>
+                        <Typography>Вы точно хотите удалить прибор? </Typography>
+                        <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
+                        <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
+                            <Typography>№КССС:</Typography>
+                            <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
+                            <Typography mb={2}>№R-3:</Typography>
+                            <Typography color="primary">{device !== null ? device!.nr3 : ""}</Typography>
+                        </Stack>
+                        <Stack direction='row' justifyContent="space-between" m={8}>
+                            <Button onClick={handleClose} variant="contained">Отмена</Button>
+                            <Button onClick={deleteDevice} variant="contained">Удалить</Button>
+                        </Stack>
+                    </Box>
+                </Modal>
             </Stack>
         </Box>
     )
