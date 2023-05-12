@@ -23,18 +23,6 @@ export default function Order() {
     const dispatch = useDispatch<AppDispatch>();
     const [checked, setChecked] = useState(false);
     const [key, setKey] = useState(false);
-    const OrderPerriod = () => (
-        <Stack direction="row" spacing={2} sx={{width: '40%'}}>
-            <TextField id="interval" label="Интервал" variant="outlined" size='small' type="number"
-                       InputProps={{
-                           inputProps: {min: 1}
-                       }}
-            />
-            <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit} sx={{width: '40%'}}
-                          renderInput={(params) => <TextField {...params} label="Ед. измерения"/>}
-            />
-        </Stack>
-    )
 
     const [dateTimeOt, setDateTimeOt] = useState<string>();
     const [dateTimeDo, setDateTimeDo] = useState<string>();
@@ -60,15 +48,6 @@ export default function Order() {
         {label: 'Внешний'},
     ]
 
-
-    useEffect(() => {
-        if(key) return
-        setKey(true)
-        DeviceService.getAllDevices().then((res) => {
-            dispatch(res);
-        }).catch(err => console.log(err));
-    }, [])
-
     const [showOrderTable, setShowOrderTable] = useState(false);
     const handleShowOrderTable = () => setShowOrderTable(true);
 
@@ -77,8 +56,7 @@ export default function Order() {
     const addMaterial = () => {
         console.log(selectedMaterial);
         console.log(materialAmount);
-        if(selectedMaterial === null || selectedMaterial === undefined)
-        {
+        if (selectedMaterial === null || selectedMaterial === undefined) {
             dispatch(AddSnackbar({
                 messageText: "Материал не выбран!",
                 messageType: "error",
@@ -86,8 +64,7 @@ export default function Order() {
             }))
             return
         }
-        if(materialAmount === null || materialAmount === undefined)
-        {
+        if (materialAmount === null || materialAmount === undefined) {
             dispatch(AddSnackbar({
                 messageText: "Не задано количество!",
                 messageType: "error",
@@ -103,6 +80,15 @@ export default function Order() {
         setSelectedMaterial(null);
         setMaterialAmount(null);
     }
+
+    useEffect(() => {
+        if (key) return
+        setKey(true)
+        DeviceService.getAllDevices().then((res) => {
+            dispatch(res);
+        }).catch(err => console.log(err));
+    }, [])
+
 
     return (
         <Box sx={{
@@ -181,7 +167,19 @@ export default function Order() {
                                     />
                                     <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
                                                       label="Период"/>
-                                    {checked ? <OrderPerriod/> : null}
+                                    {checked && <Stack direction="row" spacing={2} sx={{width: '40%'}}>
+                                        <TextField id="interval" label="Интервал" variant="outlined" size='small'
+                                                   type="number"
+                                                   InputProps={{
+                                                       inputProps: {min: 1}
+                                                   }}
+                                        />
+                                        <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
+                                                      sx={{width: '40%'}}
+                                                      renderInput={(params) => <TextField {...params}
+                                                                                          label="Ед. измерения"/>}
+                                        />
+                                    </Stack>}
                                 </Stack>
                                 <Typography mb={2}>Добавление материалов в заявку</Typography>
                                 <Stack direction="row" spacing={2}>
@@ -189,7 +187,8 @@ export default function Order() {
                                                   options={state.devices.map((row) => (row.title))}
                                                   sx={{width: '26%'}}
                                                   renderInput={(params) => <TextField {...params}
-                                                                                      label="Наименование" value={selectedMaterial}
+                                                                                      label="Наименование"
+                                                                                      value={selectedMaterial}
                                                                                       onChange={(newValue) => setSelectedMaterial(newValue.target.value)}/>}
                                     />
                                     <TextField id="amount-material" label="Количество" variant="outlined" size='small'

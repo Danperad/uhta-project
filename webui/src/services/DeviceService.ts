@@ -49,16 +49,6 @@ class DeviceService {
                 return res.data as boolean
             })
     }
-
-    changeDeviceByCsss(csss: number){
-        const params : LooseObject = {}
-        params['csss'] = csss
-        return axios.post(`${ApiUrl}change`, {},{params: params})
-            .then((res) => {
-                return res.data as boolean
-            })
-    }
-
 }
 
 export default new DeviceService();

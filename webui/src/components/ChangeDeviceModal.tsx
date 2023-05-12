@@ -24,7 +24,7 @@ import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
 import DeviceService from "../services/DeviceService";
 
-export default (props: { receivedMaterial: Device }) => {
+function ChangeDeviceModal(props: { receivedMaterial: Device }) {
     const dispatch = useDispatch<AppDispatch>();
     const [device, setDevice] = useState<Device | null>(props.receivedMaterial);
     const [openChildModal, setOpenChildModal] = useState(false);
@@ -228,3 +228,5 @@ export default (props: { receivedMaterial: Device }) => {
         </Box>
     )
 }
+
+export default ChangeDeviceModal;

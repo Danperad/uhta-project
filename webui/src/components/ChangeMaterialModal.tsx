@@ -1,44 +1,94 @@
 import {
-    Autocomplete,
     Box,
-    Button,
-    Checkbox,
-    FormControlLabel,
+    Button, Modal,
     Paper,
     Stack,
     TextField,
     Typography
 } from "@mui/material";
 import style from "../assets/css/ChangeDeviceModal.module.css";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Consumable, Device} from '../models';
 import {AddSnackbar} from "../redux/actions/snackbarAction";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../redux/store";
+import DeviceService from "../services/DeviceService";
+import styl from "../assets/css/ChildModalDeleteMaterial.module.css";
+import ConsumableService from "../services/ConsumableService";
 
 export default (props: { receivedMaterial: Consumable }) => {
-    const state = useSelector((state: RootState) => state);
     const dispatch = useDispatch<AppDispatch>();
-    const [consumable, setConsumable] = useState<Consumable>(props.receivedMaterial);
-    const [checked, setChecked] = useState(true);
-    const [materialTitle, setMaterialTitle] = useState<string | null>();
-    const [kccc, setKccc] = useState<string | null>();
+    const [consumable, setConsumable] = useState<Consumable | null>(props.receivedMaterial);
+    const [csss, setCsss] = useState<string | null>();
     const [amount, setAmount] = useState<string | null>();
+    const [device, setDevice] = useState<Device | null>();
 
-    const [autocompleteTitleValue, setAutocompleteTitleValue] = useState<Device | null>(null);
 
-    const handleChangeChecked = () => {
-        setChecked(prev => !prev)
+    const [openChildModal, setOpenChildModal] = useState(false);
+    const [openChildModalAddParent, setOpenChildModalAddParent] = useState(false);
+
+    const handleClose = () => {
+        setOpenChildModal(false);
+    };
+    const handleCloseAddParent = () => {
+        setOpenChildModalAddParent(false);
+    }
+
+    const saveChange = () => {
+        ConsumableService.saveConsumable(consumable!).then(res => {
+            if (res) {
+                setOpenChildModal(false);
+                setConsumable(null);
+                dispatch(AddSnackbar({
+                    messageText: "Расходник успешно изменен!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+                ConsumableService.getAllConsumables().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+            } else {
+                dispatch(AddSnackbar({
+                    messageText: "Не удалось изменить расходник!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+            }
+        })
+    }
+    const deleteConsumable = () => {
+        ConsumableService.deleteConsumableByCsss(consumable!.csss).then(res => {
+            if (res) {
+                setOpenChildModal(false);
+                setConsumable(null)
+                dispatch(AddSnackbar({
+                    messageText: "Расходник успешно удален!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+                ConsumableService.getAllConsumables().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+
+            }
+            else {
+                dispatch(AddSnackbar({
+                    messageText: "Не удалось удалить расходник!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+            }
+        })
     }
 
     function changeMaterialInOperation(newValue: number) {
         if (newValue >= 0) {
-            if (newValue < consumable.inOperation && consumable.inOperation - 1 >= 0) {
-                setConsumable({...consumable, inOperation: consumable.inOperation - 1})
+            if (newValue < consumable!.inOperation && consumable!.inOperation - 1 >= 0) {
+                setConsumable({...consumable!, inOperation: consumable!.inOperation - 1})
                 return;
             }
-            if (newValue > consumable.inOperation && consumable.inStock - 1 >= 0) {
-                setConsumable({...consumable, inOperation: consumable.inOperation + 1, inStock: consumable.inStock - 1})
+            if (newValue > consumable!.inOperation && consumable!.inStock - 1 >= 0) {
+                setConsumable({...consumable!, inOperation: consumable!.inOperation + 1, inStock: consumable!.inStock - 1})
             } else {
                 dispatch(AddSnackbar({
                     messageText: "Приборы на складе закончились!",
@@ -46,31 +96,95 @@ export default (props: { receivedMaterial: Consumable }) => {
                     key: +new Date()
                 }))
             }
-
         }
     }
 
     function changeMaterialInStock(newValue: number) {
         if (newValue >= 0) {
-            if (newValue > consumable.inStock) {
-                setConsumable({...consumable, inStock: consumable.inStock + 1})
+            if (newValue > consumable!.inStock) {
+                setConsumable({...consumable!, inStock: consumable!.inStock + 1})
             }
-            if (newValue < consumable.inStock) {
-                setConsumable({...consumable, inStock: consumable.inStock - 1})
+            if (newValue < consumable!.inStock) {
+                setConsumable({...consumable!, inStock: consumable!.inStock - 1})
             }
         }
     }
 
-    function CheckMaterialTitle(event: any, value: string) {
-        for(var i = 0; i < state.devices.length; i++)
+    const checkCorrectData = () => {
+        let device : Device | null = null;
+        if(csss !== null || csss !== '' || csss !== undefined)
         {
-            if(value === state.devices[i].title)
-            {
-                setMaterialTitle(value);
-                setAutocompleteTitleValue(state.devices[i]);
-            }
+            DeviceService.getDeviceByCsss(parseInt(csss!)).then((res) => {
+                if (res === null){
+                    dispatch(AddSnackbar({
+                        messageText: "Прибор с КССС: " + csss + " не найден!",
+                        messageType: "error",
+                        key: +new Date()
+                    }))
+                    return;
+                }
+                device = res;
+            });
         }
+        if(amount === null || amount === '' || amount === undefined)
+        {
+            dispatch(AddSnackbar({
+                messageText: "Количество должно быть больше 0",
+                messageType: "error",
+                key: +new Date()
+            }))
+            setDevice(null);
+            return;
+        }
+        if(parseInt(amount!) > consumable!.inStock)
+        {
+            dispatch(AddSnackbar({
+                messageText: "Недостаточно на складе!",
+                messageType: "error",
+                key: +new Date()
+            }))
+            setDevice(null);
+            return;
+        }
+        setDevice(device);
+        setOpenChildModalAddParent(true);
     }
+
+    const bind = () => {
+        setConsumable({...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
+            inStock: consumable!.inOperation - parseInt(amount!), devices: [device!]})
+        ConsumableService.saveConsumable({...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
+            inStock: consumable!.inOperation - parseInt(amount!), devices: [device!]}).then(res => {
+            if (res) {
+                setOpenChildModal(false);
+                setDevice(null)
+                dispatch(AddSnackbar({
+                    messageText: "Привязка успешно добавлена!",
+                    messageType: "success",
+                    key: +new Date()
+                }))
+                DeviceService.getAllDevices().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+            } else {
+                dispatch(AddSnackbar({
+                    messageText: "Не удалось добавить привязку!",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+            }
+        })
+    }
+
+    useEffect(() => {
+        if(device !== null)
+        {
+            setOpenChildModalAddParent(true);
+        }
+        else {
+            setOpenChildModalAddParent(false);
+        }
+    })
 
     return (
         <Box className={style.modalStyle}>
@@ -87,10 +201,6 @@ export default (props: { receivedMaterial: Consumable }) => {
                             <Typography color="primary">{consumable !== null ? consumable!.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
                             <Typography color="primary">{consumable !== null ? consumable!.nr3 : ""}</Typography>
-                        </Stack>
-                        <Stack direction="row" spacing={2}>
-                            <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
-                                              label="Прибор"/>
                         </Stack>
                         <Stack direction="row" spacing={2} mt={1}>
                             <Typography mb={2}>Количество на складе:</Typography>
@@ -112,32 +222,23 @@ export default (props: { receivedMaterial: Consumable }) => {
                             <Typography mb={2}>КССС привязки материала к приборам:</Typography>
                             <Stack spacing={2}>
                                 <Stack direction="row" width='100%' spacing={1}>
-                                    <Autocomplete disablePortal id="combo-box-title" size='small' options={state.devices}
-                                                  isOptionEqualToValue={(materials, value) => materials.id === value.id}
-                                                  getOptionLabel={(option) => option.title}
-                                                  onInputChange={CheckMaterialTitle} value={autocompleteTitleValue}
-
-                                                  renderInput={(params) => <TextField {...params} label="Наименование"
-                                                                                      required
-                                                                                      value={materialTitle}
-                                                                                      onChange={(newValue) => setMaterialTitle(newValue.target.value)}/>}
-                                                  style={{width: '30%'}}
-                                    />
                                     <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number"
                                                required
-                                               value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
+                                               value={csss} onChange={(newValue) => setCsss(newValue.target.value)}
                                                InputProps={{
                                                    inputProps: {min: 1}
                                                }}
                                     />
                                     <TextField id="amount-material" label="Количество" variant="outlined" size='small'
                                                type="number" required
-                                               value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
-                                               InputProps={{
-                                                   inputProps: {min: 1}
+                                               value={amount}
+                                               onChange={(newValue) => setAmount(newValue.target.value)}
+                                               //onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                               InputLabelProps={{
+                                                   shrink: true,
                                                }}
                                     />
-                                    <Button variant="contained">добавить</Button>
+                                    <Button variant="contained" onClick={checkCorrectData}>добавить</Button>
                                 </Stack>
                                 <div>
                                     {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0  && (
@@ -175,10 +276,54 @@ export default (props: { receivedMaterial: Consumable }) => {
                 </div>
                 <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                     <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                        <Button variant="contained">Удалить материал</Button>
-                        <Button variant="contained">Сохранить изменения</Button>
+                        <Button variant="contained" onClick={ () => setOpenChildModal(true)}>Удалить материал</Button>
+                        <Button variant="contained" onClick={saveChange}>Сохранить изменения</Button>
                     </Stack>
                 </Paper>
+                <Modal
+                    open={openChildModal}
+                    onClose={handleClose}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                >
+                    <Box className={styl.childModalStyle}>
+                        <Typography>Вы точно хотите удалить расходник? </Typography>
+                        <Typography color="primary">{consumable !== null ? consumable!.title : ""}</Typography>
+                        <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
+                            <Typography>№КССС:</Typography>
+                            <Typography color="primary">{consumable !== null ? consumable!.csss : ""}</Typography>
+                            <Typography mb={2}>№R-3:</Typography>
+                            <Typography color="primary">{consumable !== null ? consumable!.nr3 : ""}</Typography>
+                        </Stack>
+                        <Stack direction='row' justifyContent="space-between" m={8}>
+                            <Button onClick={handleClose} variant="contained">Отмена</Button>
+                            <Button onClick={deleteConsumable} variant="contained">Удалить</Button>
+                        </Stack>
+                    </Box>
+                </Modal>
+                {device !== undefined &&
+                    <Modal
+                        open={openChildModalAddParent}
+                        onClose={handleCloseAddParent}
+                        aria-labelledby="child-modal-add-parent-title"
+                        aria-describedby="child-modal-add-parent-description"
+                    >
+                        <Box className={styl.childModalStyle}>
+                            <Typography>Вы точно хотите привязать расходник  </Typography>
+                            <Typography color="primary">{consumable !== null ? consumable!.title : ""}</Typography>
+                            <Typography> к прибору  </Typography>
+                            <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
+                                <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
+                                <Typography>№КССС:</Typography>
+                                <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
+                            </Stack>
+                            <Stack direction='row' justifyContent="space-between" m={8}>
+                                <Button onClick={handleCloseAddParent} variant="contained">Отмена</Button>
+                                <Button onClick={bind} variant="contained">Привязать</Button>
+                            </Stack>
+                        </Box>
+                    </Modal>
+                }
             </Stack>
         </Box>
     )

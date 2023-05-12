@@ -62,8 +62,7 @@ export default function DeviceAndConsumable() {
     }
 
     function CheckMaterialUnit(event: any, value: string) {
-        if (!(value === "ШТ" || value === "УПК" || value === "КМП" || value === "РУЛ"
-            || value === "КГ" || value === "Т" || value === "М" || value === "М2")) {
+        if (!Unit.some((v, _, __) => v === value)) {
             setAutocompleteUnitValue('');
             return;
         }
