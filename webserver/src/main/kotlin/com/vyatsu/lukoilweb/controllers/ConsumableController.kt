@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.controllers
 
-import com.vyatsu.lukoilweb.models.ConsumableModel
+import com.vyatsu.lukoilweb.models.ConsumableDTO
 import com.vyatsu.lukoilweb.services.ConsumableService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
@@ -19,14 +19,14 @@ class ConsumableController(private val consumableService: ConsumableService) {
         @RequestParam(required = false) start: Int?,
         @RequestParam(required = false) count: Int?,
         @RequestParam(required = false) search: String?
-    ): ResponseEntity<Set<ConsumableModel>> {
+    ): ResponseEntity<Set<ConsumableDTO>> {
         logger.debug("Getting request get all consumables with start=$start, count=$count, search=$search")
         val consumables = consumableService.findAllConsumablesPage(PageRequest.of(start ?: 0, count ?: 10), search)
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(consumables)
     }
 
     @GetMapping("{csss}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getConsumableByCsss(@PathVariable csss: Int): ResponseEntity<ConsumableModel?> {
+    fun getConsumableByCsss(@PathVariable csss: Int): ResponseEntity<ConsumableDTO?> {
         logger.debug("Getting request get consumable with csss=$csss")
         val consumable = consumableService.findConsumableByCsss(csss)
         return if (consumable != null) {
@@ -37,9 +37,9 @@ class ConsumableController(private val consumableService: ConsumableService) {
     }
 
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun saveConsumable(@RequestBody @Validated consumableModel: ConsumableModel): ResponseEntity<ConsumableModel> {
-        logger.debug("Getting request post consumable {}", consumableModel)
-        val consumable = consumableService.saveConsumable(consumableModel)
+    fun saveConsumable(@RequestBody @Validated consumableDTO: ConsumableDTO): ResponseEntity<ConsumableDTO> {
+        logger.debug("Getting request post consumable {}", consumableDTO)
+        val consumable = consumableService.saveConsumable(consumableDTO)
         return if (consumable != null) {
             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(consumable)
         } else {

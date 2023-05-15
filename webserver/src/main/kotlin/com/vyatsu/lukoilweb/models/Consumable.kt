@@ -42,11 +42,11 @@ class Consumable(
     @Column(name = "consumables_id", nullable = false)
     var id: Int? = null
 ) : Material {
-    fun toConsumableModel() : ConsumableModel{
-        val newDevices = devices.map { it.toDeviceWithoutConsumables() }.toSet()
-        return toConsumableModelWithoutDevices().copy(devices = newDevices)
+    fun mapToConsumableDTO() : ConsumableDTO{
+        val newDevices = devices.map { it.mapToDeviceDTOWithoutConsumables() }.toSet()
+        return mapToConsumableDTOWithoutDevices().copy(devices = newDevices)
     }
-    fun toConsumableModelWithoutDevices() = ConsumableModel(id, title, producer, csss, nr,unitOfMeasurement.value, inOperation, inStock)
+    fun mapToConsumableDTOWithoutDevices() = ConsumableDTO(id, title, producer, csss, nr,unitOfMeasurement.value, inOperation, inStock)
     fun copy(
         csss: Int = this.csss,
         nr: Int = this.nr,

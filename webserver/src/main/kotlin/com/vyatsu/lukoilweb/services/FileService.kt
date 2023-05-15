@@ -26,12 +26,12 @@ class FileService(
         sheet.filter { it.getCell(6).stringCellValue == "Прибор" }.forEach {
             preparedDevices.add(getDeviceFromRow(it))
         }
-        preparedDevices.forEach { deviceService.saveDevice(it.toDeviceModel()) }
+        preparedDevices.forEach { deviceService.saveDevice(it.mapToDeviceDTO()) }
         val preparedConsumables = mutableListOf<Consumable>()
         sheet.filter { it.getCell(6).stringCellValue == "Расходник" }.forEach {
             preparedConsumables.add(getConsumableFromRow(it))
         }
-        preparedConsumables.forEach { consumableService.saveConsumable(it.toConsumableModel()) }
+        preparedConsumables.forEach { consumableService.saveConsumable(it.mapToConsumableDTO()) }
     }
 
     private fun getDeviceFromRow(row: Row): Device {

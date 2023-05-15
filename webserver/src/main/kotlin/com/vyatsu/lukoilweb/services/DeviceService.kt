@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.DeviceModel
+import com.vyatsu.lukoilweb.models.DeviceDTO
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
 import org.springframework.data.domain.Pageable
@@ -13,33 +13,34 @@ class DeviceService(
     private val consumableRepository: ConsumableRepository
 ) {
     @Transactional
-    fun findDeviceByCsss(nr: Int): DeviceModel? {
-        return deviceRepository.findDeviceByCsssAndIsDeletedFalse(nr)?.toDeviceModel()
+    fun findDeviceByCsss(nr: Int): DeviceDTO? {
+        return deviceRepository.findDeviceByCsssAndIsDeletedFalse(nr)?.mapToDeviceDTO()
     }
 
     @Transactional
-    fun findAllDevicePage(limit: Pageable, search: String?): Set<DeviceModel> {
+    fun findAllDevicePage(limit: Pageable, search: String?): Set<DeviceDTO> {
         val devices = if (search == null) {
             deviceRepository.findAllByIsDeletedFalse(limit)
         } else {
             deviceRepository.findAllBySearch(limit, search)
         }
-        return devices.map { it.toDeviceModel() }.toSet()
+        return devices.map { it.mapToDeviceDTO() }.toSet()
     }
 
     @Transactional
-    fun saveDevice(deviceModel: DeviceModel): DeviceModel? {
-        val device = deviceModel.getDevice()
+    fun saveDevice(deviceDTO: DeviceDTO): DeviceDTO? {
+        val device = deviceDTO.mapToDevice()
         val csssDevice = deviceRepository.findDeviceByCsssAndIsDeletedFalse(device.csss)
         if ((device.id == null || device.id == 0) && csssDevice != null) return null
-        if (deviceModel.consumables.isNotEmpty()) {
+        if (deviceDTO.consumables.isNotEmpty()) {
             val consumables =
-                deviceModel.consumables.map { consumableRepository.findConsumableByCsssAndIsDeletedFalse(it.csss) }
+                deviceDTO.consumables.map { consumableRepository.findConsumableByCsssAndIsDeletedFalse(it.csss) }
             if (consumables.any{it == null}) return null
+            device.consumables.clear()
             device.consumables.addAll(consumables.mapNotNull { it })
         }
         return try {
-            deviceRepository.save(device).toDeviceModel()
+            deviceRepository.save(device).mapToDeviceDTO()
         } catch (e: Exception) {
             null
         }

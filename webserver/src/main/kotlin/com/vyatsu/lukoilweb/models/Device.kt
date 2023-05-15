@@ -42,14 +42,14 @@ class Device(
     @Column(name = "device_id", nullable = false)
     var id: Int? = null
 ) : Material {
-    fun toDeviceModel(): DeviceModel {
-        val newConsumables = consumables.map { it.toConsumableModelWithoutDevices() }.toSet()
+    fun mapToDeviceDTO(): DeviceDTO {
+        val newConsumables = consumables.map { it.mapToConsumableDTOWithoutDevices() }.toSet()
 
-        return toDeviceWithoutConsumables().copy(consumables = newConsumables)
+        return mapToDeviceDTOWithoutConsumables().copy(consumables = newConsumables)
     }
 
-    fun toDeviceWithoutConsumables() =
-        DeviceModel(id!!, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, emptySet())
+    fun mapToDeviceDTOWithoutConsumables() =
+        DeviceDTO(id!!, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, emptySet())
 
     fun copy(
         csss: Int = this.csss,
