@@ -23,5 +23,5 @@ class User(
     @Column(name = "user_id", nullable = false)
     var id: Int? = null
 ) {
-    fun toUserModel() = UserModel(id!!, login, lastName, firstName, middleName)
+    fun mapToUserDTO() = UserDTO(id!!, login, lastName, firstName, middleName)
 }

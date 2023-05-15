@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.controllers
 
-import com.vyatsu.lukoilweb.models.DeviceModel
+import com.vyatsu.lukoilweb.models.DeviceDTO
 import com.vyatsu.lukoilweb.services.DeviceService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
@@ -19,14 +19,14 @@ class DeviceController(private val deviceService: DeviceService) {
         @RequestParam(required = false) start: Int?,
         @RequestParam(required = false) count: Int?,
         @RequestParam(required = false) search: String?
-    ): ResponseEntity<Set<DeviceModel>> {
+    ): ResponseEntity<Set<DeviceDTO>> {
         logger.debug("Getting request get all devices with start=$start, count=$count, search=$search")
         val devices = deviceService.findAllDevicePage(PageRequest.of(start ?: 0, count ?: 10), search)
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(devices)
     }
 
     @GetMapping("{csss}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getDeviceByCsss(@PathVariable csss: Int): ResponseEntity<DeviceModel?> {
+    fun getDeviceByCsss(@PathVariable csss: Int): ResponseEntity<DeviceDTO?> {
         logger.debug("Getting request get device with csss=$csss")
         val device = deviceService.findDeviceByCsss(csss)
         return if (device != null) {
@@ -37,9 +37,9 @@ class DeviceController(private val deviceService: DeviceService) {
     }
 
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun saveDevice(@RequestBody @Validated deviceModel: DeviceModel) : ResponseEntity<DeviceModel?> {
-        logger.debug("Getting request post device {}", deviceModel)
-        val device = deviceService.saveDevice(deviceModel)
+    fun saveDevice(@RequestBody @Validated deviceDTO: DeviceDTO) : ResponseEntity<DeviceDTO?> {
+        logger.debug("Getting request post device {}", deviceDTO)
+        val device = deviceService.saveDevice(deviceDTO)
         return if (device != null) {
             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(device)
         } else {

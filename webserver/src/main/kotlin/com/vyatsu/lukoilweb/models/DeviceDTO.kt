@@ -3,18 +3,18 @@ package com.vyatsu.lukoilweb.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DeviceModel(
-    val id: Int?,
+data class DeviceDTO(
+    val id: Int? = null,
     val title: String,
-    val producer: String?,
+    val producer: String? = null,
     val csss: Int,
     val nr3: Int,
     val unitType: String,
     val inOperation: Int,
     val inStock: Int,
-    val consumables: Set<ConsumableModel>
+    val consumables: Set<ConsumableDTO> = setOf()
 ) {
-    fun getDevice(): Device {
+    fun mapToDevice(): Device {
         return Device(
             csss,
             nr3,
@@ -24,7 +24,7 @@ data class DeviceModel(
             false,
             inStock,
             inOperation,
-            consumables.map { it.getConsumable() }.toMutableList(),
+            consumables.map { it.mapToConsumable() }.toMutableList(),
             id
         )
     }

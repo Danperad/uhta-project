@@ -36,9 +36,9 @@ class Application(
     @Column(name = "application_id", nullable = false)
     var number: Int? = null
 ) {
-    fun convertToModel(): ApplicationModel {
-        val newDevices = this.devices.map { it.toDeviceWithoutConsumables() }.toSet()
-        val newConsumables = this.consumables.map { it.toConsumableModelWithoutDevices() }.toSet()
-        return ApplicationModel(number!!, date.time, title, period.toLong(DurationUnit.SECONDS), status.value, newDevices, newConsumables)
+    fun mapToApplicationDTO(): ApplicationDTO {
+        val newDevices = this.devices.map { it.mapToDeviceDTOWithoutConsumables() }.toSet()
+        val newConsumables = this.consumables.map { it.mapToConsumableDTOWithoutDevices() }.toSet()
+        return ApplicationDTO(number!!, date.time, title, period.toLong(DurationUnit.SECONDS), status.value, newDevices, newConsumables)
     }
 }
