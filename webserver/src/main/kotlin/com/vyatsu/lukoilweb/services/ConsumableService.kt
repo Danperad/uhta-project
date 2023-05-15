@@ -49,7 +49,7 @@ class ConsumableService(
     @Transactional
     fun deleteConsumable(csss: Int): Boolean {
         val consumable =
-            consumableRepository.findConsumableByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true) ?: return false
+            consumableRepository.findConsumableByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true, devices = mutableListOf()) ?: return false
         return try {
             consumableRepository.save(consumable).isDeleted
         } catch (e: Exception) {

@@ -23,8 +23,7 @@ logging:
   file:
     path: "./logs"
   level:
+    com.vyatsu.lukoilweb.controllers: DEBUG
     org:
-      springframework:
-        web: DEBUG
       hibernate:
         SQL: DEBUG
