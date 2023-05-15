@@ -48,7 +48,7 @@ class DeviceService(
 
     @Transactional
     fun deleteDevice(csss: Int): Boolean {
-        val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true) ?: return false
+        val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true, consumables = mutableListOf()) ?: return false
         return try {
             deviceRepository.save(device).isDeleted
         } catch (e: Exception) {
