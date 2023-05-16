@@ -17,4 +17,9 @@ data class ConsumableDTO(
     fun mapToConsumable() : Consumable{
         return Consumable(csss,nr3,title, producer, UnitTypeConverter().convertToEntityAttribute(unitType), false, inStock, inOperation, devices.map { it.mapToDevice() }.toMutableList(), id)
     }
+
+    override fun toString(): String {
+        return "ConsumableDTO(id=$id, title='$title', producer=$producer, csss=$csss, nr3=$nr3, unitType='$unitType', inOperation=$inOperation, inStock=$inStock, devices=$devices)"
+    }
+
 }

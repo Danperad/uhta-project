@@ -24,6 +24,3 @@ logging:
     path: "./logs"
   level:
     com.vyatsu.lukoilweb.controllers: DEBUG
-    org:
-      hibernate:
-        SQL: DEBUG
