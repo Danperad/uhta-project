@@ -1,11 +1,4 @@
-import {
-    Box,
-    Button, Modal,
-    Paper,
-    Stack,
-    TextField,
-    Typography
-} from "@mui/material";
+import {Box, Button, Modal, Paper, Stack, TextField, Typography} from "@mui/material";
 import style from "../assets/css/ChangeDeviceModal.module.css";
 import {useEffect, useState} from "react";
 import {Consumable, Device} from '../models';
@@ -16,7 +9,7 @@ import DeviceService from "../services/DeviceService";
 import styl from "../assets/css/ChildModalDeleteMaterial.module.css";
 import ConsumableService from "../services/ConsumableService";
 
-export default (props: { receivedMaterial: Consumable }) => {
+function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
     const dispatch = useDispatch<AppDispatch>();
     const [consumable, setConsumable] = useState<Consumable | null>(props.receivedMaterial);
     const [csss, setCsss] = useState<string | null>();
@@ -29,8 +22,12 @@ export default (props: { receivedMaterial: Consumable }) => {
 
     const handleClose = () => {
         setOpenChildModal(false);
+        setConsumable(null);
     };
     const handleCloseAddParent = () => {
+        setOpenChildModal(false);
+        setConsumable(null);
+        setDevice(null);
         setOpenChildModalAddParent(false);
     }
 
@@ -70,8 +67,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                     dispatch(res);
                 }).catch(err => console.log(err));
 
-            }
-            else {
+            } else {
                 dispatch(AddSnackbar({
                     messageText: "Не удалось удалить расходник!",
                     messageType: "error",
@@ -88,7 +84,11 @@ export default (props: { receivedMaterial: Consumable }) => {
                 return;
             }
             if (newValue > consumable!.inOperation && consumable!.inStock - 1 >= 0) {
-                setConsumable({...consumable!, inOperation: consumable!.inOperation + 1, inStock: consumable!.inStock - 1})
+                setConsumable({
+                    ...consumable!,
+                    inOperation: consumable!.inOperation + 1,
+                    inStock: consumable!.inStock - 1
+                })
             } else {
                 dispatch(AddSnackbar({
                     messageText: "Приборы на складе закончились!",
@@ -111,11 +111,10 @@ export default (props: { receivedMaterial: Consumable }) => {
     }
 
     const checkCorrectData = () => {
-        let device : Device | null = null;
-        if(csss !== null || csss !== '' || csss !== undefined)
-        {
+        let device: Device | null = null;
+        if (csss !== null || csss !== '' || csss !== undefined) {
             DeviceService.getDeviceByCsss(parseInt(csss!)).then((res) => {
-                if (res === null){
+                if (res === null) {
                     dispatch(AddSnackbar({
                         messageText: "Прибор с КССС: " + csss + " не найден!",
                         messageType: "error",
@@ -124,8 +123,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                     return;
                 }
                 device = res;
-                if(amount === null || amount === '' || amount === undefined)
-                {
+                if (amount === null || amount === '' || amount === undefined) {
                     dispatch(AddSnackbar({
                         messageText: "Количество должно быть больше 0",
                         messageType: "error",
@@ -134,8 +132,7 @@ export default (props: { receivedMaterial: Consumable }) => {
                     setDevice(null);
                     return;
                 }
-                if(parseInt(amount!) > consumable!.inStock)
-                {
+                if (parseInt(amount!) > consumable!.inStock) {
                     dispatch(AddSnackbar({
                         messageText: "Недостаточно на складе!",
                         messageType: "error",
@@ -154,8 +151,10 @@ export default (props: { receivedMaterial: Consumable }) => {
         if (consumable === undefined || consumable == null) return
         const devices = consumable!.devices === undefined ? [] as Device[] : consumable!.devices
         devices.push(device!)
-        ConsumableService.saveConsumable({...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
-            inStock: consumable!.inOperation - parseInt(amount!), devices: devices}).then(res => {
+        ConsumableService.saveConsumable({
+            ...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
+            inStock: consumable!.inOperation - parseInt(amount!), devices: devices
+        }).then(res => {
             if (res) {
                 setOpenChildModal(false);
                 setDevice(null)
@@ -177,12 +176,22 @@ export default (props: { receivedMaterial: Consumable }) => {
         })
     }
 
+    const delBind = async (csss: number) => {
+        if (consumable === null) return
+        const newConsumable = consumable
+        newConsumable.devices = newConsumable?.devices.filter((d) => d.csss !== csss)
+        const res = await ConsumableService.saveConsumable(newConsumable!)
+        dispatch(AddSnackbar({
+            messageText: "Материал отвязан!",
+            messageType: "success",
+            key: +new Date()
+        }))
+    };
+
     useEffect(() => {
-        if(device !== null)
-        {
+        if (device !== null) {
             setOpenChildModalAddParent(true);
-        }
-        else {
+        } else {
             setOpenChildModalAddParent(false);
         }
     })
@@ -234,50 +243,50 @@ export default (props: { receivedMaterial: Consumable }) => {
                                                type="number" required
                                                value={amount}
                                                onChange={(newValue) => setAmount(newValue.target.value)}
-                                               //onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                        //onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                                                InputLabelProps={{
                                                    shrink: true,
                                                }}
                                     />
                                     <Button variant="contained" onClick={checkCorrectData}>добавить</Button>
                                 </Stack>
-                                <div>
-                                    {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0  && (
-                                        consumable!.devices.map((row: Device) => (
-                                            <Stack direction="row" width='100%' spacing={1}>
-                                                <TextField id="title" label="Наименование" variant="outlined"
-                                                           size='small'
-                                                           type="string"
-                                                           value={row.title}
-                                                           style={{width: '30%'}}
-                                                />
-                                                <TextField id="kccc" label="КССС" variant="outlined" size='small'
-                                                           type="number"
-                                                           value={row.csss}
-                                                           InputProps={{
-                                                               inputProps: {min: 1}
-                                                           }}
-                                                />
-                                                <TextField id="amount-material" label="Количество"
-                                                           variant="outlined"
-                                                           size='small'
-                                                           type="number"
-                                                           value={row.inOperation}
-                                                           onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
-                                                />
-                                                <Button variant="outlined">отвязать</Button>
+                                {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0 && (
+                                    consumable!.devices.map((row: Device) => (
+                                        <Stack direction="row" width='100%' spacing={1} mb={1}>
+                                            <TextField id="title" label="Наименование" variant="outlined"
+                                                       size='small'
+                                                       type="string"
+                                                       value={row.title}
+                                                       style={{width: '30%'}}
+                                            />
+                                            <TextField id="kccc" label="КССС" variant="outlined" size='small'
+                                                       type="number"
+                                                       value={row.csss}
+                                                       InputProps={{
+                                                           inputProps: {min: 1}
+                                                       }}
+                                            />
+                                            <TextField id="amount-material" label="Количество"
+                                                       variant="outlined"
+                                                       size='small'
+                                                       type="number"
+                                                       value={row.inOperation}
+                                                       onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                            />
+                                            <Button variant="outlined" onClick={() => {
+                                                delBind(row.csss)
+                                            }}>отвязать</Button>
 
-                                            </Stack>
-                                        ))
-                                    )}
-                                </div>
+                                        </Stack>
+                                    ))
+                                )}
                             </Stack>
                         </Paper>
                     </div>
                 </div>
                 <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                     <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                        <Button variant="contained" onClick={ () => setOpenChildModal(true)}>Удалить материал</Button>
+                        <Button variant="contained" onClick={() => setOpenChildModal(true)}>Удалить материал</Button>
                         <Button variant="contained" onClick={saveChange}>Сохранить изменения</Button>
                     </Stack>
                 </Paper>
@@ -310,9 +319,9 @@ export default (props: { receivedMaterial: Consumable }) => {
                         aria-describedby="child-modal-add-parent-description"
                     >
                         <Box className={styl.childModalStyle}>
-                            <Typography>Вы точно хотите привязать расходник  </Typography>
+                            <Typography>Вы точно хотите привязать расходник </Typography>
                             <Typography color="primary">{consumable !== null ? consumable!.title : ""}</Typography>
-                            <Typography> к прибору  </Typography>
+                            <Typography> к прибору </Typography>
                             <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
                                 <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
                                 <Typography>№КССС:</Typography>
@@ -329,3 +338,5 @@ export default (props: { receivedMaterial: Consumable }) => {
         </Box>
     )
 }
+
+export default ChangeMaterialModal
