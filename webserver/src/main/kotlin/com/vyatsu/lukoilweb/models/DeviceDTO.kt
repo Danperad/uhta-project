@@ -28,4 +28,8 @@ data class DeviceDTO(
             id
         )
     }
+
+    override fun toString(): String {
+        return "DeviceDTO(id=$id, title='$title', producer=$producer, csss=$csss, nr3=$nr3, unitType='$unitType', inOperation=$inOperation, inStock=$inStock, consumables=$consumables)"
+    }
 }
