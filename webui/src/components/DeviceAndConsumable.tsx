@@ -113,7 +113,6 @@ export default function DeviceAndConsumable() {
         } else if (check && materialType === "Расходник") {
             if (parentKccc !== '' || parentKccc !== undefined) {
                 const res = await DeviceService.getDeviceByCsss(parseInt(parentKccc!))
-                if (res === null) return;
                 const newConsumable: Consumable = {
                     id: 0,
                     title: materialName!,
@@ -123,8 +122,7 @@ export default function DeviceAndConsumable() {
                     unitType: materialUnit!,
                     inOperation: 0,
                     inStock: parseInt(amount!),
-                    devices: [res]
-
+                    devices: res === null ? [] : [res]
                 }
                 const saveRes = await ConsumableService.saveConsumable(newConsumable)
                 if (saveRes === null) return;
