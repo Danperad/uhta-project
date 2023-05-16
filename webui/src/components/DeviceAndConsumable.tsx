@@ -186,6 +186,7 @@ export default function DeviceAndConsumable() {
         const file = files!.item(0)
         if (file === null) return;
         const res = await FileUploadService.uploadMaterial(file!)
+        e.target.value = ''
         if (!res) {
             dispatch(AddSnackbar({
                 messageText: "Не удалось загрузить файл!",
