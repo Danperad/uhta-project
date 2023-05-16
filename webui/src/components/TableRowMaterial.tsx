@@ -39,23 +39,19 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
     }
 
     useEffect(() => {
-        if(device !== null)
-        {
+        if (device !== null) {
             setChangeDeviceModal(true);
-        }
-        else{
+        } else {
             setChangeDeviceModal(false);
         }
-    },[device])
+    }, [device])
     useEffect(() => {
-        if(consumable !== null)
-        {
+        if (consumable !== null) {
             setChangeConsumableModal(true);
-        }
-        else{
+        } else {
             setChangeConsumableModal(false);
         }
-    },[consumable])
+    }, [consumable])
 
     return (
         <Fragment>
@@ -97,23 +93,27 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rowMaterial.consumables.map((materialRow) => (
-                                        <TableRow>
-                                            <TableCell component="th" scope="row" onClick={() => {
-                                                handleOpenEditMaterialModal(materialRow.csss)
-                                            }}>{materialRow.title}</TableCell>
-                                            <TableCell>{materialRow.nr3}</TableCell>
-                                            <TableCell>{materialRow.csss}</TableCell>
-                                            <TableCell align="right" onClick={() => {
-                                                handleOpenEditMaterialModal(materialRow.csss)
-                                            }}
-                                                       typeof='number'>{materialRow.inOperation}</TableCell>
-                                            <TableCell align="right" onClick={() => {
-                                                handleOpenEditMaterialModal(materialRow.csss)
-                                            }}
-                                                       typeof='number'>{materialRow.inStock}</TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {rowMaterial.consumables !== undefined &&
+                                        <>
+                                            {rowMaterial.consumables.map((materialRow) => (
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row" onClick={() => {
+                                                        handleOpenEditMaterialModal(materialRow.csss)
+                                                    }}>{materialRow.title}</TableCell>
+                                                    <TableCell>{materialRow.nr3}</TableCell>
+                                                    <TableCell>{materialRow.csss}</TableCell>
+                                                    <TableCell align="right" onClick={() => {
+                                                        handleOpenEditMaterialModal(materialRow.csss)
+                                                    }}
+                                                               typeof='number'>{materialRow.inOperation}</TableCell>
+                                                    <TableCell align="right" onClick={() => {
+                                                        handleOpenEditMaterialModal(materialRow.csss)
+                                                    }}
+                                                               typeof='number'>{materialRow.inStock}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </>
+                                    }
                                 </TableBody>
                             </Table>
                         </Box>

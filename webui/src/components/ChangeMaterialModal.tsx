@@ -124,37 +124,38 @@ export default (props: { receivedMaterial: Consumable }) => {
                     return;
                 }
                 device = res;
+                if(amount === null || amount === '' || amount === undefined)
+                {
+                    dispatch(AddSnackbar({
+                        messageText: "Количество должно быть больше 0",
+                        messageType: "error",
+                        key: +new Date()
+                    }))
+                    setDevice(null);
+                    return;
+                }
+                if(parseInt(amount!) > consumable!.inStock)
+                {
+                    dispatch(AddSnackbar({
+                        messageText: "Недостаточно на складе!",
+                        messageType: "error",
+                        key: +new Date()
+                    }))
+                    setDevice(null);
+                    return;
+                }
+                setDevice(device);
+                setOpenChildModalAddParent(true);
             });
         }
-        if(amount === null || amount === '' || amount === undefined)
-        {
-            dispatch(AddSnackbar({
-                messageText: "Количество должно быть больше 0",
-                messageType: "error",
-                key: +new Date()
-            }))
-            setDevice(null);
-            return;
-        }
-        if(parseInt(amount!) > consumable!.inStock)
-        {
-            dispatch(AddSnackbar({
-                messageText: "Недостаточно на складе!",
-                messageType: "error",
-                key: +new Date()
-            }))
-            setDevice(null);
-            return;
-        }
-        setDevice(device);
-        setOpenChildModalAddParent(true);
     }
 
     const bind = () => {
-        setConsumable({...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
-            inStock: consumable!.inOperation - parseInt(amount!), devices: [device!]})
+        if (consumable === undefined || consumable == null) return
+        const devices = consumable!.devices === undefined ? [] as Device[] : consumable!.devices
+        devices.push(device!)
         ConsumableService.saveConsumable({...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
-            inStock: consumable!.inOperation - parseInt(amount!), devices: [device!]}).then(res => {
+            inStock: consumable!.inOperation - parseInt(amount!), devices: devices}).then(res => {
             if (res) {
                 setOpenChildModal(false);
                 setDevice(null)

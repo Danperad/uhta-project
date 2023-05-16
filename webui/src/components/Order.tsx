@@ -54,8 +54,6 @@ export default function Order() {
     const [selectedMaterial, setSelectedMaterial] = useState<string | null>();
     const [materialAmount, setMaterialAmount] = useState<string | null>();
     const addMaterial = () => {
-        console.log(selectedMaterial);
-        console.log(materialAmount);
         if (selectedMaterial === null || selectedMaterial === undefined) {
             dispatch(AddSnackbar({
                 messageText: "Материал не выбран!",
