@@ -49,7 +49,7 @@ class Device(
     }
 
     fun mapToDeviceDTOWithoutConsumables() =
-        DeviceDTO(id!!, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, emptySet())
+        DeviceDTO(id, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, emptySet())
 
     fun copy(
         csss: Int = this.csss,
