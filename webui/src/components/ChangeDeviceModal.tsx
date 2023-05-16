@@ -168,23 +168,27 @@ function ChangeDeviceModal(props: { receivedMaterial: Device }) {
                                         <TableCell align="right">Количество на складе</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                {device?.consumables.length !== 0 && (
-                                    <TableBody>
-                                        {device?.consumables.map((row) => (
-                                            <TableRow
-                                                key={row.nr3}
-                                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                                            >
-                                                <TableCell component="th" scope="row">
-                                                    {row.title}
-                                                </TableCell>
-                                                <TableCell align="right">{row.nr3}</TableCell>
-                                                <TableCell align="right">{row.csss}</TableCell>
-                                                <TableCell align="right">{row.inOperation}</TableCell>
-                                                <TableCell align="right">{row.inStock}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
+                                {device?.consumables !== undefined && (
+                                    <>
+                                        {device?.consumables.length !== 0 && (
+                                            <TableBody>
+                                                {device?.consumables.map((row) => (
+                                                    <TableRow
+                                                        key={row.nr3}
+                                                        sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                                                    >
+                                                        <TableCell component="th" scope="row">
+                                                            {row.title}
+                                                        </TableCell>
+                                                        <TableCell align="right">{row.nr3}</TableCell>
+                                                        <TableCell align="right">{row.csss}</TableCell>
+                                                        <TableCell align="right">{row.inOperation}</TableCell>
+                                                        <TableCell align="right">{row.inStock}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        )}
+                                    </>
                                 )}
                             </Table>
                         </TableContainer>
