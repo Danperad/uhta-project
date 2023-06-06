@@ -77,7 +77,7 @@ export default function DeviceAndConsumable() {
     }
 
     const DeviceBinding = () => (
-        <TextField id="parent-kccc" label="КССС привязка" variant="outlined" size='small' type='number'
+        <TextField label="КССС привязка" variant="outlined" size='small' type='number'
                    value={parentKccc} onChange={(newValue) => setParentKccc(newValue.target.value)}
                    InputProps={{
                        inputProps: {min: 1}
@@ -228,7 +228,7 @@ export default function DeviceAndConsumable() {
                     <Paper style={{padding: "20px"}}>
                         <Typography mb={1}>Приборы и расходники</Typography>
                         <Stack direction="row" spacing={1}>
-                            <TextField sx={{width: '40%'}} id="search" label="Поиск" variant="outlined" size='small'
+                            <TextField sx={{width: '40%'}} label="Поиск" variant="outlined" size='small'
                                        type="search" value={search}
                                        onChange={(newValue) => setSearch(newValue.target.value)}/>
                             <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
@@ -254,19 +254,19 @@ export default function DeviceAndConsumable() {
                         >
                             <Stack spacing={2}>
                                 <Typography>Добавление</Typography>
-                                <TextField id="add-material-name" label="Наименование" variant="outlined"
+                                <TextField label="Наименование" variant="outlined"
                                            size='small'
                                            required
                                            value={materialName}
                                            onChange={(newValue) => setMaterialName(newValue.target.value)}/>
-                                <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number"
+                                <TextField label="КССС" variant="outlined" size='small' type="number"
                                            required
                                            value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
                                            InputProps={{
                                                inputProps: {min: 1}
                                            }}
                                 />
-                                <TextField id="nr3" label="№R-3" variant="outlined" size='small' type="number"
+                                <TextField label="№R-3" variant="outlined" size='small' type="number"
                                            required
                                            value={nr3} onChange={(newValue) => setNr3(newValue.target.value)}
                                            InputProps={{
@@ -274,7 +274,7 @@ export default function DeviceAndConsumable() {
                                            }}
                                 />
 
-                                <Autocomplete disablePortal id="combo-box-producer" size='small' options={Producers}
+                                <Autocomplete disablePortal size='small' options={Producers}
                                               onInputChange={CheckMaterialProducer}
                                               value={autocompleteProducerValue}
 
@@ -283,7 +283,7 @@ export default function DeviceAndConsumable() {
                                                                                   onChange={(newValue) => setProducer(newValue.target.value)}/>}
                                 />
 
-                                <Autocomplete disablePortal id="combo-box-type" size='small' options={Type}
+                                <Autocomplete disablePortal size='small' options={Type}
                                               onInputChange={CheckMaterialType} value={autocompleteTypeValue}
 
                                               renderInput={(params) => <TextField {...params} label="Тип" required
@@ -293,14 +293,14 @@ export default function DeviceAndConsumable() {
 
                                 {showDeviceBinding && <DeviceBinding/>}
 
-                                <TextField id="amount-material" label="Количество" variant="outlined" size='small'
+                                <TextField label="Количество" variant="outlined" size='small'
                                            type="number" required
                                            value={amount} onChange={(newValue) => setAmount(newValue.target.value)}
                                            InputProps={{
                                                inputProps: {min: 1}
                                            }}
                                 />
-                                <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
+                                <Autocomplete disablePortal size='small' options={Unit}
                                               onInputChange={CheckMaterialUnit} value={autocompleteUnitValue}
                                               renderInput={(params) => <TextField {...params} label="Ед. измерения"
                                                                                   value={materialUnit} required

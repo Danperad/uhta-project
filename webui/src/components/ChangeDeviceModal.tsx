@@ -130,7 +130,7 @@ function ChangeDeviceModal(props: { receivedMaterial: Device }) {
                         <Stack direction="row" spacing={2} mt={1}>
                             <Typography mb={2}>Количество в эксплуатации:</Typography>
 
-                            <TextField id="inOperationMaterial" variant="outlined" size='small' type="number"
+                            <TextField variant="outlined" size='small' type="number"
                                        style={{width: "10%"}}
                                        value={device !== null ? device!.inOperation : ""}
                                        onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
@@ -141,7 +141,7 @@ function ChangeDeviceModal(props: { receivedMaterial: Device }) {
                         </Stack>
                         <Stack direction="row" spacing={2} mt={1}>
                             <Typography mb={2}>Количество на складе:</Typography>
-                            <TextField id="inStockMaterial" variant="outlined" size='small' type="number"
+                            <TextField variant="outlined" size='small' type="number"
                                        style={{marginLeft: "65px", width: "10%"}}
                                        value={device !== null ? device!.inStock : 0}
                                        onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}

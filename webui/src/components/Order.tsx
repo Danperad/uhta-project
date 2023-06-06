@@ -24,9 +24,6 @@ export default function Order() {
     const [checked, setChecked] = useState(false);
     const [key, setKey] = useState(false);
 
-    const [dateTimeOt, setDateTimeOt] = useState<string>();
-    const [dateTimeDo, setDateTimeDo] = useState<string>();
-
     const [openCreateOrderModal, setCreateOrderModalOpen] = useState(false);
     const handleOpenCreateOrderModal = () => setCreateOrderModalOpen(true);
     const handleCloseCreateOrderModal = () => {
@@ -110,20 +107,14 @@ export default function Order() {
                         <Typography mb={1}>Заявки</Typography>
                         <Stack direction="row" justifyContent="space-between" width='100%' height='100%'>
                             <Stack direction="row" spacing={2} style={{width: "100%"}} height='100%'>
-                                <TextField sx={{width: '30%'}} id="outlined-search" label="Поиск" variant="outlined"
+                                <TextField sx={{width: '30%'}} label="Поиск" variant="outlined"
                                            size='small' type="search"/>
-                                <TextField id="dateOt" label="От" type="date" size='small' sx={{width: '16%'}}
-                                           onChange={e => {
-                                               setDateTimeOt(e.target.value);
-                                           }}
+                                <TextField label="От" type="date" size='small' sx={{width: '16%'}}
                                            InputLabelProps={{
                                                shrink: true,
                                            }}
                                 />
-                                <TextField id="dateDo" label="До" type="date" size='small' sx={{width: '16%'}}
-                                           onChange={e => {
-                                               setDateTimeDo(e.target.value);
-                                           }}
+                                <TextField label="До" type="date" size='small' sx={{width: '16%'}}
                                            InputLabelProps={{
                                                shrink: true,
                                            }}
@@ -151,28 +142,25 @@ export default function Order() {
                             <Typography mb={2}>Создание заявки</Typography>
                             <Stack direction="column" spacing={2}>
                                 <Stack direction="row" spacing={2}>
-                                    <TextField id="date" label="Дата" type="date" size='small' sx={{width: '16%'}}
-                                               onChange={e => {
-                                                   setDateTimeOt(e.target.value);
-                                               }}
+                                    <TextField label="Дата" type="date" size='small' sx={{width: '16%'}}
                                                InputLabelProps={{
                                                    shrink: true,
                                                }}
                                     />
-                                    <Autocomplete disablePortal id="combo-box-unit" size='small' options={Purchase}
+                                    <Autocomplete disablePortal size='small' options={Purchase}
                                                   sx={{width: '16%'}}
                                                   renderInput={(params) => <TextField {...params} label="Закуп"/>}
                                     />
                                     <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
                                                       label="Период"/>
                                     {checked && <Stack direction="row" spacing={2} sx={{width: '40%'}}>
-                                        <TextField id="interval" label="Интервал" variant="outlined" size='small'
+                                        <TextField label="Интервал" variant="outlined" size='small'
                                                    type="number"
                                                    InputProps={{
                                                        inputProps: {min: 1}
                                                    }}
                                         />
-                                        <Autocomplete disablePortal id="combo-box-unit" size='small' options={Unit}
+                                        <Autocomplete disablePortal size='small' options={Unit}
                                                       sx={{width: '40%'}}
                                                       renderInput={(params) => <TextField {...params}
                                                                                           label="Ед. измерения"/>}
@@ -181,7 +169,7 @@ export default function Order() {
                                 </Stack>
                                 <Typography mb={2}>Добавление материалов в заявку</Typography>
                                 <Stack direction="row" spacing={2}>
-                                    <Autocomplete disablePortal id="combo-box-name-material" size='small'
+                                    <Autocomplete disablePortal size='small'
                                                   options={state.devices.map((row) => (row.title))}
                                                   sx={{width: '26%'}}
                                                   renderInput={(params) => <TextField {...params}
@@ -189,7 +177,7 @@ export default function Order() {
                                                                                       value={selectedMaterial}
                                                                                       onChange={(newValue) => setSelectedMaterial(newValue.target.value)}/>}
                                     />
-                                    <TextField id="amount-material" label="Количество" variant="outlined" size='small'
+                                    <TextField label="Количество" variant="outlined" size='small'
                                                type="number"
                                                InputProps={{
                                                    inputProps: {min: 1}

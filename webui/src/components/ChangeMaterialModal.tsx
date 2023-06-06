@@ -184,7 +184,7 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
         if (consumable === null) return
         const newConsumable = consumable
         newConsumable.devices = newConsumable?.devices.filter((d) => d.csss !== csss)
-        const res = await ConsumableService.saveConsumable(newConsumable!)
+        await ConsumableService.saveConsumable(newConsumable!)
         dispatch(AddSnackbar({
             messageText: "Материал отвязан!",
             messageType: "success",
@@ -218,7 +218,7 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                         </Stack>
                         <Stack direction="row" spacing={2} mt={1}>
                             <Typography mb={2}>Количество на складе:</Typography>
-                            <TextField id="inStockMaterial" variant="outlined" size='small' type="number"
+                            <TextField variant="outlined" size='small' type="number"
                                        style={{marginLeft: "10px", width: "10%"}}
                                        value={consumable !== null ? consumable!.inStock : ""}
                                        onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
@@ -236,14 +236,14 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                             <Typography mb={2}>КССС привязки материала к приборам:</Typography>
                             <Stack spacing={2}>
                                 <Stack direction="row" width='100%' spacing={1}>
-                                    <TextField id="kccc" label="КССС" variant="outlined" size='small' type="number"
+                                    <TextField label="КССС" variant="outlined" size='small' type="number"
                                                required
                                                value={csss} onChange={(newValue) => setCsss(newValue.target.value)}
                                                InputProps={{
                                                    inputProps: {min: 1}
                                                }}
                                     />
-                                    <TextField id="amount-material" label="Количество" variant="outlined" size='small'
+                                    <TextField label="Количество" variant="outlined" size='small'
                                                type="number" required
                                                value={amount}
                                                onChange={(newValue) => setAmount(newValue.target.value)}
@@ -257,20 +257,20 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                                 {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0 && (
                                     consumable!.devices.map((row: Device) => (
                                         <Stack direction="row" width='100%' spacing={1} mb={1}>
-                                            <TextField id="title" label="Наименование" variant="outlined"
+                                            <TextField label="Наименование" variant="outlined"
                                                        size='small'
                                                        type="string"
                                                        value={row.title}
                                                        style={{width: '30%'}}
                                             />
-                                            <TextField id="kccc" label="КССС" variant="outlined" size='small'
+                                            <TextField label="КССС" variant="outlined" size='small'
                                                        type="number"
                                                        value={row.csss}
                                                        InputProps={{
                                                            inputProps: {min: 1}
                                                        }}
                                             />
-                                            <TextField id="amount-material" label="Количество"
+                                            <TextField label="Количество"
                                                        variant="outlined"
                                                        size='small'
                                                        type="number"

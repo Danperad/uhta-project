@@ -25,12 +25,11 @@ export interface MaterialTableProps {
     search: string;
 }
 
-export default () => {
+function MaterialTable() {
     const state = useSelector((state: RootState) => state);
 
     const [value, setValue] = useState(0);
 
-    const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
     const [consumable, setConsumable] = useState<Consumable | null>(null);
     const [openChangeConsumableModal, setChangeConsumableModal] = useState(false);
 
@@ -46,7 +45,6 @@ export default () => {
             <div
                 role="tabpanel"
                 hidden={value !== index}
-                id={`simple-tabpanel-${index}`}
                 aria-labelledby={`simple-tab-${index}`}
                 {...other}
                 className='section' style={{height: '94%'}}
@@ -76,7 +74,6 @@ export default () => {
             if (res === null) return;
             setConsumable(res);
         });
-        setChangeMaterialModal(true);
     }
     const handleCloseEditConsumableModal = () => {
         setConsumable(null);
@@ -188,3 +185,4 @@ export default () => {
         </Paper>
     )
 }
+export default MaterialTable;
