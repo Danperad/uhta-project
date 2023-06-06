@@ -57,9 +57,13 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
         <Fragment>
             <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
                 <TableCell>
-                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
-                    </IconButton>
+                    {rowMaterial.consumables !== undefined &&
+                        <>
+                            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                                {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                            </IconButton>
+                        </>
+                    }
                 </TableCell>
                 <TableCell component="th" scope="row" onClick={() => {
                     handleOpenEditDeviceModal(rowMaterial.csss)

@@ -8,6 +8,7 @@ import {AppDispatch} from "../redux/store";
 import DeviceService from "../services/DeviceService";
 import styl from "../assets/css/ChildModalDeleteMaterial.module.css";
 import ConsumableService from "../services/ConsumableService";
+import MaterialService from "../services/ConsumableService";
 
 function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
     const dispatch = useDispatch<AppDispatch>();
@@ -153,7 +154,7 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
         devices.push(device!)
         ConsumableService.saveConsumable({
             ...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
-            inStock: consumable!.inOperation - parseInt(amount!), devices: devices
+            inStock: consumable!.inStock - parseInt(amount!), devices: devices
         }).then(res => {
             if (res) {
                 setOpenChildModal(false);
@@ -164,6 +165,9 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                     key: +new Date()
                 }))
                 DeviceService.getAllDevices().then((res) => {
+                    dispatch(res);
+                }).catch(err => console.log(err));
+                MaterialService.getAllConsumables().then((res) => {
                     dispatch(res);
                 }).catch(err => console.log(err));
             } else {
