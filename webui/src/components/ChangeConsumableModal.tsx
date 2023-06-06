@@ -8,14 +8,13 @@ import {AppDispatch} from "../redux/store";
 import DeviceService from "../services/DeviceService";
 import styl from "../assets/css/ChildModalDeleteMaterial.module.css";
 import ConsumableService from "../services/ConsumableService";
-import MaterialService from "../services/ConsumableService";
 
-function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
+function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent: () => void }) {
     const dispatch = useDispatch<AppDispatch>();
-    const [consumable, setConsumable] = useState<Consumable | null>(props.receivedMaterial);
-    const [csss, setCsss] = useState<string | null>();
-    const [amount, setAmount] = useState<string | null>();
-    const [device, setDevice] = useState<Device | null>();
+    const [consumable, setConsumable] = useState<Consumable>(props.receivedMaterial);
+    const [csss, setCsss] = useState<string | undefined>();
+    const [amount, setAmount] = useState<string | undefined>();
+    const [device, setDevice] = useState<Device | undefined>();
 
 
     const [openChildModal, setOpenChildModal] = useState(false);
@@ -23,81 +22,79 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
 
     const handleClose = () => {
         setOpenChildModal(false);
-        setConsumable(null);
+        props.closeEvent()
     };
     const handleCloseAddParent = () => {
         setOpenChildModal(false);
-        setConsumable(null);
-        setDevice(null);
+        setDevice(undefined);
         setOpenChildModalAddParent(false);
+        props.closeEvent()
     }
 
-    const saveChange = () => {
-        ConsumableService.saveConsumable(consumable!).then(res => {
-            if (res) {
-                setOpenChildModal(false);
-                setConsumable(null);
-                dispatch(AddSnackbar({
-                    messageText: "Расходник успешно изменен!",
-                    messageType: "success",
-                    key: +new Date()
-                }))
-                ConsumableService.getAllConsumables().then((res) => {
-                    dispatch(res);
-                }).catch(err => console.log(err));
-            } else {
-                dispatch(AddSnackbar({
-                    messageText: "Не удалось изменить расходник!",
-                    messageType: "error",
-                    key: +new Date()
-                }))
-            }
-        })
+    const saveChange = async () => {
+        const savedConsumable = await ConsumableService.saveConsumable(consumable)
+        if (!savedConsumable) {
+            dispatch(AddSnackbar({
+                messageText: "Не удалось изменить расходник!",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        dispatch(AddSnackbar({
+            messageText: "Расходник успешно изменен!",
+            messageType: "success",
+            key: +new Date()
+        }))
+        setOpenChildModal(false)
+        props.closeEvent()
+        const consumables = await ConsumableService.getAllConsumables()
+        if (!consumables) return
+        dispatch(consumables)
     }
-    const deleteConsumable = () => {
-        ConsumableService.deleteConsumableByCsss(consumable!.csss).then(res => {
-            if (res) {
-                setOpenChildModal(false);
-                setConsumable(null)
-                dispatch(AddSnackbar({
-                    messageText: "Расходник успешно удален!",
-                    messageType: "success",
-                    key: +new Date()
-                }))
-                ConsumableService.getAllConsumables().then((res) => {
-                    dispatch(res);
-                }).catch(err => console.log(err));
-
-            } else {
-                dispatch(AddSnackbar({
-                    messageText: "Не удалось удалить расходник!",
-                    messageType: "error",
-                    key: +new Date()
-                }))
-            }
-        })
+    const deleteConsumable = async () => {
+        const isDeleted = await ConsumableService.deleteConsumableByCsss(consumable.csss)
+        if (!isDeleted) {
+            dispatch(AddSnackbar({
+                messageText: "Не удалось удалить расходник!",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        dispatch(AddSnackbar({
+            messageText: "Расходник успешно удален!",
+            messageType: "success",
+            key: +new Date()
+        }))
+        setOpenChildModal(false);
+        props.closeEvent()
+        const consumables = await ConsumableService.getAllConsumables()
+        if (!consumables) return
+        dispatch(consumables)
     }
 
     function changeMaterialInOperation(newValue: number) {
-        if (newValue >= 0) {
-            if (newValue < consumable!.inOperation && consumable!.inOperation - 1 >= 0) {
-                setConsumable({...consumable!, inOperation: consumable!.inOperation - 1})
-                return;
-            }
-            if (newValue > consumable!.inOperation && consumable!.inStock - 1 >= 0) {
-                setConsumable({
-                    ...consumable!,
-                    inOperation: consumable!.inOperation + 1,
-                    inStock: consumable!.inStock - 1
-                })
-            } else {
-                dispatch(AddSnackbar({
-                    messageText: "Приборы на складе закончились!",
-                    messageType: "error",
-                    key: +new Date()
-                }))
-            }
+        if (newValue < 0) return
+
+        if (newValue < consumable!.inOperation && consumable!.inOperation - 1 >= 0) {
+            setConsumable({...consumable!, inOperation: consumable!.inOperation - 1})
+            return;
         }
+        if (newValue > consumable!.inOperation && consumable!.inStock - 1 >= 0) {
+            setConsumable({
+                ...consumable!,
+                inOperation: consumable!.inOperation + 1,
+                inStock: consumable!.inStock - 1
+            })
+        } else {
+            dispatch(AddSnackbar({
+                messageText: "Приборы на складе закончились!",
+                messageType: "error",
+                key: +new Date()
+            }))
+        }
+
     }
 
     function changeMaterialInStock(newValue: number) {
@@ -111,94 +108,108 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
         }
     }
 
-    const checkCorrectData = () => {
-        let device: Device | null = null;
-        if (csss !== null || csss !== '' || csss !== undefined) {
-            DeviceService.getDeviceByCsss(parseInt(csss!)).then((res) => {
-                if (res === null) {
-                    dispatch(AddSnackbar({
-                        messageText: "Прибор с КССС: " + csss + " не найден!",
-                        messageType: "error",
-                        key: +new Date()
-                    }))
-                    return;
-                }
-                device = res;
-                if (amount === null || amount === '' || amount === undefined) {
-                    dispatch(AddSnackbar({
-                        messageText: "Количество должно быть больше 0",
-                        messageType: "error",
-                        key: +new Date()
-                    }))
-                    setDevice(null);
-                    return;
-                }
-                if (parseInt(amount!) > consumable!.inStock) {
-                    dispatch(AddSnackbar({
-                        messageText: "Недостаточно на складе!",
-                        messageType: "error",
-                        key: +new Date()
-                    }))
-                    setDevice(null);
-                    return;
-                }
-                setDevice(device);
-                setOpenChildModalAddParent(true);
-            });
+    const checkCorrectData = async () => {
+        if (!csss) return
+
+        if (consumable.devices && consumable.devices.find(d => d.csss === +csss)) {
+            dispatch(AddSnackbar({
+                messageText: "Прибор уже привязан",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return;
         }
+        if (!amount || amount === '') {
+            dispatch(AddSnackbar({
+                messageText: "Количество должно быть больше 0",
+                messageType: "error",
+                key: +new Date()
+            }))
+            setDevice(undefined);
+            return;
+        }
+        if (parseInt(amount!) > consumable!.inStock) {
+            dispatch(AddSnackbar({
+                messageText: "Недостаточно на складе!",
+                messageType: "error",
+                key: +new Date()
+            }))
+            setDevice(undefined);
+            return;
+        }
+
+        const res = await DeviceService.getDeviceByCsss(+csss!)
+        if (!res) {
+            dispatch(AddSnackbar({
+                messageText: "Прибор с КССС: " + csss + " не найден!",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return;
+        }
+        setDevice(res);
+        setOpenChildModalAddParent(true);
     }
 
-    const bind = () => {
-        if (consumable === undefined || consumable == null) return
-        const devices = consumable!.devices === undefined ? [] as Device[] : consumable!.devices
+    const bind = async () => {
+        if (!consumable) return
+        const devices = !consumable!.devices ? [] as Device[] : consumable!.devices
         devices.push(device!)
-        ConsumableService.saveConsumable({
+        const addedConsumable = await ConsumableService.saveConsumable({
             ...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
             inStock: consumable!.inStock - parseInt(amount!), devices: devices
-        }).then(res => {
-            if (res) {
-                setOpenChildModal(false);
-                setDevice(null)
-                dispatch(AddSnackbar({
-                    messageText: "Привязка успешно добавлена!",
-                    messageType: "success",
-                    key: +new Date()
-                }))
-                DeviceService.getAllDevices().then((res) => {
-                    dispatch(res);
-                }).catch(err => console.log(err));
-                MaterialService.getAllConsumables().then((res) => {
-                    dispatch(res);
-                }).catch(err => console.log(err));
-            } else {
-                dispatch(AddSnackbar({
-                    messageText: "Не удалось добавить привязку!",
-                    messageType: "error",
-                    key: +new Date()
-                }))
-            }
         })
-    }
-
-    const delBind = async (csss: number) => {
-        if (consumable === null) return
-        const newConsumable = consumable
-        newConsumable.devices = newConsumable?.devices.filter((d) => d.csss !== csss)
-        const res = await ConsumableService.saveConsumable(newConsumable!)
+        if (!addedConsumable) {
+            dispatch(AddSnackbar({
+                messageText: "Не удалось добавить привязку!",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        setConsumable(addedConsumable)
+        setOpenChildModal(false);
+        setDevice(undefined)
         dispatch(AddSnackbar({
-            messageText: "Материал отвязан!",
+            messageText: "Привязка успешно добавлена!",
             messageType: "success",
             key: +new Date()
         }))
+        const newDevices = await DeviceService.getAllDevices()
+        if (newDevices)
+            dispatch(newDevices)
+        const newConsumables = await ConsumableService.getAllConsumables()
+        if (newConsumables)
+            dispatch(newConsumables)
+    }
+
+    const delBind = async (csss: number) => {
+        if (!consumable) return
+        const newConsumable = consumable
+        newConsumable.devices = newConsumable?.devices.filter((d) => d.csss !== csss)
+        try {
+            await ConsumableService.saveConsumable(newConsumable!)
+            dispatch(AddSnackbar({
+                messageText: "Материал отвязан!",
+                messageType: "success",
+                key: +new Date()
+            }))
+        } catch (e) {
+            dispatch(AddSnackbar({
+                messageText: "АЛЯРМА!",
+                messageType: "error",
+                key: +new Date()
+            }))
+        }
     };
 
     useEffect(() => {
-        if (device !== null) {
+        if (device) {
             setOpenChildModalAddParent(true);
         } else {
             setOpenChildModalAddParent(false);
         }
-    })
+    }, [device])
 
     return (
         <Box className={style.modalStyle}>
@@ -210,17 +221,17 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                     <Paper sx={{width: '100%'}} style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                         <Stack direction="row" spacing={2} sx={{width: '100%'}}>
                             <Typography mb={2}>Редактирование материала:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.title : ""}</Typography>
+                            <Typography color="primary">{consumable ? consumable.title : ""}</Typography>
                             <Typography mb={2}>№КССС:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.csss : ""}</Typography>
+                            <Typography color="primary">{consumable ? consumable.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.nr3 : ""}</Typography>
+                            <Typography color="primary">{consumable ? consumable.nr3 : ""}</Typography>
                         </Stack>
                         <Stack direction="row" spacing={2} mt={1}>
                             <Typography mb={2}>Количество на складе:</Typography>
                             <TextField id="inStockMaterial" variant="outlined" size='small' type="number"
                                        style={{marginLeft: "10px", width: "10%"}}
-                                       value={consumable !== null ? consumable!.inStock : ""}
+                                       value={consumable ? consumable.inStock : ""}
                                        onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
                                        InputLabelProps={{
                                            shrink: true,
@@ -254,7 +265,7 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                                     />
                                     <Button variant="contained" onClick={checkCorrectData}>добавить</Button>
                                 </Stack>
-                                {consumable !== null && consumable!.devices !== undefined && consumable!.devices.length !== 0 && (
+                                {consumable && consumable!.devices && consumable!.devices.length !== 0 && (
                                     consumable!.devices.map((row: Device) => (
                                         <Stack direction="row" width='100%' spacing={1} mb={1}>
                                             <TextField id="title" label="Наименование" variant="outlined"
@@ -302,12 +313,12 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                 >
                     <Box className={styl.childModalStyle}>
                         <Typography>Вы точно хотите удалить расходник? </Typography>
-                        <Typography color="primary">{consumable !== null ? consumable!.title : ""}</Typography>
+                        <Typography color="primary">{consumable ? consumable!.title : ""}</Typography>
                         <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
                             <Typography>№КССС:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.csss : ""}</Typography>
+                            <Typography color="primary">{consumable ? consumable!.csss : ""}</Typography>
                             <Typography mb={2}>№R-3:</Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.nr3 : ""}</Typography>
+                            <Typography color="primary">{consumable ? consumable!.nr3 : ""}</Typography>
                         </Stack>
                         <Stack direction='row' justifyContent="space-between" m={8}>
                             <Button onClick={handleClose} variant="contained">Отмена</Button>
@@ -324,12 +335,12 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
                     >
                         <Box className={styl.childModalStyle}>
                             <Typography>Вы точно хотите привязать расходник </Typography>
-                            <Typography color="primary">{consumable !== null ? consumable!.title : ""}</Typography>
+                            <Typography color="primary">{consumable ? consumable!.title : ""}</Typography>
                             <Typography> к прибору </Typography>
                             <Stack direction='row' spacing={1} alignItems="center" justifyContent="center">
-                                <Typography color="primary">{device !== null ? device!.title : ""}</Typography>
+                                <Typography color="primary">{device ? device!.title : ""}</Typography>
                                 <Typography>№КССС:</Typography>
-                                <Typography color="primary">{device !== null ? device!.csss : ""}</Typography>
+                                <Typography color="primary">{device ? device!.csss : ""}</Typography>
                             </Stack>
                             <Stack direction='row' justifyContent="space-between" m={8}>
                                 <Button onClick={handleCloseAddParent} variant="contained">Отмена</Button>
@@ -343,4 +354,4 @@ function ChangeMaterialModal(props: { receivedMaterial: Consumable }) {
     )
 }
 
-export default ChangeMaterialModal
+export default ChangeConsumableModal

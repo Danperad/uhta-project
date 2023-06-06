@@ -28,6 +28,12 @@ export default function Order() {
     const [dateTimeDo, setDateTimeDo] = useState<string>();
 
     const [openCreateOrderModal, setCreateOrderModalOpen] = useState(false);
+
+    const [selectedMaterial, setSelectedMaterial] = useState<string | undefined>();
+    const [materialAmount, setMaterialAmount] = useState<string | undefined>();
+
+    const [showOrderTable, setShowOrderTable] = useState(false);
+
     const handleOpenCreateOrderModal = () => setCreateOrderModalOpen(true);
     const handleCloseCreateOrderModal = () => {
         setCreateOrderModalOpen(false);
@@ -48,13 +54,10 @@ export default function Order() {
         {label: 'Внешний'},
     ]
 
-    const [showOrderTable, setShowOrderTable] = useState(false);
     const handleShowOrderTable = () => setShowOrderTable(true);
 
-    const [selectedMaterial, setSelectedMaterial] = useState<string | null>();
-    const [materialAmount, setMaterialAmount] = useState<string | null>();
     const addMaterial = () => {
-        if (selectedMaterial === null || selectedMaterial === undefined) {
+        if (!selectedMaterial) {
             dispatch(AddSnackbar({
                 messageText: "Материал не выбран!",
                 messageType: "error",
@@ -62,7 +65,7 @@ export default function Order() {
             }))
             return
         }
-        if (materialAmount === null || materialAmount === undefined) {
+        if (!materialAmount) {
             dispatch(AddSnackbar({
                 messageText: "Не задано количество!",
                 messageType: "error",
@@ -75,16 +78,16 @@ export default function Order() {
             messageType: "success",
             key: +new Date()
         }))
-        setSelectedMaterial(null);
-        setMaterialAmount(null);
+        setSelectedMaterial(undefined);
+        setMaterialAmount(undefined);
     }
 
     useEffect(() => {
         if (key) return
         setKey(true)
         DeviceService.getAllDevices().then((res) => {
-            dispatch(res);
-        }).catch(err => console.log(err));
+            if (res) dispatch(res);
+        });
     }, [])
 
 
@@ -135,7 +138,7 @@ export default function Order() {
                     </Paper>
                 </Box>
                 <Box sx={{height: "84vh", gridArea: 'main'}}>
-                    {showOrderTable ? <OrderTable/> : null}
+                    {showOrderTable && <OrderTable/>}
                 </Box>
             </Box>
             <Modal
