@@ -10,7 +10,6 @@ import {AddSnackbar} from "../redux/actions/snackbarAction";
 import MaterialTable from "./MaterialTable";
 import DeviceService from "../services/DeviceService";
 import ConsumableService from "../services/ConsumableService";
-import MaterialService from "../services/ConsumableService";
 import {Consumable, Device} from "../models";
 import FileUploadService from "../services/FileUploadService";
 
@@ -22,14 +21,14 @@ const Producers = ['Поставщик', 'Производитель', 'Пост
 export default function DeviceAndConsumable() {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [materialName, setMaterialName] = useState<string | null>();
-    const [nr3, setNr3] = useState<string | null>();
-    const [kccc, setKccc] = useState<string | null>();
-    const [parentKccc, setParentKccc] = useState<string | null>();
-    const [producer, setProducer] = useState<string | null>();
-    const [materialType, setMaterialType] = useState<string | null>();
-    const [amount, setAmount] = useState<string | null>();
-    const [materialUnit, setMaterialUnit] = useState<string | null>();
+    const [materialName, setMaterialName] = useState<string | undefined>();
+    const [nr3, setNr3] = useState<string | undefined>();
+    const [csss, setCsss] = useState<string | undefined>();
+    const [parentCsss, setParentCsss] = useState<string | undefined>();
+    const [producer, setProducer] = useState<string | undefined>();
+    const [materialType, setMaterialType] = useState<string | undefined>();
+    const [amount, setAmount] = useState<string | undefined>();
+    const [materialUnit, setMaterialUnit] = useState<string | undefined>();
 
     const [showDeviceBinding, setShowDeviceBinding] = useState(false);
 
@@ -58,7 +57,7 @@ export default function DeviceAndConsumable() {
         } else {
 
             setShowDeviceBinding(false)
-            setParentKccc(null)
+            setParentCsss(undefined)
         }
     }
 
@@ -78,7 +77,7 @@ export default function DeviceAndConsumable() {
 
     const DeviceBinding = () => (
         <TextField label="КССС привязка" variant="outlined" size='small' type='number'
-                   value={parentKccc} onChange={(newValue) => setParentKccc(newValue.target.value)}
+                   value={parentCsss} onChange={(newValue) => setParentCsss(newValue.target.value)}
                    InputProps={{
                        inputProps: {min: 1}
                    }}
@@ -93,7 +92,7 @@ export default function DeviceAndConsumable() {
                 id: 0,
                 title: materialName!,
                 producer: producer!,
-                csss: parseInt(kccc!),
+                csss: parseInt(csss!),
                 nr3: parseInt(nr3!),
                 unitType: materialUnit!,
                 inOperation: 0,
@@ -101,38 +100,39 @@ export default function DeviceAndConsumable() {
                 consumables: []
             }
             const res = await DeviceService.saveDevice(newDevice)
-            if (res === null) return
+            if (!res) return
             dispatch(AddSnackbar({
                 messageText: "Прибор успешно добавлен!",
                 messageType: "success",
                 key: +new Date()
             }))
             const allDevices = await DeviceService.getAllDevices()
+            if (!allDevices) return
             dispatch(allDevices)
             ClearFields();
         } else if (check && materialType === "Расходник") {
-            if (parentKccc !== '' || parentKccc !== undefined) {
-                const res = await DeviceService.getDeviceByCsss(parseInt(parentKccc!))
+            if (parentCsss !== '' || parentCsss !== undefined) {
+                const res = await DeviceService.getDeviceByCsss(parseInt(parentCsss!))
                 const newConsumable: Consumable = {
                     id: 0,
                     title: materialName!,
                     producer: producer!,
-                    csss: parseInt(kccc!),
+                    csss: parseInt(csss!),
                     nr3: parseInt(nr3!),
                     unitType: materialUnit!,
                     inOperation: 0,
                     inStock: parseInt(amount!),
-                    devices: res === null ? [] : [res]
+                    devices: !res ? [] : [res]
                 }
                 const saveRes = await ConsumableService.saveConsumable(newConsumable)
-                if (saveRes === null) return;
+                if (!saveRes) return;
                 dispatch(AddSnackbar({
                     messageText: "Материал успешно добавлен!",
                     messageType: "success",
                     key: +new Date()
                 }))
                 const allConsumables = await ConsumableService.getAllConsumables()
-                dispatch(allConsumables)
+                if (allConsumables) dispatch(allConsumables)
             }
             ClearFields();
         } else {
@@ -145,29 +145,29 @@ export default function DeviceAndConsumable() {
 
     };
 
-    const handleShowMaterialTable = () => {
-        DeviceService.getAllDevices(search).then((res) => {
-            dispatch(res);
-        }).catch(err => console.log(err));
-        MaterialService.getAllConsumables(search).then((res) => {
-            dispatch(res);
-        }).catch(err => console.log(err));
+    const handleShowMaterialTable = async () => {
+        const devices = await DeviceService.getAllDevices(search)
+        if (devices)
+            dispatch(devices)
+        const consumables = await ConsumableService.getAllConsumables(search)
+        if (consumables)
+            dispatch(consumables)
         setShowMaterialTable(true);
     }
 
-    function CheckRequiredFields() {
-        return !(materialName === undefined || nr3 === undefined || kccc === undefined ||
+    const CheckRequiredFields = () => {
+        return !(materialName === undefined || nr3 === undefined || csss === undefined ||
             materialType === undefined || amount === undefined || materialUnit === undefined ||
-            materialName === "" || nr3 === "" || kccc === "" ||
+            materialName === "" || nr3 === "" || csss === "" ||
             materialType === "" || amount === "" || materialUnit === "");
     }
 
     function ClearFields() {
         setMaterialName("");
         setNr3("");
-        setKccc("");
+        setCsss("");
         setMaterialType("");
-        setParentKccc("");
+        setParentCsss("");
         setProducer("");
         setAmount("");
         setMaterialUnit("");
@@ -178,7 +178,7 @@ export default function DeviceAndConsumable() {
 
     const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.currentTarget.files
-        if (files === null || files === undefined || files!.length === 0)
+        if (files === null || !files || files!.length === 0)
             return
 
         const file = files!.item(0)
@@ -261,7 +261,7 @@ export default function DeviceAndConsumable() {
                                            onChange={(newValue) => setMaterialName(newValue.target.value)}/>
                                 <TextField label="КССС" variant="outlined" size='small' type="number"
                                            required
-                                           value={kccc} onChange={(newValue) => setKccc(newValue.target.value)}
+                                           value={csss} onChange={(newValue) => setCsss(newValue.target.value)}
                                            InputProps={{
                                                inputProps: {min: 1}
                                            }}

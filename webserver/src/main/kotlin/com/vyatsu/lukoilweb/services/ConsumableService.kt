@@ -34,7 +34,7 @@ class ConsumableService(
         if ((consumable.id == null || consumable.id == 0) && csssConsumable != null) return null
         if (consumableDTO.devices.isNotEmpty()) {
             val devices =
-                consumableDTO.devices.map { deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.csss) }
+                consumableDTO.devices.map { deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.csss) }.toSet()
             if (devices.any { it == null }) return null
             consumable.devices.clear()
             consumable.devices.addAll(devices.mapNotNull { it })

@@ -16,10 +16,10 @@ import {
 import TableRowMaterial from "./TableRowMaterial";
 import {ReactNode, SyntheticEvent, useEffect, useState} from "react";
 import {Consumable} from "../models";
-import MaterialService from "../services/ConsumableService";
-import ChangeMaterialModal from "./ChangeMaterialModal";
-import { RootState} from "../redux/store";
-import { useSelector} from "react-redux";
+import ConsumableService from "../services/ConsumableService";
+import ChangeConsumableModal from "./ChangeConsumableModal";
+import {RootState} from "../redux/store";
+import {useSelector} from "react-redux";
 
 export interface MaterialTableProps {
     search: string;
@@ -30,7 +30,8 @@ function MaterialTable() {
 
     const [value, setValue] = useState(0);
 
-    const [consumable, setConsumable] = useState<Consumable | null>(null);
+    const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
+    const [consumable, setConsumable] = useState<Consumable | undefined>();
     const [openChangeConsumableModal, setChangeConsumableModal] = useState(false);
 
     interface TabPanelProps {
@@ -69,22 +70,20 @@ function MaterialTable() {
         setValue(newValue);
     };
 
-    const handleOpenEditMaterialModal = (csss: number) => {
-        MaterialService.getConsumableByCsss(csss).then((res) => {
-            if (res === null) return;
-            setConsumable(res);
-        });
+    const handleOpenEditMaterialModal = async (csss: number) => {
+        const consumable = await ConsumableService.getConsumableByCsss(csss)
+        if (!consumable) return
+        setConsumable(consumable)
+        setChangeMaterialModal(true);
     }
     const handleCloseEditConsumableModal = () => {
-        setConsumable(null);
+        setConsumable(undefined);
     }
 
     useEffect(() => {
-        if(consumable !== null)
-        {
+        if (consumable !== undefined) {
             setChangeConsumableModal(true);
-        }
-        else{
+        } else {
             setChangeConsumableModal(false);
         }
     },[consumable])
@@ -174,15 +173,22 @@ function MaterialTable() {
                 )}
 
             </TabPanel>
-            <Modal
-                open={openChangeConsumableModal}
-                onClose={handleCloseEditConsumableModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <ChangeMaterialModal receivedMaterial={consumable!}/>
-            </Modal>
+            {consumable &&
+                <Modal
+                    open={openChangeConsumableModal}
+                    onClose={handleCloseEditConsumableModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <ChangeConsumableModal receivedMaterial={consumable} closeEvent={() => {
+                        handleCloseEditConsumableModal();
+                        setConsumable(undefined)
+                    }}/>
+                </Modal>
+            }
+
         </Paper>
     )
 }
-export default MaterialTable;
+
+export default MaterialTable
