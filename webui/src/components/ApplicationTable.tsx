@@ -14,7 +14,7 @@ import {
     TableRow
 } from "@mui/material";
 
-export default function OrderTable() {
+export default function ApplicationTable() {
     const [orders, setOrders] = useState<Application[]>([]);
     const [key, setKey] = useState<boolean>(false);
 
