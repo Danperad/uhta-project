@@ -27,6 +27,7 @@ repositories {
 dependencies {
 	//springboot
 	implementation("org.springframework.boot:spring-boot-starter-data-rest:3.0.4")
+	implementation("org.springframework.boot:spring-boot-configuration-processor")
 	implementation("org.springframework.boot:spring-boot-starter-cache:3.1.0")
 	implementation("org.springframework.boot:spring-boot-starter-security:3.0.4")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.1.0")

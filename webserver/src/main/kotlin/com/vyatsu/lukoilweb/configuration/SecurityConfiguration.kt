@@ -1,31 +1,61 @@
 package com.vyatsu.lukoilweb.configuration
 
+import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jose.jwk.RSAKey
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet
+import com.nimbusds.jose.proc.SecurityContext
 import com.vyatsu.lukoilweb.models.Roles
+import com.vyatsu.lukoilweb.services.CustomUserDetailsService
+import com.vyatsu.lukoilweb.utils.RsaProperties
+import com.vyatsu.lukoilweb.utils.jwtAuthenticationConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.ProviderManager
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
-import org.springframework.security.config.core.GrantedAuthorityDefaults
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtEncoder
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver
 import org.springframework.security.web.SecurityFilterChain
 
 
 @Configuration
-class SecurityConfiguration {
+class SecurityConfiguration(
+    private val rsaKeys: RsaProperties,
+    private val customUserDetailsService: CustomUserDetailsService
+) {
     @Bean
-    fun grantedAuthorityDefaults(): GrantedAuthorityDefaults {
-        return GrantedAuthorityDefaults("GUEST")
+    fun passwordEncoder(): BCryptPasswordEncoder? {
+        return BCryptPasswordEncoder()
     }
+
     @Bean
-    fun bearerTokenResolver(): BearerTokenResolver {
-        val bearerTokenResolver = DefaultBearerTokenResolver()
-        bearerTokenResolver.setBearerTokenHeaderName(HttpHeaders.AUTHORIZATION)
-        return bearerTokenResolver
+    fun authManager(): AuthenticationManager {
+        val authProvider = DaoAuthenticationProvider()
+        authProvider.setUserDetailsService(customUserDetailsService)
+        authProvider.setPasswordEncoder(passwordEncoder())
+        return ProviderManager(authProvider)
     }
+
+    @Bean
+    fun jwtEncoder(): JwtEncoder {
+        val jwk = RSAKey.Builder(rsaKeys.publicKey).privateKey(rsaKeys.privateKey).build()
+        val jwkSource = ImmutableJWKSet<SecurityContext>(JWKSet(jwk))
+        return NimbusJwtEncoder(jwkSource)
+    }
+
+    @Bean
+    fun jwtDecoder(): JwtDecoder {
+        return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey).build()
+    }
+
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         val resolver = DefaultBearerTokenResolver()
@@ -44,6 +74,9 @@ class SecurityConfiguration {
                 authorize("/api/user/**", hasAuthority(Roles.ADMIN.value))
             }
             oauth2ResourceServer {
+                jwt {
+                    jwtAuthenticationConverter = jwtAuthenticationConverter()
+                }
                 bearerTokenResolver = resolver
             }
         }

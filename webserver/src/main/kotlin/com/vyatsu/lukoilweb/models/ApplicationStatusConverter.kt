@@ -2,7 +2,6 @@ package com.vyatsu.lukoilweb.models
 
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
-import java.util.NoSuchElementException
 
 @Converter(autoApply = true)
 class ApplicationStatusConverter : AttributeConverter<ApplicationStatuses, String> {

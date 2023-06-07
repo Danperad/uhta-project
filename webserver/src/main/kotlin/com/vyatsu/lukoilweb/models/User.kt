@@ -24,4 +24,5 @@ class User(
     var id: Int? = null
 ) {
     fun mapToUserDTO() = UserDTO(id!!, login, lastName, firstName, middleName)
+    fun mapToUserSecurity() = UserSecurity(id!!, login, password, role.getListOfAuthority())
 }

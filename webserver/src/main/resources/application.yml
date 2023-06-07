@@ -24,3 +24,7 @@ logging:
     path: "./logs"
   level:
     com.vyatsu.lukoilweb.controllers: DEBUG
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
