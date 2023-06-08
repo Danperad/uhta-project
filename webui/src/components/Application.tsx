@@ -70,6 +70,7 @@ export default function Application() {
             }))
             return;
         }
+
         const resDevice = await DeviceService.getDeviceByCsss(+csss!)
         const resConsumable = await ConsumableService.getConsumableByCsss(+csss!)
         if (!resDevice && !resConsumable) {
@@ -82,9 +83,18 @@ export default function Application() {
         }
         if (resDevice) {
             const tmp: Device[] = []
-            devices?.forEach((d) => {
+            devices.forEach((d) => {
                 tmp.push(d)
             })
+            if(tmp.find(d => d.csss === +csss))
+            {
+                dispatch(AddSnackbar({
+                    messageText: "Прибор с таким КССС уже добавлен",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+                return
+            }
             tmp.push({...resDevice!, inStock: parseInt(materialAmount)})
             setDevices(tmp)
         } else {
@@ -92,6 +102,16 @@ export default function Application() {
             consumables?.forEach((c) => {
                 tmp.push(c)
             })
+            if(tmp.find(d => d.csss === +csss))
+            {
+                dispatch(AddSnackbar({
+                    messageText: "Расходник с таким КССС уже добавлен",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+                return
+            }
+
             tmp.push({...resConsumable!, inStock: parseInt(materialAmount)})
             setConsumables(tmp)
         }
