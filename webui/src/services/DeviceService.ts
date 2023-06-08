@@ -3,51 +3,61 @@ import {Device} from "../models";
 import {DeviceLoaded} from "../redux/actions/deviceAction";
 
 const ApiUrl = `${import.meta.env.VITE_API_URL}/api/devices/`
-interface LooseObject{
-    [key: string] : any
+
+interface LooseObject {
+    [key: string]: any
 }
+
 class DeviceService {
-    getAllDevices(search: string | null = null) {
-        const params : LooseObject = {}
+    async getAllDevices(search: string | null = null) {
+        const params: LooseObject = {}
         params['count'] = 20
-        if(search !== null && search !== '')
-        {
-           params["search"] = search
+        if (search !== null && search !== '') {
+            params["search"] = search
         }
-        return axios.get(ApiUrl, {params: params}).then(res => {
-            return DeviceLoaded(res.data);
-        })
+        try {
+            const res = await axios.get(ApiUrl, {params: params})
+            if (res.status % 100 > 3) return undefined
+            return DeviceLoaded(res.data)
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
     }
 
-    getDeviceByCsss(csss: number){
-        return axios.get(ApiUrl + csss )
-            .then((res) => {
-                return res.data as Device;
-            })
-            .catch(error => {
-                console.log(error);
-                return null
-            });
+    async getDeviceByCsss(csss: number) {
+        try {
+            const res = await axios.get(`${ApiUrl}${csss}`)
+            if (res.status % 100 > 3) return undefined
+            return res.data as Device
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
     }
 
-    saveDevice(device: Device){
-        return axios.post(ApiUrl, device)
-            .then((res) => {
-                if (res.status % 100 !== 2) return []
-                const devices : Device[] = res.data;
-                return devices;
-            }).catch((error) => {
-                console.log(error);
-                return [];
-            });
+    async saveDevice(device: Device) {
+        try {
+            const res = await axios.post(ApiUrl, device)
+            if (res.status % 100 > 3) return undefined
+            return res.data as Device;
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
     }
-    deleteDeviceByCsss(csss: number){
-        const params : LooseObject = {}
+
+    async deleteDeviceByCsss(csss: number) {
+        const params: LooseObject = {}
         params['csss'] = csss
-        return axios.post(`${ApiUrl}delete`, {},{params: params})
-            .then((res) => {
-                return res.data as boolean
-            })
+        try {
+            const res = await axios.post(`${ApiUrl}delete`, {}, {params: params})
+            if (res.status % 100 > 3) return false
+            return res.data as boolean;
+        } catch (e) {
+            console.log(e);
+            return false
+        }
     }
 }
 

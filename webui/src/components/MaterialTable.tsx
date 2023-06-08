@@ -16,22 +16,22 @@ import {
 import TableRowMaterial from "./TableRowMaterial";
 import {ReactNode, SyntheticEvent, useEffect, useState} from "react";
 import {Consumable} from "../models";
-import MaterialService from "../services/ConsumableService";
-import ChangeMaterialModal from "./ChangeMaterialModal";
-import { RootState} from "../redux/store";
-import { useSelector} from "react-redux";
+import ConsumableService from "../services/ConsumableService";
+import ChangeConsumableModal from "./ChangeConsumableModal";
+import {RootState} from "../redux/store";
+import {useSelector} from "react-redux";
 
 export interface MaterialTableProps {
     search: string;
 }
 
-export default () => {
+function MaterialTable() {
     const state = useSelector((state: RootState) => state);
 
     const [value, setValue] = useState(0);
 
     const [openChangeMaterialModal, setChangeMaterialModal] = useState(false);
-    const [consumable, setConsumable] = useState<Consumable | null>(null);
+    const [consumable, setConsumable] = useState<Consumable | undefined>();
     const [openChangeConsumableModal, setChangeConsumableModal] = useState(false);
 
     interface TabPanelProps {
@@ -46,7 +46,6 @@ export default () => {
             <div
                 role="tabpanel"
                 hidden={value !== index}
-                id={`simple-tabpanel-${index}`}
                 aria-labelledby={`simple-tab-${index}`}
                 {...other}
                 className='section' style={{height: '94%'}}
@@ -71,23 +70,20 @@ export default () => {
         setValue(newValue);
     };
 
-    const handleOpenEditMaterialModal = (csss: number) => {
-        MaterialService.getConsumableByCsss(csss).then((res) => {
-            if (res === null) return;
-            setConsumable(res);
-        });
+    const handleOpenEditMaterialModal = async (csss: number) => {
+        const consumable = await ConsumableService.getConsumableByCsss(csss)
+        if (!consumable) return
+        setConsumable(consumable)
         setChangeMaterialModal(true);
     }
     const handleCloseEditConsumableModal = () => {
-        setConsumable(null);
+        setConsumable(undefined);
     }
 
     useEffect(() => {
-        if(consumable !== null)
-        {
+        if (consumable !== undefined) {
             setChangeConsumableModal(true);
-        }
-        else{
+        } else {
             setChangeConsumableModal(false);
         }
     },[consumable])
@@ -177,14 +173,22 @@ export default () => {
                 )}
 
             </TabPanel>
-            <Modal
-                open={openChangeConsumableModal}
-                onClose={handleCloseEditConsumableModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <ChangeMaterialModal receivedMaterial={consumable!}/>
-            </Modal>
+            {consumable &&
+                <Modal
+                    open={openChangeConsumableModal}
+                    onClose={handleCloseEditConsumableModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <ChangeConsumableModal receivedMaterial={consumable} closeEvent={() => {
+                        handleCloseEditConsumableModal();
+                        setConsumable(undefined)
+                    }}/>
+                </Modal>
+            }
+
         </Paper>
     )
 }
+
+export default MaterialTable

@@ -14,14 +14,15 @@ import {
     TableRow
 } from "@mui/material";
 
-export default function MaterialTable() {
+export default function ApplicationTable() {
     const [orders, setOrders] = useState<Application[]>([]);
     const [key, setKey] = useState<boolean>(false);
 
     useEffect(() => {
         if (key) return;
         setKey(true);
-        OrderService.getAllApplications().then((res: Application[]) => {
+        OrderService.getAllApplications().then((res) => {
+            if (!res) return
             setOrders(res);
         }).catch(err => console.log(err));
     }, [])
