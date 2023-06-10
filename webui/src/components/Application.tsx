@@ -50,8 +50,8 @@ export default function Application() {
     }
     //Dictionaries
     const Unit = [
-        {label: 'Дней'},
-        {label: 'Месяцев'},
+        {label: 'Дни'},
+        {label: 'Месяцы'},
     ]
     const Purchase = [
         {label: 'Внутренний'},
@@ -115,7 +115,9 @@ export default function Application() {
             tmp.push({...resConsumable!, inStock: parseInt(materialAmount)})
             setConsumables(tmp)
         }
-        setMaterialAmount('')
+        setMaterialAmount(undefined)
+        setCsss(undefined)
+
     }
 
     const delDevice = async (csss: number) => {
@@ -125,6 +127,45 @@ export default function Application() {
         setConsumables(consumables.filter((c) => c.csss !== csss))
     }
 
+    function changeConsumableAmountInApplication(newValue: number, csss: number)
+    {
+        if (newValue < 1)
+        {
+            dispatch(AddSnackbar({
+                messageText: "Недопустимое количество",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        const selectConumsble = consumables.find(c => c.csss === csss)
+        if(!selectConumsble)
+            return;
+        selectConumsble.inStock = newValue
+        const tmp = consumables.filter(c => c.csss !== csss)
+        tmp.push(selectConumsble)
+        setConsumables(tmp)
+    }
+    function changeDeviceAmountInApplication(newValue: number, csss: number)
+    {
+        if (newValue < 1)
+        {
+            dispatch(AddSnackbar({
+                messageText: "Недопустимое количество",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        const selectDevice = devices.find(c => c.csss === csss)
+        if(!selectDevice)
+            return;
+        selectDevice.inStock = newValue
+        const tmp = devices.filter(c => c.csss !== csss)
+        tmp.push(selectDevice)
+        setDevices(tmp)
+    }
+
     useEffect(() => {
         if (key) return
         setKey(true)
@@ -132,7 +173,6 @@ export default function Application() {
             if (res) dispatch(res);
         });
     }, [])
-
 
     return (
         <Box sx={{
@@ -261,7 +301,7 @@ export default function Application() {
                                                        size='small'
                                                        type="number"
                                                        value={row.inStock}
-                                                // onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                                       onChange={(newValue) => changeConsumableAmountInApplication(parseInt(newValue.target.value), row.csss)}
                                             />
                                             <IconButton aria-label="delete" size="large" style={{marginTop: "-8px"}}
                                                         onClick={() => {
@@ -294,7 +334,7 @@ export default function Application() {
                                                        size='small'
                                                        type="number"
                                                        value={row.inStock}
-                                                // onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                                        onChange={(newValue) => changeDeviceAmountInApplication(parseInt(newValue.target.value), row.csss)}
                                             />
                                             <IconButton aria-label="delete" size="large" style={{marginTop: "-8px"}}
                                                         onClick={() => {
