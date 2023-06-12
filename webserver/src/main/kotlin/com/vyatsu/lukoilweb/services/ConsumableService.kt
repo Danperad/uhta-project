@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.ConsumableDTO
+import com.vyatsu.lukoilweb.models.dto.ConsumableDTO
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
 import org.springframework.data.domain.Pageable
@@ -32,12 +32,15 @@ class ConsumableService(
         val consumable = consumableDTO.mapToConsumable()
         val csssConsumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(consumable.csss)
         if ((consumable.id == null || consumable.id == 0) && csssConsumable != null) return null
-        if (consumableDTO.devices.isNotEmpty()) {
-            val devices =
-                consumableDTO.devices.map { deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.csss) }.toSet()
-            if (devices.any { it == null }) return null
+        if (consumableDTO.devices.isNotEmpty())
+        {
+            if (consumableDTO.devices.any { it.device == null }) return null
+            val devices = consumableDTO.devices.map {
+                val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.device!!.csss) ?: return null
+                it.mapToBinding(device, consumable)
+            }
             consumable.devices.clear()
-            consumable.devices.addAll(devices.mapNotNull { it })
+            consumable.devices.addAll(devices)
         }
         return try {
             consumableRepository.save(consumable).mapToConsumableDTOWithoutDevices()

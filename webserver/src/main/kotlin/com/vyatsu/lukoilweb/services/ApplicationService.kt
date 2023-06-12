@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.ApplicationDTO
+import com.vyatsu.lukoilweb.models.dto.ApplicationDTO
 import com.vyatsu.lukoilweb.repositories.ApplicationRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

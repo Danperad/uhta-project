@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.controllers
 
-import com.vyatsu.lukoilweb.models.DeviceDTO
+import com.vyatsu.lukoilweb.models.dto.DeviceDTO
 import com.vyatsu.lukoilweb.services.DeviceService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest

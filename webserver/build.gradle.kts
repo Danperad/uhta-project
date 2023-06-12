@@ -40,6 +40,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.hibernate.orm:hibernate-core:6.2.4.Final")
 	runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
 	runtimeOnly("org.flywaydb:flyway-core:9.8.1")
 	runtimeOnly("org.flywaydb:flyway-sqlserver")

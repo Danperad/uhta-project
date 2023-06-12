@@ -1,5 +1,7 @@
-package com.vyatsu.lukoilweb.models
+package com.vyatsu.lukoilweb.models.dto
 
+import com.vyatsu.lukoilweb.models.Device
+import com.vyatsu.lukoilweb.utils.UnitTypeConverter
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,10 +14,10 @@ data class DeviceDTO(
     val unitType: String,
     val inOperation: Int,
     val inStock: Int,
-    val consumables: Set<ConsumableDTO> = setOf()
+    val consumables: Set<BindingDTO> = setOf()
 ) {
     fun mapToDevice(): Device {
-        return Device(
+        val device = Device(
             csss,
             nr3,
             title,
@@ -24,9 +26,10 @@ data class DeviceDTO(
             false,
             inStock,
             inOperation,
-            consumables.map { it.mapToConsumable() }.toMutableList(),
-            id
+            id = id
         )
+        device.consumables.addAll(consumables.map { it.mapToBinding(device) })
+        return device
     }
 
     override fun toString(): String {

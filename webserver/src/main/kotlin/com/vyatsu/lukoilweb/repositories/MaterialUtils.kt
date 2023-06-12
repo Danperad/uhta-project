@@ -1,11 +1,11 @@
 package com.vyatsu.lukoilweb.repositories
 
-import com.vyatsu.lukoilweb.models.Material
+import com.vyatsu.lukoilweb.models.MaterialBase
 import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.CriteriaQuery
 import jakarta.persistence.criteria.Root
 
-fun <T : Material> preparePredicate(
+fun <T : MaterialBase> preparePredicate(
     query: CriteriaQuery<T>,
     materialRoot: Root<T>,
     search: String,

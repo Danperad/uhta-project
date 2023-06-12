@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.controllers
 
-import com.vyatsu.lukoilweb.models.ApplicationDTO
+import com.vyatsu.lukoilweb.models.dto.ApplicationDTO
 import com.vyatsu.lukoilweb.services.ApplicationService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
