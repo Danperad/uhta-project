@@ -22,9 +22,9 @@ class Application(
     @Convert(converter = ApplicationStatusConverter::class)
     val status: ApplicationStatuses,
     @OneToMany(mappedBy = "application")
-    val devices: List<ApplicationDevice> = listOf(),
+    val devices: MutableList<ApplicationDevice> = mutableListOf(),
     @OneToMany(mappedBy = "application")
-    val consumables: List<ApplicationConsumable> = listOf(),
+    val consumables: MutableList<ApplicationConsumable> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "application_id", nullable = false)
