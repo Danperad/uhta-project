@@ -36,12 +36,12 @@ class DeviceService(
         if ((device.id == null || device.id == 0) && csssDevice != null)
             TODO()
 
-        if (deviceDTO.consumables.isNotEmpty()) {
+        if (csssDevice != null && csssDevice.consumables.isNotEmpty()) {
             if (deviceDTO.consumables.any { it.device == null })
                 TODO()
             if (deviceDTO.consumables.any { consumableRepository.findConsumableByCsssAndIsDeletedFalse(it.consumable!!.csss) == null })
                 TODO()
-            if (csssDevice != null && !csssDevice.consumables.all { first -> device.consumables.any { it.consumable.csss == first.consumable.csss } }) {
+            if (!csssDevice.consumables.all { first -> device.consumables.any { it.consumable.csss == first.consumable.csss } }) {
                 val bindings =
                     csssDevice.consumables.filter { first -> !device.consumables.none { it.consumable.csss == first.device.csss } }
                 bindingRepository.deleteAll(bindings)
