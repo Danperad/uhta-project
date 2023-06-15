@@ -15,7 +15,8 @@ class Device(
     inStock: Int = 0,
     inOperation: Int = 0,
 
-    @OneToMany(mappedBy = "device")
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @JoinColumn(name = "device_id")
     val consumables: MutableList<Binding> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
