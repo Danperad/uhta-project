@@ -172,16 +172,16 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
                                             <TableBody>
                                                 {device?.consumables.map((row) => (
                                                     <TableRow
-                                                        key={row.nr3}
+                                                        key={row.consumable!.nr3}
                                                         sx={{'&:last-child td, &:last-child th': {border: 0}}}
                                                     >
                                                         <TableCell component="th" scope="row">
-                                                            {row.title}
+                                                            {row.consumable!.title}
                                                         </TableCell>
-                                                        <TableCell align="right">{row.nr3}</TableCell>
-                                                        <TableCell align="right">{row.csss}</TableCell>
-                                                        <TableCell align="right">{row.inOperation}</TableCell>
-                                                        <TableCell align="right">{row.inStock}</TableCell>
+                                                        <TableCell align="right">{row.consumable!.nr3}</TableCell>
+                                                        <TableCell align="right">{row.consumable!.csss}</TableCell>
+                                                        <TableCell align="right">{row.consumable!.inOperation}</TableCell>
+                                                        <TableCell align="right">{row.consumable!.inStock}</TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>

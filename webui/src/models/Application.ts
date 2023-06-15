@@ -1,4 +1,5 @@
 import Consumable from "./Consumable";
+import Device from "./Device";
 
 declare type Application = {
     number: number,
@@ -6,7 +7,8 @@ declare type Application = {
     title: string,
     period: number,
     status: "Новая" | "На согласование" | "Согласована" ,
-    materials: Consumable[]
+    consumables: Consumable[],
+    devices: Device[]
 
 }
 export default Application;

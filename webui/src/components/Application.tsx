@@ -50,8 +50,8 @@ export default function Application() {
     }
     //Dictionaries
     const Unit = [
-        {label: 'Дней'},
-        {label: 'Месяцев'},
+        {label: 'Дни'},
+        {label: 'Месяцы'},
     ]
     const Purchase = [
         {label: 'Внутренний'},
@@ -70,6 +70,26 @@ export default function Application() {
             }))
             return;
         }
+
+        if(devices.find(d => d.csss === +csss))
+        {
+            dispatch(AddSnackbar({
+                messageText: "Прибор с таким КССС уже добавлен",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        if(consumables.find(d => d.csss === +csss))
+        {
+            dispatch(AddSnackbar({
+                messageText: "Расходник с таким КССС уже добавлен",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+
         const resDevice = await DeviceService.getDeviceByCsss(+csss!)
         const resConsumable = await ConsumableService.getConsumableByCsss(+csss!)
         if (!resDevice && !resConsumable) {
@@ -82,9 +102,10 @@ export default function Application() {
         }
         if (resDevice) {
             const tmp: Device[] = []
-            devices?.forEach((d) => {
+            devices.forEach((d) => {
                 tmp.push(d)
             })
+
             tmp.push({...resDevice!, inStock: parseInt(materialAmount)})
             setDevices(tmp)
         } else {
@@ -92,10 +113,13 @@ export default function Application() {
             consumables?.forEach((c) => {
                 tmp.push(c)
             })
+
             tmp.push({...resConsumable!, inStock: parseInt(materialAmount)})
             setConsumables(tmp)
         }
-        setMaterialAmount('')
+        setMaterialAmount(undefined)
+        setCsss(undefined)
+
     }
 
     const delDevice = async (csss: number) => {
@@ -105,6 +129,45 @@ export default function Application() {
         setConsumables(consumables.filter((c) => c.csss !== csss))
     }
 
+    function changeConsumableAmountInApplication(newValue: number, csss: number)
+    {
+        if (newValue < 1)
+        {
+            dispatch(AddSnackbar({
+                messageText: "Недопустимое количество",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        const selectConumsble = consumables.find(c => c.csss === csss)
+        if(!selectConumsble)
+            return;
+        selectConumsble.inStock = newValue
+        const tmp = consumables.filter(c => c.csss !== csss)
+        tmp.push(selectConumsble)
+        setConsumables(tmp)
+    }
+    function changeDeviceAmountInApplication(newValue: number, csss: number)
+    {
+        if (newValue < 1)
+        {
+            dispatch(AddSnackbar({
+                messageText: "Недопустимое количество",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        const selectDevice = devices.find(c => c.csss === csss)
+        if(!selectDevice)
+            return;
+        selectDevice.inStock = newValue
+        const tmp = devices.filter(c => c.csss !== csss)
+        tmp.push(selectDevice)
+        setDevices(tmp)
+    }
+
     useEffect(() => {
         if (key) return
         setKey(true)
@@ -112,7 +175,6 @@ export default function Application() {
             if (res) dispatch(res);
         });
     }, [])
-
 
     return (
         <Box sx={{
@@ -241,7 +303,7 @@ export default function Application() {
                                                        size='small'
                                                        type="number"
                                                        value={row.inStock}
-                                                // onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                                       onChange={(newValue) => changeConsumableAmountInApplication(parseInt(newValue.target.value), row.csss)}
                                             />
                                             <IconButton aria-label="delete" size="large" style={{marginTop: "-8px"}}
                                                         onClick={() => {
@@ -274,7 +336,7 @@ export default function Application() {
                                                        size='small'
                                                        type="number"
                                                        value={row.inStock}
-                                                // onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                                        onChange={(newValue) => changeDeviceAmountInApplication(parseInt(newValue.target.value), row.csss)}
                                             />
                                             <IconButton aria-label="delete" size="large" style={{marginTop: "-8px"}}
                                                         onClick={() => {

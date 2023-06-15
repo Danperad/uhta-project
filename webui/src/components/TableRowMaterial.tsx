@@ -100,18 +100,18 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                                             {rowMaterial.consumables.map((materialRow) => (
                                                 <TableRow>
                                                     <TableCell component="th" scope="row" onClick={() => {
-                                                        handleOpenEditMaterialModal(materialRow.csss)
-                                                    }}>{materialRow.title}</TableCell>
-                                                    <TableCell>{materialRow.nr3}</TableCell>
-                                                    <TableCell>{materialRow.csss}</TableCell>
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
+                                                    }}>{materialRow.consumable!.title}</TableCell>
+                                                    <TableCell>{materialRow.consumable!.nr3}</TableCell>
+                                                    <TableCell>{materialRow.consumable!.csss}</TableCell>
                                                     <TableCell align="right" onClick={() => {
-                                                        handleOpenEditMaterialModal(materialRow.csss)
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}
-                                                               typeof='number'>{materialRow.inOperation}</TableCell>
+                                                               typeof='number'>{materialRow.count}</TableCell>
                                                     <TableCell align="right" onClick={() => {
-                                                        handleOpenEditMaterialModal(materialRow.csss)
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}
-                                                               typeof='number'>{materialRow.inStock}</TableCell>
+                                                               typeof='number'>{materialRow.consumable!.inStock}</TableCell>
                                                 </TableRow>
                                             ))}
                                         </>
