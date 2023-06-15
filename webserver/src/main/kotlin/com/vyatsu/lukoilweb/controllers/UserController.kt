@@ -1,7 +1,7 @@
 package com.vyatsu.lukoilweb.controllers
 
-import com.vyatsu.lukoilweb.models.AuthModel
-import com.vyatsu.lukoilweb.models.UserDTO
+import com.vyatsu.lukoilweb.models.dto.AuthModel
+import com.vyatsu.lukoilweb.models.dto.UserDTO
 import com.vyatsu.lukoilweb.services.UserService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

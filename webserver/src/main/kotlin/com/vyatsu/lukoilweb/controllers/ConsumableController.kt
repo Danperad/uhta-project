@@ -1,6 +1,6 @@
 package com.vyatsu.lukoilweb.controllers
 
-import com.vyatsu.lukoilweb.models.ConsumableDTO
+import com.vyatsu.lukoilweb.models.dto.ConsumableDTO
 import com.vyatsu.lukoilweb.services.ConsumableService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
