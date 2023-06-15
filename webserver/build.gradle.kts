@@ -9,9 +9,9 @@ plugins {
 	kotlin("plugin.serialization") version "1.8.21"
 	id("org.flywaydb.flyway") version "9.8.1"
 }
-
+val a = System.getenv("WEBSERVER_VERSION") ?: "1"
 group = "com.vyatsu"
-version = "0.0.1"
+version = "0.0.${a}"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
