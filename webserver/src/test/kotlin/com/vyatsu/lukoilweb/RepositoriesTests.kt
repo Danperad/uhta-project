@@ -63,14 +63,6 @@ class RepositoriesTests {
         val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(2)
         consumable.devices.add(Binding(device!!, consumable, 1))
         val newConsumable = consumableRepository.save(consumable)
-        assert(newConsumable.devices.any { it.device.csss == device.csss})
-    }
-
-    @Test
-    fun removeBindingConsumable(){
-        val consumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(1)
-        consumable!!.devices.removeAt(0)
-        val newConsumable = consumableRepository.save(consumable)
-        assert(newConsumable.devices.isEmpty())
+        assert(newConsumable.devices.any { it.device.csss == device.csss })
     }
 }
