@@ -41,9 +41,13 @@ class ConsumableService(
             }
             consumable.devices.clear()
             consumable.devices.addAll(devices)
+            consumable.devices.forEach {
+                it.device.consumables.add(it)
+            }
         }
         return try {
-            consumableRepository.save(consumable).mapToConsumableDTOWithoutDevices()
+            val test = consumableRepository.save(consumable)
+            return test.mapToConsumableDTO()
         } catch (e: Exception) {
             null
         }
