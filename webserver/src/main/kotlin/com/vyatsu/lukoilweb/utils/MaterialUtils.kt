@@ -1,4 +1,4 @@
-package com.vyatsu.lukoilweb.repositories
+package com.vyatsu.lukoilweb.utils
 
 import com.vyatsu.lukoilweb.models.MaterialBase
 import jakarta.persistence.criteria.CriteriaBuilder

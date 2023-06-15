@@ -33,7 +33,7 @@ class RepositoriesTests {
             Consumable(1, 1, "Тестовый Расходник 1", "Тест", UnitTypes.PC),
             Consumable(2, 2, "Тестовый Расходник 2", "Тест", UnitTypes.PC),
         )
-        consumables[0].devices.add(Binding(devices[0], consumables[0], 1))
+        consumables[0].devices.add(Binding(newDevices[0], consumables[0], 1))
         consumableRepository.saveAll(consumables)
 
     }

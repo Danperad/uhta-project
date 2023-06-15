@@ -1,6 +1,7 @@
 package com.vyatsu.lukoilweb.repositories
 
 import com.vyatsu.lukoilweb.models.Device
+import com.vyatsu.lukoilweb.utils.preparePredicate
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.data.domain.Page
