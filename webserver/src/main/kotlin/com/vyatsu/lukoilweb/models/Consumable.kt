@@ -15,7 +15,7 @@ class Consumable(
     inStock: Int = 0,
     inOperation: Int = 0,
 
-    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], orphanRemoval = true)
     @JoinColumn(name = "consumables_id")
     val devices: MutableList<Binding> = mutableListOf(),
 
