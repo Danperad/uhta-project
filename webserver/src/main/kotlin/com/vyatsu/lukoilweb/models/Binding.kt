@@ -6,10 +6,10 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "binding")
 class Binding(
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "device_id")
     val device: Device,
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "consumables_id")
     val consumable: Consumable,
     @Column(name = "count")
