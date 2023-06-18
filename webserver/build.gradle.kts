@@ -9,9 +9,9 @@ plugins {
 	kotlin("plugin.serialization") version "1.8.21"
 	id("org.flywaydb.flyway") version "9.8.1"
 }
-
+val a = System.getenv("WEBSERVER_VERSION") ?: "1"
 group = "com.vyatsu"
-version = "0.0.1"
+version = "0.0.${a}"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -40,6 +40,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.hibernate.orm:hibernate-core:6.2.4.Final")
 	runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
 	runtimeOnly("org.flywaydb:flyway-core:9.8.1")
 	runtimeOnly("org.flywaydb:flyway-sqlserver")
@@ -50,6 +51,7 @@ dependencies {
 	//tests
 	testImplementation("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("io.mockk:mockk:1.13.5")
 //	  testImplementation("org.springframework.security:spring-security-test")
 }
 

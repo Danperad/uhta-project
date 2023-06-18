@@ -2,50 +2,63 @@ import axios from "axios";
 import Consumable from "../models/Consumable";
 import {ConsumableLoaded} from "../redux/actions/consumableAction";
 
-interface LooseObject{
-    [key: string] : any
+interface LooseObject {
+    [key: string]: any
 }
+
 const ApiUrl = `${import.meta.env.VITE_API_URL}/api/consumables/`
 
 class ConsumableService {
-    getAllConsumables(search: string | null = null) {
-        const params : LooseObject = {}
+    async getAllConsumables(search: string | null = null) {
+        const params: LooseObject = {}
         params['count'] = 20
-        if(search !== null && search !== '')
-        {
+        if (search !== null && search !== '') {
             params["search"] = search
         }
-        return axios.get(ApiUrl, {params: params}).then(res => {
+        try {
+            const res = await axios.get(ApiUrl, {params: params})
+            if (res.status % 100 > 3) return undefined
             return ConsumableLoaded(res.data);
-        })
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
     }
-    getConsumableByCsss(csss: number) {
-        return axios.get(ApiUrl + csss)
-            .then((res) => {
-                return res.data as Consumable;
-            }).catch((error) => {
-                console.log(error);
-                return null
-            });
+
+    async getConsumableByCsss(csss: number) {
+        try {
+            const res = await axios.get(`${ApiUrl}${csss}`)
+            if (res.status % 100 > 3) return undefined
+            return res.data as Consumable
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
     }
-    saveConsumable(consumable: Consumable){
-        return axios.post(ApiUrl, consumable)
-            .then((res) => {
-                if (res.status % 100 !== 2) return []
-                const consumables : Consumable[] = res.data;
-                return consumables;
-            }).catch((error) => {
-                console.log(error);
-                return [];
-            });
+
+    async saveConsumable(consumable: Consumable) {
+        try {
+            const res = await axios.post(ApiUrl, consumable)
+            if (res.status % 100 > 3) return undefined
+            return res.data as Consumable
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
     }
-    deleteConsumableByCsss(csss: number){
-        const params : LooseObject = {}
+
+    async deleteConsumableByCsss(csss: number) {
+        const params: LooseObject = {}
         params['csss'] = csss
-        return axios.post(`${ApiUrl}delete`, {},{params: params})
-            .then((res) => {
-                return res.data as boolean
-            })
+        try {
+            const res = await axios.post(`${ApiUrl}delete`, {}, {params: params})
+            if (res.status % 100 > 3) return false
+            return res.data as boolean
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
     }
 }
+
 export default new ConsumableService();

@@ -1,5 +1,7 @@
 package com.vyatsu.lukoilweb.models
 
+import com.vyatsu.lukoilweb.models.dto.UserDTO
+import com.vyatsu.lukoilweb.utils.RoleConverter
 import jakarta.persistence.*
 
 @Entity
@@ -23,5 +25,5 @@ class User(
     @Column(name = "user_id", nullable = false)
     var id: Int? = null
 ) {
-    fun toUserModel() = UserModel(id!!, login, lastName, firstName, middleName)
+    fun mapToUserDTO() = UserDTO(id!!, login, lastName, firstName, middleName)
 }

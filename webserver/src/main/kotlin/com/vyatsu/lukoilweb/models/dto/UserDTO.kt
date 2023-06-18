@@ -1,12 +1,12 @@
-package com.vyatsu.lukoilweb.models
+package com.vyatsu.lukoilweb.models.dto
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserModel(
+data class UserDTO(
     val userId: Int,
     val login: String,
     val lastName: String,
     val firstName: String,
-    val middleName: String?
+    val middleName: String? = null
 )
