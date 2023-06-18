@@ -15,15 +15,15 @@ data class BindingDTO(
 ) {
     fun mapToBinding(consumable: Consumable): Binding {
         if (device == null) throw JsonParseException()
-        return Binding(device.mapToDevice(), consumable, count, id)
+        return Binding(device.mapToDevice(), consumable, count, false, id)
     }
 
     fun mapToBinding(device: Device): Binding {
         if (consumable == null) throw JsonParseException()
-        return Binding(device, consumable.mapToConsumable(), count, id)
+        return Binding(device, consumable.mapToConsumable(), count, false, id)
     }
 
     fun mapToBinding(device: Device, consumable: Consumable): Binding {
-        return Binding(device, consumable, count, id)
+        return Binding(device, consumable, count, false, id)
     }
 }

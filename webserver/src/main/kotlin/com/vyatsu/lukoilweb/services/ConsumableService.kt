@@ -1,6 +1,5 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.dto.ConsumableDTO
 import com.vyatsu.lukoilweb.repositories.BindingRepository
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
@@ -44,8 +43,8 @@ class ConsumableService(
                 TODO()
             if (!csssConsumable.devices.all { first -> consumable.devices.any { it.device.csss == first.device.csss } }) {
                 val bindings =
-                    csssConsumable.devices.filter { first -> !consumable.devices.none { it.device.csss == first.device.csss } }
-                bindingRepository.deleteAll(bindings)
+                    csssConsumable.devices.filter { first -> !consumable.devices.none { it.device.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
+                bindingRepository.saveAll(bindings)
             }
         }
 

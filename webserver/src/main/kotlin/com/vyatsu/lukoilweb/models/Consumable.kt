@@ -15,7 +15,7 @@ class Consumable(
     inStock: Int = 0,
     inOperation: Int = 0,
 
-    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], orphanRemoval = true)
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = true)
     @JoinColumn(name = "consumables_id")
     val devices: MutableList<Binding> = mutableListOf(),
 
@@ -24,11 +24,14 @@ class Consumable(
     @Column(name = "consumables_id", nullable = false)
     var id: Int? = null
 ) : MaterialBase(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation) {
-    fun mapToConsumableDTO() : ConsumableDTO {
-        val newDevices = devices.map { it.mapToBindingWithoutConsumable() }.toSet()
+    fun mapToConsumableDTO(): ConsumableDTO {
+        val newDevices = devices.filter { !it.isDeleted }.map { it.mapToBindingWithoutConsumable() }.toSet()
         return mapToConsumableDTOWithoutDevices().copy(devices = newDevices)
     }
-    fun mapToConsumableDTOWithoutDevices() = ConsumableDTO(id, title, producer, csss, nr,unitOfMeasurement.value, inOperation, inStock)
+
+    fun mapToConsumableDTOWithoutDevices() =
+        ConsumableDTO(id, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock)
+
     fun copy(
         csss: Int = this.csss,
         nr: Int = this.nr,
