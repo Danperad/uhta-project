@@ -1,4 +1,4 @@
-package com.vyatsu.lukoilweb.models
+package com.vyatsu.lukoilweb.models.dto
 
 import kotlinx.serialization.Serializable
 

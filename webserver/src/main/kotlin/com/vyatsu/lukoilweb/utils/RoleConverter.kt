@@ -1,5 +1,6 @@
-package com.vyatsu.lukoilweb.models
+package com.vyatsu.lukoilweb.utils
 
+import com.vyatsu.lukoilweb.models.Roles
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 import java.util.NoSuchElementException

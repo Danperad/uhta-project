@@ -1,7 +1,7 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.AuthModel
-import com.vyatsu.lukoilweb.models.UserDTO
+import com.vyatsu.lukoilweb.models.dto.AuthModel
+import com.vyatsu.lukoilweb.models.dto.UserDTO
 import com.vyatsu.lukoilweb.repositories.UserRepository
 import org.springframework.stereotype.Service
 

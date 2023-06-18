@@ -4,18 +4,27 @@ import com.vyatsu.lukoilweb.models.Binding
 import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.Device
 import com.vyatsu.lukoilweb.models.UnitTypes
+import com.vyatsu.lukoilweb.models.dto.BindingDTO
+import com.vyatsu.lukoilweb.models.dto.ConsumableDTO
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
+import com.vyatsu.lukoilweb.services.ConsumableService
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.data.domain.PageRequest
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.transaction.annotation.Transactional
 
-@DataJpaTest
+@ExtendWith(SpringExtension::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class RepositoriesTests {
+class ConsumableServiceTests {
+    @Autowired
+    private lateinit var consumableService: ConsumableService
+
     @Autowired
     private lateinit var consumableRepository: ConsumableRepository
 
@@ -23,6 +32,7 @@ class RepositoriesTests {
     private lateinit var deviceRepository: DeviceRepository
 
     @BeforeAll
+    @Transactional
     fun setUp() {
         val devices = listOf(
             Device(1, 1, "Тестовый Прибор 1", "Тест", UnitTypes.PC),
@@ -39,30 +49,17 @@ class RepositoriesTests {
     }
 
     @Test
-    fun gettingAllDevices() {
-        val devices = deviceRepository.findAllByIsDeletedFalse(PageRequest.of(0, 20))
-        assert(devices.size == 2)
-    }
-
-    @Test
-    fun gettingAllConsumables() {
-        val consumables = consumableRepository.findAllByIsDeletedFalse(PageRequest.of(0, 20))
-        assert(consumables.size == 2)
-    }
-
-    @Test
-    fun addingDevice() {
-        val device = Device(3, 3, "Тестовый Прибор 3", "Тест", UnitTypes.PC)
-        val newDevice = deviceRepository.save(device)
-        assert(newDevice.id != null)
-    }
-
-    @Test
-    fun addBindingConsumable() {
-        val consumable = Consumable(3, 3, "Тестовый Расходник", "Тест", UnitTypes.PC)
-        val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(2)
-        consumable.devices.add(Binding(device!!, consumable, 1))
-        val newConsumable = consumableRepository.save(consumable)
-        assert(newConsumable.devices.any { it.device.csss == device.csss })
+    @Transactional
+    fun addConsumableWithBinding() {
+        val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(1)!!.mapToDeviceDTO()
+        val consumable =
+            ConsumableDTO(null, "Расходник 3", "Тест", 3, 3, "ШТ", 0, 0, setOf(BindingDTO(null, device, null, 0)))
+        val newConsumable = consumableService.saveConsumable(consumable)
+        assert(newConsumable != null)
+        assert(newConsumable!!.devices.isNotEmpty())
+        assert(newConsumable.devices.first().device!= null)
+        val aaa = consumableService.saveConsumable(newConsumable.copy(devices = setOf()))
+        assert(aaa != null)
+        assert(aaa!!.devices.isEmpty())
     }
 }

@@ -105,7 +105,17 @@ export default function Application() {
             devices.forEach((d) => {
                 tmp.push(d)
             })
-
+          
+            if(tmp.find(d => d.csss === +csss))
+            {
+                dispatch(AddSnackbar({
+                    messageText: "Прибор с таким КССС уже добавлен",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+                return
+            }
+          
             tmp.push({...resDevice!, inStock: parseInt(materialAmount)})
             setDevices(tmp)
         } else {
@@ -113,6 +123,16 @@ export default function Application() {
             consumables?.forEach((c) => {
                 tmp.push(c)
             })
+          
+            if(tmp.find(d => d.csss === +csss))
+            {
+                dispatch(AddSnackbar({
+                    messageText: "Расходник с таким КССС уже добавлен",
+                    messageType: "error",
+                    key: +new Date()
+                }))
+                return
+            }
 
             tmp.push({...resConsumable!, inStock: parseInt(materialAmount)})
             setConsumables(tmp)
