@@ -7,7 +7,7 @@ data class ApplicationDTO(
     var number: Int? = null,
     val date: Long,
     val title: String,
-    val period: Long?,
+    val period: Long? = null,
     val status: String,
     val devices: Set<ApplicationDeviceDTO>,
     val consumables: Set<ApplicationConsumableDTO>
