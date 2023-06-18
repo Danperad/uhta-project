@@ -43,7 +43,7 @@ class DeviceService(
                 TODO()
             if (!csssDevice.consumables.all { first -> device.consumables.any { it.consumable.csss == first.consumable.csss } }) {
                 val bindings =
-                    csssDevice.consumables.filter { first -> !device.consumables.none { it.consumable.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
+                    csssDevice.consumables.filter { first -> !device.consumables.any { it.consumable.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
                 bindingRepository.saveAll(bindings)
             }
         }

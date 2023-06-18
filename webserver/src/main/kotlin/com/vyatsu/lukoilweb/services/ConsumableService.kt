@@ -43,7 +43,7 @@ class ConsumableService(
                 TODO()
             if (!csssConsumable.devices.all { first -> consumable.devices.any { it.device.csss == first.device.csss } }) {
                 val bindings =
-                    csssConsumable.devices.filter { first -> !consumable.devices.none { it.device.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
+                    csssConsumable.devices.filter { first -> !consumable.devices.any { it.device.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
                 bindingRepository.saveAll(bindings)
             }
         }
