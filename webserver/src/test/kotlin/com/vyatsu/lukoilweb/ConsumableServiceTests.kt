@@ -55,11 +55,9 @@ class ConsumableServiceTests {
         val consumable =
             ConsumableDTO(null, "Расходник 3", "Тест", 3, 3, "ШТ", 0, 0, setOf(BindingDTO(null, device, null, 0)))
         val newConsumable = consumableService.saveConsumable(consumable)
-        assert(newConsumable != null)
-        assert(newConsumable!!.devices.isNotEmpty())
-        assert(newConsumable.devices.first().device!= null)
+        assert(newConsumable.devices.isNotEmpty())
+        assert(newConsumable.devices.first().device != null)
         val aaa = consumableService.saveConsumable(newConsumable.copy(devices = setOf()))
-        assert(aaa != null)
-        assert(aaa!!.devices.isEmpty())
+        assert(aaa.devices.isEmpty())
     }
 }
