@@ -1,7 +1,7 @@
 import {Box, Button, Modal, Paper, Stack, TextField, Typography} from "@mui/material";
 import style from "../assets/css/ChangeDeviceModal.module.css";
 import {useEffect, useState} from "react";
-import {Consumable, Device} from '../models';
+import {Binding, Consumable, Device} from '../models';
 import {AddSnackbar} from "../redux/actions/snackbarAction";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../redux/store";
@@ -111,7 +111,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
     const checkCorrectData = async () => {
         if (!csss) return
 
-        if (consumable.devices && consumable.devices.find(d => d.csss === +csss)) {
+        if (consumable.devices && consumable.devices.find(d => d.device!.csss === +csss)) {
             dispatch(AddSnackbar({
                 messageText: "Прибор уже привязан",
                 messageType: "error",
@@ -152,12 +152,17 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
     }
 
     const bind = async () => {
-        if (!consumable) return
-        const devices = !consumable!.devices ? [] as Device[] : consumable!.devices
-        devices.push(device!)
+        if (!consumable || !amount) return
+        const devices = !consumable.devices ? [] as Binding[] : consumable.devices
+        const newDevice = {
+            id: 0,
+            device: device,
+            count: +amount
+        } as Binding
+        devices.push(newDevice)
         const addedConsumable = await ConsumableService.saveConsumable({
-            ...consumable!, inOperation: consumable!.inOperation + parseInt(amount!),
-            inStock: consumable!.inStock - parseInt(amount!), devices: devices
+            ...consumable, inOperation: consumable.inOperation + parseInt(amount),
+            inStock: consumable.inStock - parseInt(amount), devices: devices
         })
         if (!addedConsumable) {
             dispatch(AddSnackbar({
@@ -186,9 +191,9 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
     const delBind = async (csss: number) => {
         if (!consumable) return
         const newConsumable = consumable
-        newConsumable.devices = newConsumable?.devices.filter((d) => d.csss !== csss)
+        newConsumable.devices = newConsumable.devices.filter((d) => d.device!.csss !== csss)
         try {
-            await ConsumableService.saveConsumable(newConsumable!)
+            await ConsumableService.saveConsumable(newConsumable)
             dispatch(AddSnackbar({
                 messageText: "Материал отвязан!",
                 messageType: "success",
@@ -266,17 +271,17 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                                     <Button variant="contained" onClick={checkCorrectData}>добавить</Button>
                                 </Stack>
                                 {consumable && consumable!.devices && consumable!.devices.length !== 0 && (
-                                    consumable!.devices.map((row: Device) => (
+                                    consumable!.devices.map((row) => (
                                         <Stack direction="row" width='100%' spacing={1} mb={1}>
                                             <TextField label="Наименование" variant="outlined"
                                                        size='small'
                                                        type="string"
-                                                       value={row.title}
+                                                       value={row.device!.title}
                                                        style={{width: '30%'}}
                                             />
                                             <TextField label="КССС" variant="outlined" size='small'
                                                        type="number"
-                                                       value={row.csss}
+                                                       value={row.device!.csss}
                                                        InputProps={{
                                                            inputProps: {min: 1}
                                                        }}
@@ -285,11 +290,11 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                                                        variant="outlined"
                                                        size='small'
                                                        type="number"
-                                                       value={row.inOperation}
+                                                       value={row.count}
                                                        onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                                             />
                                             <Button variant="outlined" onClick={() => {
-                                                delBind(row.csss)
+                                                delBind(row.device!.csss)
                                             }}>отвязать</Button>
 
                                         </Stack>

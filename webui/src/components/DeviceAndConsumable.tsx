@@ -10,7 +10,7 @@ import {AddSnackbar} from "../redux/actions/snackbarAction";
 import MaterialTable from "./MaterialTable";
 import DeviceService from "../services/DeviceService";
 import ConsumableService from "../services/ConsumableService";
-import {Consumable, Device} from "../models";
+import {Binding, Consumable, Device} from "../models";
 import FileUploadService from "../services/FileUploadService";
 
 //Dictionaries
@@ -89,9 +89,9 @@ export default function DeviceAndConsumable() {
 
         if (check && materialType === "Прибор") {
             const newDevice: Device = {
-                id: 0,
+                id: undefined,
                 title: materialName!,
-                producer: producer!,
+                producer: producer,
                 csss: parseInt(csss!),
                 nr3: parseInt(nr3!),
                 unitType: materialUnit!,
@@ -113,16 +113,20 @@ export default function DeviceAndConsumable() {
         } else if (check && materialType === "Расходник") {
             if (parentCsss !== '' || parentCsss !== undefined) {
                 const res = await DeviceService.getDeviceByCsss(parseInt(parentCsss!))
+                const newDevice = {
+                    device: res,
+                    count: +amount!
+                } as Binding
                 const newConsumable: Consumable = {
-                    id: 0,
+                    id: undefined,
                     title: materialName!,
-                    producer: producer!,
+                    producer: producer,
                     csss: parseInt(csss!),
                     nr3: parseInt(nr3!),
                     unitType: materialUnit!,
                     inOperation: 0,
                     inStock: parseInt(amount!),
-                    devices: !res ? [] : [res]
+                    devices: !res ? [] : [newDevice]
                 }
                 const saveRes = await ConsumableService.saveConsumable(newConsumable)
                 if (!saveRes) return;
