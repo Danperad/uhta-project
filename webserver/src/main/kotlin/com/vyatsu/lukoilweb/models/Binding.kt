@@ -14,6 +14,8 @@ class Binding(
     val consumable: Consumable,
     @Column(name = "count")
     val count: Int = 0,
+    @Column(name = "deleted")
+    val isDeleted: Boolean = false,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "binding_id", nullable = false)
@@ -35,5 +37,15 @@ class Binding(
             null,
             count
         )
+    }
+
+    fun copy(
+        device: Device = this.device,
+        consumable: Consumable = this.consumable,
+        count: Int = this.count,
+        isDeleted: Boolean = this.isDeleted,
+        id: Int? = this.id
+    ):Binding{
+        return Binding(device, consumable, count, isDeleted, id)
     }
 }
