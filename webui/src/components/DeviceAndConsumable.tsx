@@ -283,7 +283,7 @@ export default function DeviceAndConsumable() {
                                               value={autocompleteProducerValue}
 
                                               renderInput={(params) => <TextField {...params} label="Производитель"
-                                                                                  value={materialType}
+                                                                                  value={producer}
                                                                                   onChange={(newValue) => setProducer(newValue.target.value)}/>}
                                 />
 
