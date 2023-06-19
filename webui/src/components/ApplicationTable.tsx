@@ -13,6 +13,7 @@ import {
     TableHead,
     TableRow
 } from "@mui/material";
+import moment from 'moment';
 
 export default function ApplicationTable() {
     const [orders, setOrders] = useState<Application[]>([]);
@@ -50,7 +51,8 @@ export default function ApplicationTable() {
                                 >
                                     <TableCell>{row.number}</TableCell>
                                     <TableCell align="left">{row.title}</TableCell>
-                                    <TableCell align="center">{row.date}</TableCell>
+                                    {/*<TableCell align="center">{(moment(row.date)).format('DD-MMM-YYYY')}</TableCell>*/}
+                                    <TableCell align="center">{moment(row.date).format('DD.MM.YYYY')}</TableCell>
                                     <TableCell align="center">{row.status}</TableCell>
                                     <TableCell align="center"><Button
                                         variant="contained">Архивировать</Button>
