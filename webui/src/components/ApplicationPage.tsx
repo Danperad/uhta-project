@@ -55,12 +55,12 @@ export default function ApplicationPage() {
     }
     //Dictionaries
     const Unit = [
-        {label: 'Дни'},
-        {label: 'Месяцы'},
+        'Дни',
+        'Месяцы',
     ]
     const Purchase = [
-        {label: 'Внутренний'},
-        {label: 'Внешний'},
+        'Внутренний',
+        'Внешний',
     ]
 
     const handleShowApplicationTable = () => setShowApplicationTable(true);
@@ -169,13 +169,15 @@ export default function ApplicationPage() {
 
     const calculatePeriod = () => {
         let period = 86400 * interval!
-        if(unit === Unit[1].label)
+        if (unit === Unit[1])
             period = period * 30
         return period
     }
 
-    const addApplication = ()=>
-    {
+    const addApplication = ()=> {
+
+        if (!date || !purchase || consumables.length === undefined || devices.length === undefined)
+            return;
 
         const milleseconds = new Date(date!).getTime()
 
@@ -190,10 +192,8 @@ export default function ApplicationPage() {
             consumables: consumables,
             devices: devices
         }
-        console.log(newApplication)
         const res = ApplicationService.addApplication(newApplication)
-        if(!res)
-        {
+        if (!res) {
             dispatch(AddSnackbar({
                 messageText: "Что-то пошло не так",
                 messageType: "error",
@@ -201,6 +201,12 @@ export default function ApplicationPage() {
             }))
             return
         }
+        dispatch(AddSnackbar({
+            messageText: "Заявка успешно добавлена!",
+            messageType: "success",
+            key: +new Date()
+        }))
+        setCreateApplicationModalOpen(false);
     }
 
     useEffect(() => {
@@ -281,8 +287,10 @@ export default function ApplicationPage() {
                                         />
                                         <Autocomplete disablePortal size='small' options={Purchase}
                                                       sx={{width: '16%'}}
-                                                      onInputChange={(e, value) => {setPurchase(value)}}
-                                                      value={{label: purchase}}
+                                                      onInputChange={(e, value) => {
+                                                          setPurchase(value)
+                                                      }}
+                                                      value={purchase}
                                                       renderInput={(params) => <TextField
                                                           value={purchase}
                                                           onChange={(newValue) => setPurchase(newValue.target.value)} {...params}
