@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {
     Autocomplete,
     Box,
@@ -26,7 +26,6 @@ import ApplicationService from "../services/ApplicationService";
 export default function ApplicationPage() {
     const dispatch = useDispatch<AppDispatch>();
     const [checked, setChecked] = useState(false);
-    const [key, setKey] = useState(false);
 
     const [openCreateOrderModal, setCreateApplicationModalOpen] = useState(false);
 
@@ -43,7 +42,12 @@ export default function ApplicationPage() {
     const [interval, setInterval] = useState<number>()
     const [unit, setUnit] = useState<string>()
 
-    const handleOpenCreateApplicationModal = () => setCreateApplicationModalOpen(true);
+    const handleOpenCreateApplicationModal = () => {
+        setCreateApplicationModalOpen(true)
+        DeviceService.getAllDevices().then((res) => {
+            if (res) dispatch(res);
+        });
+    }
     const handleCloseCreateOrderModal = () => {
         setCreateApplicationModalOpen(false);
         if (checked) {
@@ -55,12 +59,12 @@ export default function ApplicationPage() {
     }
     //Dictionaries
     const Unit = [
-        {label: 'Дни'},
-        {label: 'Месяцы'},
+        'Дни',
+        'Месяцы',
     ]
     const Purchase = [
-        {label: 'Внутренний'},
-        {label: 'Внешний'},
+        'Внутренний',
+        'Внешний',
     ]
 
     const handleShowApplicationTable = () => setShowApplicationTable(true);
@@ -169,13 +173,15 @@ export default function ApplicationPage() {
 
     const calculatePeriod = () => {
         let period = 86400 * interval!
-        if(unit === Unit[1].label)
+        if (unit === Unit[1])
             period = period * 30
         return period
     }
 
-    const addApplication = ()=>
-    {
+    const addApplication = ()=> {
+
+        if (!date || !purchase || consumables.length === undefined || devices.length === undefined)
+            return;
 
         const milleseconds = new Date(date!).getTime()
 
@@ -190,10 +196,8 @@ export default function ApplicationPage() {
             consumables: consumables,
             devices: devices
         }
-        console.log(newApplication)
         const res = ApplicationService.addApplication(newApplication)
-        if(!res)
-        {
+        if (!res) {
             dispatch(AddSnackbar({
                 messageText: "Что-то пошло не так",
                 messageType: "error",
@@ -201,15 +205,13 @@ export default function ApplicationPage() {
             }))
             return
         }
+        dispatch(AddSnackbar({
+            messageText: "Заявка успешно добавлена!",
+            messageType: "success",
+            key: +new Date()
+        }))
+        setCreateApplicationModalOpen(false);
     }
-
-    useEffect(() => {
-        if (key) return
-        setKey(true)
-        DeviceService.getAllDevices().then((res) => {
-            if (res) dispatch(res);
-        });
-    }, [])
 
     return (
         <Box sx={{
@@ -281,8 +283,10 @@ export default function ApplicationPage() {
                                         />
                                         <Autocomplete disablePortal size='small' options={Purchase}
                                                       sx={{width: '16%'}}
-                                                      onInputChange={(e, value) => {setPurchase(value)}}
-                                                      value={{label: purchase}}
+                                                      onInputChange={(e, value) => {
+                                                          setPurchase(value)
+                                                      }}
+                                                      value={purchase}
                                                       renderInput={(params) => <TextField
                                                           value={purchase}
                                                           onChange={(newValue) => setPurchase(newValue.target.value)} {...params}
@@ -402,8 +406,8 @@ export default function ApplicationPage() {
                         </div>
                         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                             <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                                <Button variant="contained">Удалить заявку</Button>
-                                <Button variant="contained" onClick={addApplication}>Утвердить</Button>
+                                <Button variant="contained" onClick={handleCloseCreateOrderModal}>Отмена</Button>
+                                <Button variant="contained" onClick={addApplication}>Создать</Button>
                             </Stack>
                         </Paper>
                     </Stack>

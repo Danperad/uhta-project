@@ -36,6 +36,20 @@ class ApplicationService {
             return undefined
         }
     }
+
+    async downloadFile(num: number) {
+        try {
+            const res = await axios({
+                url: `${ApiUrl}get-xlsx?number=${num}`,
+                method: "GET", responseType: "blob"
+            })
+            if (res.status % 100 > 3) return undefined
+            return res.data
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
+    }
 }
 
 export default new ApplicationService();

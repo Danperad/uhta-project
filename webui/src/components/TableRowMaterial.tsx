@@ -37,18 +37,17 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
     }
 
     useEffect(() => {
-        if (device) {
+        if (device)
             setChangeDeviceModal(true);
-        } else {
+        else
             setChangeDeviceModal(false);
-        }
     }, [device])
     useEffect(() => {
-        if (consumable) {
+        if (consumable)
             setChangeConsumableModal(true);
-        } else {
+        else
             setChangeConsumableModal(false);
-        }
+
     }, [consumable])
 
     return (
@@ -102,8 +101,12 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                                                     <TableCell component="th" scope="row" onClick={() => {
                                                         handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}>{materialRow.consumable!.title}</TableCell>
-                                                    <TableCell>{materialRow.consumable!.nr3}</TableCell>
-                                                    <TableCell>{materialRow.consumable!.csss}</TableCell>
+                                                    <TableCell onClick={() => {
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
+                                                    }}>{materialRow.consumable!.nr3}</TableCell>
+                                                    <TableCell onClick={() => {
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
+                                                    }}>{materialRow.consumable!.csss}</TableCell>
                                                     <TableCell align="right" onClick={() => {
                                                         handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}
