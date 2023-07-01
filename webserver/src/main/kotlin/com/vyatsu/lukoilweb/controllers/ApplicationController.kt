@@ -2,6 +2,7 @@ package com.vyatsu.lukoilweb.controllers
 
 import com.vyatsu.lukoilweb.models.dto.ApplicationDTO
 import com.vyatsu.lukoilweb.services.ApplicationService
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(origins = ["*"])
 @RequestMapping("api/applications")
 class ApplicationController(private val applicationService: ApplicationService) {
+    private val logger = LoggerFactory.getLogger(ApplicationController::class.java)
+
     @GetMapping("/",produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getAllApplications() : ResponseEntity<Set<ApplicationDTO>>{
         val applications = applicationService.getAllApplications()
@@ -40,6 +43,8 @@ class ApplicationController(private val applicationService: ApplicationService) 
             val stream = applicationService.getXlsxApplication(number) ?: return ResponseEntity.notFound().build()
             ResponseEntity.ok().contentLength(stream.file.length()).contentType(MediaType.APPLICATION_OCTET_STREAM).body(stream)
         } catch (e: Exception){
+            logger.error(e.message)
+            e.printStackTrace()
             ResponseEntity.badRequest().build()
         }
     }
