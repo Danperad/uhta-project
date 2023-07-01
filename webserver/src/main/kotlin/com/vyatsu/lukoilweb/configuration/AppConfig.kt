@@ -13,5 +13,5 @@ import java.text.SimpleDateFormat
 @EntityScan(basePackages = ["com.vyatsu.lukoilweb.models"])
 class AppConfig{
     @Bean
-    fun dateFormat() = SimpleDateFormat("dd-mm-yyyy")
+    fun dateFormat() = SimpleDateFormat("dd-MM-yyyy")
 }
