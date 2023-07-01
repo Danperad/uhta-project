@@ -41,7 +41,7 @@ class ApplicationController(private val applicationService: ApplicationService) 
     fun getApplicationXlsx(@RequestParam number: Int) : ResponseEntity<Resource>{
         return try {
             val stream = applicationService.getXlsxApplication(number) ?: return ResponseEntity.notFound().build()
-            ResponseEntity.ok().contentLength(stream.file.length()).contentType(MediaType.APPLICATION_OCTET_STREAM).body(stream)
+            ResponseEntity.ok().contentLength(stream.contentLength()).contentType(MediaType.APPLICATION_OCTET_STREAM).body(stream)
         } catch (e: Exception){
             logger.error(e.message)
             e.printStackTrace()
