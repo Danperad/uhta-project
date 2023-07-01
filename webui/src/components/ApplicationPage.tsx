@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {
     Autocomplete,
     Box,
@@ -26,7 +26,6 @@ import ApplicationService from "../services/ApplicationService";
 export default function ApplicationPage() {
     const dispatch = useDispatch<AppDispatch>();
     const [checked, setChecked] = useState(false);
-    const [key, setKey] = useState(false);
 
     const [openCreateOrderModal, setCreateApplicationModalOpen] = useState(false);
 
@@ -43,7 +42,12 @@ export default function ApplicationPage() {
     const [interval, setInterval] = useState<number>()
     const [unit, setUnit] = useState<string>()
 
-    const handleOpenCreateApplicationModal = () => setCreateApplicationModalOpen(true);
+    const handleOpenCreateApplicationModal = () => {
+        setCreateApplicationModalOpen(true)
+        DeviceService.getAllDevices().then((res) => {
+            if (res) dispatch(res);
+        });
+    }
     const handleCloseCreateOrderModal = () => {
         setCreateApplicationModalOpen(false);
         if (checked) {
@@ -208,14 +212,6 @@ export default function ApplicationPage() {
         }))
         setCreateApplicationModalOpen(false);
     }
-
-    useEffect(() => {
-        if (key) return
-        setKey(true)
-        DeviceService.getAllDevices().then((res) => {
-            if (res) dispatch(res);
-        });
-    }, [])
 
     return (
         <Box sx={{
@@ -410,8 +406,8 @@ export default function ApplicationPage() {
                         </div>
                         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                             <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                                <Button variant="contained">Удалить заявку</Button>
-                                <Button variant="contained" onClick={addApplication}>Утвердить</Button>
+                                <Button variant="contained" onClick={handleCloseCreateOrderModal}>Отмена</Button>
+                                <Button variant="contained" onClick={addApplication}>Создать</Button>
                             </Stack>
                         </Paper>
                     </Stack>
