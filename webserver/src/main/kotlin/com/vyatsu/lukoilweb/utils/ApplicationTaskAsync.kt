@@ -1,9 +1,6 @@
 package com.vyatsu.lukoilweb.utils
 
-import com.vyatsu.lukoilweb.models.application.Application
-import com.vyatsu.lukoilweb.models.application.ApplicationConsumable
-import com.vyatsu.lukoilweb.models.application.ApplicationDevice
-import com.vyatsu.lukoilweb.models.application.ApplicationStatuses
+import com.vyatsu.lukoilweb.models.application.*
 import com.vyatsu.lukoilweb.repositories.ApplicationRepository
 import org.springframework.scheduling.annotation.Async
 import java.time.LocalDate
@@ -45,7 +42,7 @@ open class ApplicationTaskAsync(private val applicationRepository: ApplicationRe
     private fun updateDevices(application: Application): MutableList<ApplicationDevice> {
         return application.devices.map {
             it.copy(
-                deviceKey = it.deviceKey.copy(applicationNumber = null),
+                deviceKey = ApplicationDeviceKey(),
                 application = application
             )
         }.toMutableList()
@@ -54,7 +51,7 @@ open class ApplicationTaskAsync(private val applicationRepository: ApplicationRe
     private fun updateConsumables(application: Application): MutableList<ApplicationConsumable> {
         return application.consumables.map {
             it.copy(
-                consumableKey = it.consumableKey.copy(applicationNumber = null),
+                consumableKey = ApplicationConsumableKey(),
                 application = application
             )
         }.toMutableList()

@@ -7,13 +7,13 @@ import jakarta.persistence.*
 @Table(name = "devices_application")
 class ApplicationDevice (
     @EmbeddedId
-    val deviceKey: ApplicationDeviceKey,
-    @ManyToOne
+    val deviceKey: ApplicationDeviceKey = ApplicationDeviceKey(),
+    @ManyToOne(optional = false)
     @MapsId("deviceId")
     @JoinColumn(name = "device_id")
     val device: Device,
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("applicationNumber")
     @JoinColumn(name = "application_id")
     val application: Application,
