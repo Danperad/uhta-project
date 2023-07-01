@@ -17,7 +17,7 @@ class Application(
     @Column(name = "title")
     val title: String,
     @Column(name = "application_period")
-    val period: Duration?,
+    var period: Duration?,
     @Column(name = "applications_status")
     @Convert(converter = ApplicationStatusConverter::class)
     val status: ApplicationStatuses,
@@ -46,5 +46,17 @@ class Application(
             )
         }.toSet()
         return ApplicationDTO(number!!, date.time, title, period?.seconds, status.value, newDevices, newConsumables)
+    }
+
+    fun copy(
+        date: Date = this.date,
+        title: String = this.title,
+        period: Duration? = this.period,
+        status: ApplicationStatuses = this.status,
+        devices: MutableList<ApplicationDevice> = this.devices,
+        consumables: MutableList<ApplicationConsumable> = this.consumables,
+        number: Int? = this.number
+    ) : Application {
+        return Application(date, title, period, status, devices, consumables, number)
     }
 }

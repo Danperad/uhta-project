@@ -20,4 +20,13 @@ class ApplicationDevice (
 
     @Column(name = "material_count")
     val deviceCount: Int
-)
+){
+    fun copy(
+        deviceKey: ApplicationDeviceKey = this.deviceKey,
+        device: Device = this.device,
+        application: Application = this.application,
+        deviceCount: Int = this.deviceCount
+    ): ApplicationDevice{
+        return ApplicationDevice(deviceKey, device, application, deviceCount)
+    }
+}

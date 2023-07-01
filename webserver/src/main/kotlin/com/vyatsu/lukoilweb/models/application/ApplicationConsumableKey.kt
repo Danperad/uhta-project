@@ -9,6 +9,13 @@ import kotlinx.serialization.Serializable
 class ApplicationConsumableKey(
     @Column(name = "consumables_id")
     val consumableId: Int,
-    @Column(name = "application_id")
-    val applicationNumber: Int,
-) : java.io.Serializable
+    @Column(name = "application_id", nullable = false)
+    val applicationNumber: Int?,
+) : java.io.Serializable {
+    fun copy(
+        consumableId: Int = this.consumableId,
+        applicationNumber: Int? = this.applicationNumber
+    ): ApplicationConsumableKey {
+        return ApplicationConsumableKey(consumableId, applicationNumber)
+    }
+}

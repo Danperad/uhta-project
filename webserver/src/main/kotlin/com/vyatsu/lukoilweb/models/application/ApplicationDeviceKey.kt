@@ -10,5 +10,12 @@ class ApplicationDeviceKey(
     @Column(name = "device_id")
     val deviceId: Int,
     @Column(name = "application_id")
-    val applicationNumber: Int,
-) : java.io.Serializable
+    val applicationNumber: Int?,
+) : java.io.Serializable{
+    fun copy(
+        deviceId: Int = this.deviceId,
+        applicationNumber: Int? = this.applicationNumber
+    ): ApplicationDeviceKey{
+        return ApplicationDeviceKey(deviceId, applicationNumber)
+    }
+}

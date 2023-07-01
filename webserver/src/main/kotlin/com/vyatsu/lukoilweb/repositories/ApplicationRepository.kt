@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ApplicationRepository : JpaRepository<Application, Int> {
     fun findApplicationByNumber(number: Int): Application?
+    fun findAllByPeriodNotNull() : List<Application>
 }
