@@ -16,14 +16,14 @@ import {style} from '../assets/css/CreateOrderModal';
 import DeviceService from "../services/DeviceService";
 import ApplicationTable from "./ApplicationTable";
 import {AddSnackbar} from "../redux/actions/snackbarAction";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store";
-import {Consumable, Device} from "../models";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../redux/store";
+import {Application, ApplicationConsumable, ApplicationDevice} from "../models";
 import ConsumableService from "../services/ConsumableService";
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
+import ApplicationService from "../services/ApplicationService";
 
-export default function Application() {
-    const state = useSelector((state: RootState) => state);
+export default function ApplicationPage() {
     const dispatch = useDispatch<AppDispatch>();
     const [checked, setChecked] = useState(false);
     const [key, setKey] = useState(false);
@@ -35,8 +35,13 @@ export default function Application() {
     const [showOrderTable, setShowApplicationTable] = useState(false);
     const [csss, setCsss] = useState<string | undefined>();
 
-    const [devices, setDevices] = useState<Device[]>([]);
-    const [consumables, setConsumables] = useState<Consumable[]>([]);
+    const [devices, setDevices] = useState<ApplicationDevice[]>([]);
+    const [consumables, setConsumables] = useState<ApplicationConsumable[]>([]);
+
+    const [date, setDate] = useState('')
+    const [purchase, setPurchase] = useState<string>()
+    const [interval, setInterval] = useState<number>()
+    const [unit, setUnit] = useState<string>()
 
     const handleOpenCreateApplicationModal = () => setCreateApplicationModalOpen(true);
     const handleCloseCreateOrderModal = () => {
@@ -71,8 +76,7 @@ export default function Application() {
             return;
         }
 
-        if(devices.find(d => d.csss === +csss))
-        {
+        if (devices.find(d => d.device.csss === +csss)) {
             dispatch(AddSnackbar({
                 messageText: "Прибор с таким КССС уже добавлен",
                 messageType: "error",
@@ -80,8 +84,7 @@ export default function Application() {
             }))
             return
         }
-        if(consumables.find(d => d.csss === +csss))
-        {
+        if (consumables.find(d => d.consumable.csss === +csss)) {
             dispatch(AddSnackbar({
                 messageText: "Расходник с таким КССС уже добавлен",
                 messageType: "error",
@@ -101,40 +104,19 @@ export default function Application() {
             return;
         }
         if (resDevice) {
-            const tmp: Device[] = []
+            const tmp: ApplicationDevice[] = []
             devices.forEach((d) => {
                 tmp.push(d)
             })
-          
-            if(tmp.find(d => d.csss === +csss))
-            {
-                dispatch(AddSnackbar({
-                    messageText: "Прибор с таким КССС уже добавлен",
-                    messageType: "error",
-                    key: +new Date()
-                }))
-                return
-            }
-          
-            tmp.push({...resDevice!, inStock: parseInt(materialAmount)})
+            tmp.push({applicationNumber: undefined, device: resDevice, count: +materialAmount})
             setDevices(tmp)
         } else {
-            const tmp: Consumable[] = []
+            const tmp: ApplicationConsumable[] = []
             consumables?.forEach((c) => {
                 tmp.push(c)
             })
-          
-            if(tmp.find(d => d.csss === +csss))
-            {
-                dispatch(AddSnackbar({
-                    messageText: "Расходник с таким КССС уже добавлен",
-                    messageType: "error",
-                    key: +new Date()
-                }))
-                return
-            }
 
-            tmp.push({...resConsumable!, inStock: parseInt(materialAmount)})
+            tmp.push({applicationNumber: undefined, consumable: resConsumable!, count: +materialAmount})
             setConsumables(tmp)
         }
         setMaterialAmount(undefined)
@@ -142,17 +124,15 @@ export default function Application() {
 
     }
 
-    const delDevice = async (csss: number) => {
-        setDevices(devices.filter((d) => d.csss !== csss))
+    const delDevice = (csss: number) => {
+        setDevices(devices.filter((d) => d.device.csss !== csss))
     }
-    const delConsumable = async (csss: number) => {
-        setConsumables(consumables.filter((c) => c.csss !== csss))
+    const delConsumable = (csss: number) => {
+        setConsumables(consumables.filter((c) => c.consumable.csss !== csss))
     }
 
-    function changeConsumableAmountInApplication(newValue: number, csss: number)
-    {
-        if (newValue < 1)
-        {
+    function changeConsumableAmountInApplication(newValue: number, csss: number) {
+        if (newValue < 1) {
             dispatch(AddSnackbar({
                 messageText: "Недопустимое количество",
                 messageType: "error",
@@ -160,18 +140,17 @@ export default function Application() {
             }))
             return
         }
-        const selectConumsble = consumables.find(c => c.csss === csss)
-        if(!selectConumsble)
+        const selectConumsble = consumables.find(c => c.consumable.csss === csss)
+        if (!selectConumsble)
             return;
-        selectConumsble.inStock = newValue
-        const tmp = consumables.filter(c => c.csss !== csss)
+        selectConumsble.count = newValue
+        const tmp = consumables.filter(c => c.consumable.csss !== csss)
         tmp.push(selectConumsble)
         setConsumables(tmp)
     }
-    function changeDeviceAmountInApplication(newValue: number, csss: number)
-    {
-        if (newValue < 1)
-        {
+
+    function changeDeviceAmountInApplication(newValue: number, csss: number) {
+        if (newValue < 1) {
             dispatch(AddSnackbar({
                 messageText: "Недопустимое количество",
                 messageType: "error",
@@ -179,13 +158,49 @@ export default function Application() {
             }))
             return
         }
-        const selectDevice = devices.find(c => c.csss === csss)
-        if(!selectDevice)
+        const selectDevice = devices.find(c => c.device.csss === csss)
+        if (!selectDevice)
             return;
-        selectDevice.inStock = newValue
-        const tmp = devices.filter(c => c.csss !== csss)
+        selectDevice.count = newValue
+        const tmp = devices.filter(c => c.device.csss !== csss)
         tmp.push(selectDevice)
         setDevices(tmp)
+    }
+
+    const calculatePeriod = () => {
+        let period = 86400 * interval!
+        if(unit === Unit[1].label)
+            period = period * 30
+        return period
+    }
+
+    const addApplication = ()=>
+    {
+
+        const milleseconds = new Date(date!).getTime()
+
+        const period = checked ? calculatePeriod() : undefined
+
+        const newApplication: Application = {
+            number: undefined,
+            date: milleseconds,
+            title: purchase!,
+            period: period,
+            status: "Новая",
+            consumables: consumables,
+            devices: devices
+        }
+        console.log(newApplication)
+        const res = ApplicationService.addApplication(newApplication)
+        if(!res)
+        {
+            dispatch(AddSnackbar({
+                messageText: "Что-то пошло не так",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
     }
 
     useEffect(() => {
@@ -256,29 +271,45 @@ export default function Application() {
                                 <Stack direction="column" spacing={2}>
                                     <Stack direction="row" spacing={2}>
                                         <TextField label="Дата" type="date" size='small' sx={{width: '16%'}}
+                                                   defaultValue={+Date()} value={date}
+                                                   onChange={e=>{
+                                                       setDate((e.target.value))
+                                                   }}
                                                    InputLabelProps={{
                                                        shrink: true,
                                                    }}
                                         />
                                         <Autocomplete disablePortal size='small' options={Purchase}
                                                       sx={{width: '16%'}}
-                                                      renderInput={(params) => <TextField {...params} label="Закуп"/>}
+                                                      onInputChange={(e, value) => {setPurchase(value)}}
+                                                      value={{label: purchase}}
+                                                      renderInput={(params) => <TextField
+                                                          value={purchase}
+                                                          onChange={(newValue) => setPurchase(newValue.target.value)} {...params}
+                                                          label="Закуп"/>}
+
                                         />
+
                                         <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
                                                           label="Период"/>
-                                        {checked && <Stack direction="row" spacing={2} sx={{width: '40%'}}>
-                                            <TextField label="Интервал" variant="outlined" size='small'
-                                                       type="number"
-                                                       InputProps={{
-                                                           inputProps: {min: 1}
-                                                       }}
-                                            />
-                                            <Autocomplete disablePortal size='small' options={Unit}
-                                                          sx={{width: '40%'}}
-                                                          renderInput={(params) => <TextField {...params}
-                                                                                              label="Ед. измерения"/>}
-                                            />
-                                        </Stack>}
+                                        {checked &&
+                                            <Stack direction="row" spacing={2} sx={{width: '40%'}}>
+                                                <TextField label="Интервал" variant="outlined" size='small'
+                                                           type="number" value={interval}
+                                                           onChange={(newValue) => setInterval(+newValue.target.value)}
+                                                           InputProps={{
+                                                               inputProps: {min: 1}
+                                                           }}
+                                                />
+                                                <Autocomplete disablePortal size='small' options={Unit}
+                                                              sx={{width: '40%'}}
+                                                              renderInput={(params) => <TextField {...params}
+                                                                                                  value={unit}
+                                                                                                  onChange={(newValue) => setUnit(newValue.target.value)}
+                                                                                                  label="Ед. измерения"/>}
+                                                />
+                                            </Stack>
+                                        }
                                     </Stack>
                                     <Typography mb={2}>Добавление материалов в заявку</Typography>
                                     <Stack direction="row" spacing={2}>
@@ -302,18 +333,18 @@ export default function Application() {
                                 </Stack>
                             </Paper>
                             <Paper sx={{width: '100%'}} style={{marginLeft: "0px", padding: "20px"}}>
-                                {consumables && consumables!.length !== 0 && (
-                                    consumables!.map((row: Consumable) => (
+                                {consumables && consumables!.length !== 0 && consumables!.map(
+                                    (row: ApplicationConsumable) => (
                                         <Stack direction="row" width='100%' spacing={1} mb={1}>
                                             <TextField label="Наименование" variant="outlined"
                                                        size='small'
                                                        type="string"
-                                                       value={row.title}
+                                                       value={row.consumable.title}
                                                        style={{width: '30%'}}
                                             />
                                             <TextField label="КССС" variant="outlined" size='small'
                                                        type="number"
-                                                       value={row.csss}
+                                                       value={row.consumable.csss}
                                                        InputProps={{
                                                            inputProps: {min: 1}
                                                        }}
@@ -322,31 +353,31 @@ export default function Application() {
                                                        variant="outlined"
                                                        size='small'
                                                        type="number"
-                                                       value={row.inStock}
-                                                       onChange={(newValue) => changeConsumableAmountInApplication(parseInt(newValue.target.value), row.csss)}
+                                                       value={row.count}
+                                                       onChange={(newValue) => changeConsumableAmountInApplication(parseInt(newValue.target.value), row.consumable.csss)}
                                             />
                                             <IconButton aria-label="delete" size="large" style={{marginTop: "-8px"}}
                                                         onClick={() => {
-                                                            delConsumable(row.csss)
+                                                            delConsumable(row.consumable.csss)
                                                         }}>
                                                 <IndeterminateCheckBoxOutlinedIcon fontSize="inherit"/>
                                             </IconButton>
                                         </Stack>
-                                    ))
+                                    )
                                 )}
 
                                 {devices && devices!.length !== 0 && (
-                                    devices!.map((row: Device) => (
+                                    devices!.map((row: ApplicationDevice) => (
                                         <Stack direction="row" width='100%' spacing={1} mb={1}>
                                             <TextField label="Наименование" variant="outlined"
                                                        size='small'
                                                        type="string"
-                                                       value={row.title}
+                                                       value={row.device.title}
                                                        style={{width: '30%'}}
                                             />
                                             <TextField label="КССС" variant="outlined" size='small'
                                                        type="number"
-                                                       value={row.csss}
+                                                       value={row.device.csss}
                                                        InputProps={{
                                                            inputProps: {min: 1}
                                                        }}
@@ -355,12 +386,12 @@ export default function Application() {
                                                        variant="outlined"
                                                        size='small'
                                                        type="number"
-                                                       value={row.inStock}
-                                                        onChange={(newValue) => changeDeviceAmountInApplication(parseInt(newValue.target.value), row.csss)}
+                                                       value={row.count}
+                                                       onChange={(newValue) => changeDeviceAmountInApplication(parseInt(newValue.target.value), row.device.csss)}
                                             />
                                             <IconButton aria-label="delete" size="large" style={{marginTop: "-8px"}}
                                                         onClick={() => {
-                                                            delDevice(row.csss)
+                                                            delDevice(row.device.csss)
                                                         }}>
                                                 <IndeterminateCheckBoxOutlinedIcon fontSize="inherit"/>
                                             </IconButton>
@@ -372,7 +403,7 @@ export default function Application() {
                         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                             <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
                                 <Button variant="contained">Удалить заявку</Button>
-                                <Button variant="contained">Утвердить</Button>
+                                <Button variant="contained" onClick={addApplication}>Утвердить</Button>
                             </Stack>
                         </Paper>
                     </Stack>

@@ -17,9 +17,20 @@ class ApplicationService {
 
     async getApplicationByNumber(num: number) {
         try {
-            const res = await axios.get(`${ApiUrl}/${num}`)
+            const res = await axios.get(`${ApiUrl}${num}`)
             if (res.status % 100 > 3) return undefined
             return res.data as Application;
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
+    }
+
+    async addApplication(application: Application) {
+        try {
+            const res = await axios.post(ApiUrl, application)
+            if (res.status % 100 > 3) return undefined
+            return res.data as Application
         } catch (e) {
             console.log(e);
             return undefined
