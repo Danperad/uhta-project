@@ -11,7 +11,7 @@ spring:
         default_schema: uhta
         format_sql: true
     open-in-view: false
-    show-sql: true
+    show-sql: false
   flyway:
     schemas: uhta
     create-schemas: true
