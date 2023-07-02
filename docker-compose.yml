@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  app-backend:
+    build:
+      context: webserver
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8081"
+    restart: unless-stopped
+    environment:
+      SQLSERVER_URL: ""
+      SQLSERVER_USER: ""
+      SQLSERVER_PASSWORD: ""
+    networks:
+      - frontend
+
+  app-client:
+    build:
+      context: webui
+      dockerfile: Dockerfile
+      args:
+        API_BASE_URL: "http://app-backend:8080"
+    ports:
+      - "9090:80"
+    restart: always
+    depends_on:
+      - app-backend
+    networks:
+      - frontend
+
+networks:
+  frontend:
