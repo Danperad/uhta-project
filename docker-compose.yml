@@ -5,8 +5,6 @@ services:
     build:
       context: webserver
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
     restart: unless-stopped
     environment:
       SQLSERVER_URL: ""
@@ -19,8 +17,6 @@ services:
     build:
       context: webui
       dockerfile: Dockerfile
-      args:
-        API_BASE_URL: "http://app-backend:8080"
     ports:
       - "9090:80"
     restart: always
@@ -31,3 +27,4 @@ services:
 
 networks:
   frontend:
+    driver: "bridge"
