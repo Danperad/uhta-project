@@ -1,10 +1,11 @@
 FROM openjdk:17-alpine as build
 WORKDIR /app
 
-COPY gradle gradle
+COPY gradle ./gradle
 COPY build.gradle.kts settings.gradle.kts gradlew ./
-COPY src src
+COPY src ./src
 
+RUN dos2unix gradlew
 RUN ./gradlew build
 RUN ./gradlew bootJar
 
