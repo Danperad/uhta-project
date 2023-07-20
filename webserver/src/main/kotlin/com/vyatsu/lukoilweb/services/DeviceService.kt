@@ -30,7 +30,7 @@ class DeviceService(
     }
 
     @Transactional
-    fun saveDevice(deviceDTO: DeviceDTO): DeviceDTO? {
+    fun saveDevice(deviceDTO: DeviceDTO): DeviceDTO {
         val device = deviceDTO.mapToDevice()
         val csssDevice = deviceRepository.findDeviceByCsssAndIsDeletedFalse(device.csss)
         if ((device.id == null || device.id == 0) && csssDevice != null)
@@ -43,8 +43,9 @@ class DeviceService(
                 TODO()
             if (!csssDevice.consumables.all { first -> device.consumables.any { it.consumable.csss == first.consumable.csss } }) {
                 val bindings =
-                    csssDevice.consumables.filter { first -> !device.consumables.none { it.consumable.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
+                    csssDevice.consumables.filter { first -> !device.consumables.any { it.consumable.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
                 bindingRepository.saveAll(bindings)
+                device.consumables.addAll(bindings)
             }
         }
 

@@ -1,10 +1,17 @@
-FROM node:18-alpine
+FROM node:18-alpine as build
 
 WORKDIR /app
-COPY package.json /app/package.json
-RUN npm i
+COPY package.json package-lock.json ./
+RUN npm install
 
-COPY . /app
-EXPOSE 5173
+COPY . ./
 
-ENTRYPOINT ["npm", "run", "startproxy"]
+RUN npm run build
+
+FROM nginx:1.17.0-alpine
+COPY --from=build /app/dist /var/www
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+ENTRYPOINT ["nginx","-g","daemon off;"]

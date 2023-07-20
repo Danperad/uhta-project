@@ -30,7 +30,7 @@ class ConsumableService(
     }
 
     @Transactional
-    fun saveConsumable(consumableDTO: ConsumableDTO): ConsumableDTO? {
+    fun saveConsumable(consumableDTO: ConsumableDTO): ConsumableDTO {
         val consumable = consumableDTO.mapToConsumable()
         val csssConsumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(consumable.csss)
         if ((consumable.id == null || consumable.id == 0) && csssConsumable != null)
@@ -43,8 +43,9 @@ class ConsumableService(
                 TODO()
             if (!csssConsumable.devices.all { first -> consumable.devices.any { it.device.csss == first.device.csss } }) {
                 val bindings =
-                    csssConsumable.devices.filter { first -> !consumable.devices.none { it.device.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
+                    csssConsumable.devices.filter { first -> !consumable.devices.any { it.device.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
                 bindingRepository.saveAll(bindings)
+                consumable.devices.addAll(bindings)
             }
         }
 
