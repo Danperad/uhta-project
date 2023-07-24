@@ -3,6 +3,8 @@ package com.vyatsu.lukoilweb.controllers
 import com.vyatsu.lukoilweb.models.AuthModel
 import com.vyatsu.lukoilweb.models.AuthResponse
 import com.vyatsu.lukoilweb.services.TokenService
+import com.vyatsu.lukoilweb.models.dto.AuthModel
+import com.vyatsu.lukoilweb.models.dto.UserDTO
 import com.vyatsu.lukoilweb.services.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.MediaType
@@ -12,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-
 
 @RestController
 @CrossOrigin(origins = ["*"])

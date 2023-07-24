@@ -7,59 +7,60 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import {Consumable, Device} from '../models';
 import DeviceService from "../services/DeviceService";
-import MaterialService from "../services/ConsumableService";
+import ConsumableService from "../services/ConsumableService";
 import ChangeDeviceModal from "./ChangeDeviceModal";
-import ChangeMaterialModal from "./ChangeMaterialModal"
+import ChangeConsumableModal from "./ChangeConsumableModal"
 
 export default function TableRowMaterial(props: { rowMaterial: Device }) {
-    const [device, setDevice] = useState<Device | null>(null);
-    const [consumable, setConsumable] = useState<Consumable | null>(null);
+    const [device, setDevice] = useState<Device>();
+    const [consumable, setConsumable] = useState<Consumable>();
 
     const {rowMaterial} = props;
     const [open, setOpen] = useState(false);
     const [openChangeDeviceModal, setChangeDeviceModal] = useState(false);
     const [openChangeConsumableModal, setChangeConsumableModal] = useState(false);
-    const handleOpenEditDeviceModal = (csss: number) => {
-        DeviceService.getDeviceByCsss(csss).then((res) => {
-            if (res === null) return;
-            setDevice(res);
-        });
+    const handleOpenEditDeviceModal = async (csss: number) => {
+        const device = await DeviceService.getDeviceByCsss(csss)
+        if (!device) return;
+        setDevice(device);
     }
     const handleCloseEditDeviceModal = () => {
-        setDevice(null);
+        setDevice(undefined);
     }
-    const handleOpenEditMaterialModal = (csss: number) => {
-        MaterialService.getConsumableByCsss(csss).then((res) => {
-            if (res === null) return;
-            setConsumable(res);
-        });
+    const handleOpenEditMaterialModal = async (csss: number) => {
+        const consumablee = await ConsumableService.getConsumableByCsss(csss)
+        if (!consumablee) return
+        setConsumable(consumablee)
     }
     const handleCloseEditConsumableModal = () => {
-        setConsumable(null);
+        setConsumable(undefined);
     }
 
     useEffect(() => {
-        if (device !== null) {
+        if (device)
             setChangeDeviceModal(true);
-        } else {
+        else
             setChangeDeviceModal(false);
-        }
     }, [device])
     useEffect(() => {
-        if (consumable !== null) {
+        if (consumable)
             setChangeConsumableModal(true);
-        } else {
+        else
             setChangeConsumableModal(false);
-        }
+
     }, [consumable])
 
     return (
         <Fragment>
             <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
                 <TableCell>
-                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
-                    </IconButton>
+                    {rowMaterial.consumables &&
+                        <>
+                            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                                {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                            </IconButton>
+                        </>
+                    }
                 </TableCell>
                 <TableCell component="th" scope="row" onClick={() => {
                     handleOpenEditDeviceModal(rowMaterial.csss)
@@ -93,23 +94,27 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rowMaterial.consumables !== undefined &&
+                                    {rowMaterial.consumables &&
                                         <>
                                             {rowMaterial.consumables.map((materialRow) => (
                                                 <TableRow>
                                                     <TableCell component="th" scope="row" onClick={() => {
-                                                        handleOpenEditMaterialModal(materialRow.csss)
-                                                    }}>{materialRow.title}</TableCell>
-                                                    <TableCell>{materialRow.nr3}</TableCell>
-                                                    <TableCell>{materialRow.csss}</TableCell>
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
+                                                    }}>{materialRow.consumable!.title}</TableCell>
+                                                    <TableCell onClick={() => {
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
+                                                    }}>{materialRow.consumable!.nr3}</TableCell>
+                                                    <TableCell onClick={() => {
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
+                                                    }}>{materialRow.consumable!.csss}</TableCell>
                                                     <TableCell align="right" onClick={() => {
-                                                        handleOpenEditMaterialModal(materialRow.csss)
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}
-                                                               typeof='number'>{materialRow.inOperation}</TableCell>
+                                                               typeof='number'>{materialRow.count}</TableCell>
                                                     <TableCell align="right" onClick={() => {
-                                                        handleOpenEditMaterialModal(materialRow.csss)
+                                                        handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}
-                                                               typeof='number'>{materialRow.inStock}</TableCell>
+                                                               typeof='number'>{materialRow.consumable!.inStock}</TableCell>
                                                 </TableRow>
                                             ))}
                                         </>
@@ -120,22 +125,35 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                     </Collapse>
                 </TableCell>
             </TableRow>
-            <Modal
-                open={openChangeDeviceModal}
-                onClose={handleCloseEditDeviceModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <ChangeDeviceModal receivedMaterial={device!}/>
-            </Modal>
-            <Modal
-                open={openChangeConsumableModal}
-                onClose={handleCloseEditConsumableModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <ChangeMaterialModal receivedMaterial={consumable!}/>
-            </Modal>
+            {
+                device &&
+                <Modal
+                    open={openChangeDeviceModal}
+                    onClose={handleCloseEditDeviceModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <ChangeDeviceModal receivedMaterial={device} closeEvent={() => {
+                        handleCloseEditDeviceModal()
+                        setDevice(undefined)
+                    }}/>
+                </Modal>
+            }
+            {
+                consumable &&
+                <Modal
+                    open={openChangeConsumableModal}
+                    onClose={handleCloseEditConsumableModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <ChangeConsumableModal receivedMaterial={consumable} closeEvent={() => {
+                        handleCloseEditConsumableModal()
+                        setConsumable(undefined)
+                    }}/>
+                </Modal>
+            }
+
         </Fragment>
     );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import SideBar from './components/SideBar';
 import DeviceAndConsumable from './components/DeviceAndConsumable';
-import Order from './components/Order';
+import ApplicationPage from './components/ApplicationPage';
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
 import {SnackbarProvider} from "notistack";
@@ -72,7 +72,7 @@ if (domNode !== null) {
                                 <SideBar/>
                                 <Routes>
                                     <Route path={"device"} element={<DeviceAndConsumable/>}/>
-                                    <Route path={"order"} element={<Order/>}/>
+                                    <Route path={"order"} element={<ApplicationPage/>}/>
                                 </Routes>
                                 <SnackbarViewer/>
                             </Stack>

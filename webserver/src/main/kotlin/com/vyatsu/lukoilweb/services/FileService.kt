@@ -1,8 +1,10 @@
 package com.vyatsu.lukoilweb.services
 
+import com.vyatsu.lukoilweb.models.Binding
 import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.Device
-import com.vyatsu.lukoilweb.models.UnitTypeConverter
+import com.vyatsu.lukoilweb.utils.UnitTypeConverter
+import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 class FileService(
     private val deviceRepository: DeviceRepository,
+    private val consumableRepository: ConsumableRepository,
     private val deviceService: DeviceService,
     private val consumableService: ConsumableService
 ) {
@@ -54,6 +57,8 @@ class FileService(
         val unitType = UnitTypeConverter().convertToEntityAttribute(row.getCell(7).stringCellValue)
         val parent = row.getCell(8).numericCellValue.toInt()
         val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(parent) ?: throw Exception()
-        return Consumable(csss, nr3, title, producer, unitType, devices = mutableListOf(device), inStock = number)
+        val consumable = Consumable(csss, nr3, title, producer, unitType, inStock = number)
+        consumable.devices.add(Binding(device, consumable))
+        return consumable
     }
 }

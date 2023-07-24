@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://${SQLSERVER_URL};database=${SQLSERVER_DATABASE};encrypt=true;trustServerCertificate=true
-    username: sa
+    url: ${SQLSERVER_URL}
+    username: ${SQLSERVER_USER}
     password: ${SQLSERVER_PASSWORD}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
@@ -11,14 +11,14 @@ spring:
         default_schema: uhta
         format_sql: true
     open-in-view: false
-    show-sql: true
+    show-sql: false
   flyway:
     schemas: uhta
     create-schemas: true
     enabled: true
 
 server:
-  port: 8081
+  port: 8080
 logging:
   file:
     path: "./logs"

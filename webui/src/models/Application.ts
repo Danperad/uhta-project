@@ -1,12 +1,13 @@
-import Consumable from "./Consumable";
+import {ApplicationConsumable, ApplicationDevice} from "./index";
 
 declare type Application = {
-    number: number,
-    date: Date,
+    number: number | undefined,
+    date: number,
     title: string,
-    period: number,
+    period: number | undefined,
     status: "Новая" | "На согласование" | "Согласована" ,
-    materials: Consumable[]
+    consumables: ApplicationConsumable[],
+    devices: ApplicationDevice[]
 
 }
 export default Application;

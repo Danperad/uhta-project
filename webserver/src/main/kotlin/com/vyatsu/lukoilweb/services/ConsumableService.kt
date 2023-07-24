@@ -1,6 +1,7 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.ConsumableDTO
+import com.vyatsu.lukoilweb.models.dto.ConsumableDTO
+import com.vyatsu.lukoilweb.repositories.BindingRepository
 import com.vyatsu.lukoilweb.repositories.ConsumableRepository
 import com.vyatsu.lukoilweb.repositories.DeviceRepository
 import org.springframework.data.domain.Pageable
@@ -10,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ConsumableService(
     private val consumableRepository: ConsumableRepository,
-    private val deviceRepository: DeviceRepository
+    private val deviceRepository: DeviceRepository,
+    private val bindingRepository: BindingRepository
 ) {
     @Transactional
     fun findAllConsumablesPage(limit: Pageable, search: String?): Set<ConsumableDTO> {
@@ -28,28 +30,34 @@ class ConsumableService(
     }
 
     @Transactional
-    fun saveConsumable(consumableDTO: ConsumableDTO): ConsumableDTO? {
+    fun saveConsumable(consumableDTO: ConsumableDTO): ConsumableDTO {
         val consumable = consumableDTO.mapToConsumable()
         val csssConsumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(consumable.csss)
-        if ((consumable.id == null || consumable.id == 0) && csssConsumable != null) return null
-        if (consumableDTO.devices.isNotEmpty()) {
-            val devices =
-                consumableDTO.devices.map { deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.csss) }.toSet()
-            if (devices.any { it == null }) return null
-            consumable.devices.clear()
-            consumable.devices.addAll(devices.mapNotNull { it })
+        if ((consumable.id == null || consumable.id == 0) && csssConsumable != null)
+            TODO()
+
+        if (csssConsumable != null && csssConsumable.devices.isNotEmpty()) {
+            if (consumableDTO.devices.any { it.device == null })
+                TODO()
+            if (consumableDTO.devices.any { deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.device!!.csss) == null })
+                TODO()
+            if (!csssConsumable.devices.all { first -> consumable.devices.any { it.device.csss == first.device.csss } }) {
+                val bindings =
+                    csssConsumable.devices.filter { first -> !consumable.devices.any { it.device.csss == first.device.csss } }.map { it.copy(isDeleted = true) }
+                bindingRepository.saveAll(bindings)
+                consumable.devices.addAll(bindings)
+            }
         }
-        return try {
-            consumableRepository.save(consumable).mapToConsumableDTOWithoutDevices()
-        } catch (e: Exception) {
-            null
-        }
+
+        return consumableRepository.save(consumable).mapToConsumableDTO()
     }
+
 
     @Transactional
     fun deleteConsumable(csss: Int): Boolean {
         val consumable =
-            consumableRepository.findConsumableByCsssAndIsDeletedFalse(csss)?.copy(isDeleted = true, devices = mutableListOf()) ?: return false
+            consumableRepository.findConsumableByCsssAndIsDeletedFalse(csss)
+                ?.copy(isDeleted = true, devices = mutableListOf()) ?: TODO()
         return try {
             consumableRepository.save(consumable).isDeleted
         } catch (e: Exception) {

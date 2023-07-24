@@ -1,5 +1,7 @@
 package com.vyatsu.lukoilweb.models
 
+import com.vyatsu.lukoilweb.models.dto.UserDTO
+import com.vyatsu.lukoilweb.utils.RoleConverter
 import jakarta.persistence.*
 
 @Entity

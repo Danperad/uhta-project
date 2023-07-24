@@ -1,14 +1,14 @@
-import Consumable from './Consumable';
+import {Binding} from "./index";
 
 declare type Device = {
-    id: number,
+    id: number | undefined,
     title: string,
-    producer: string,
+    producer: string | undefined,
     csss: number,
     nr3: number,
     unitType: string,
     inOperation: number,
     inStock: number,
-    consumables: Consumable[]
+    consumables: Binding[]
 }
 export default Device;

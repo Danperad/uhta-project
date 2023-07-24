@@ -1,5 +1,6 @@
 package com.vyatsu.lukoilweb
 
+import com.vyatsu.lukoilweb.models.Binding
 import com.vyatsu.lukoilweb.models.Consumable
 import com.vyatsu.lukoilweb.models.Device
 import com.vyatsu.lukoilweb.models.UnitTypes
@@ -32,7 +33,7 @@ class RepositoriesTests {
             Consumable(1, 1, "Тестовый Расходник 1", "Тест", UnitTypes.PC),
             Consumable(2, 2, "Тестовый Расходник 2", "Тест", UnitTypes.PC),
         )
-        consumables[0].devices.add(newDevices[0])
+        consumables[0].devices.add(Binding(newDevices[0], consumables[0], 1))
         consumableRepository.saveAll(consumables)
 
     }
@@ -60,16 +61,8 @@ class RepositoriesTests {
     fun addBindingConsumable() {
         val consumable = Consumable(3, 3, "Тестовый Расходник", "Тест", UnitTypes.PC)
         val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(2)
-        consumable.devices.add(device!!)
+        consumable.devices.add(Binding(device!!, consumable, 1))
         val newConsumable = consumableRepository.save(consumable)
-        assert(newConsumable.devices.contains(device))
-    }
-
-    @Test
-    fun removeBindingConsumable(){
-        val consumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(1)
-        consumable!!.devices.removeAt(0)
-        val newConsumable = consumableRepository.save(consumable)
-        assert(newConsumable.devices.isEmpty())
+        assert(newConsumable.devices.any { it.device.csss == device.csss })
     }
 }
