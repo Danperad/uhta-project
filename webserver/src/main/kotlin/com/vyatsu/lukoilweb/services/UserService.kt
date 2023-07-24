@@ -1,9 +1,7 @@
 package com.vyatsu.lukoilweb.services
 
-import com.vyatsu.lukoilweb.models.AuthModel
 import com.vyatsu.lukoilweb.models.UserSecurity
 import com.vyatsu.lukoilweb.models.dto.AuthModel
-import com.vyatsu.lukoilweb.models.dto.UserDTO
 import com.vyatsu.lukoilweb.repositories.UserRepository
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -17,8 +15,7 @@ class UserService(private val userRepository: UserRepository) : UserDetailsServi
         return user.mapToUserSecurity()
     }
 
-    override fun loadUserByUsername(username: String?): UserSecurity {
-        if (username == null) throw UsernameNotFoundException("User not found !")
+    override fun loadUserByUsername(username: String): UserSecurity {
         val user = userRepository.getUserByLogin(username) ?: throw UsernameNotFoundException("User not found !")
         return user.mapToUserSecurity()
     }

@@ -9,6 +9,7 @@ plugins {
 	kotlin("plugin.serialization") version "1.8.21"
 	id("org.flywaydb.flyway") version "9.8.1"
 }
+
 val a = System.getenv("WEBSERVER_VERSION") ?: "1"
 group = "com.vyatsu"
 version = "0.0.${a}"
@@ -28,8 +29,13 @@ dependencies {
 	//springboot
 	implementation("org.springframework.boot:spring-boot-starter-data-rest")
 	implementation("org.springframework.boot:spring-boot-configuration-processor")
-	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("me.paulschwarz:spring-dotenv:3.0.0")
+
+	//security
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
 	//serialization
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
