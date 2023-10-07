@@ -98,7 +98,7 @@ export default function SideBar() {
                     </Button>
                     <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                             startIcon={<ArchiveIcon/>} onClick={() => {
-                        navigate("/")
+                        navigate("/archive")
                     }}>
                         Архив
                     </Button>

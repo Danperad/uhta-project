@@ -7,7 +7,8 @@ declare type Application = {
     period: number | undefined,
     status: "Новая" | "На согласование" | "Согласована" ,
     consumables: ApplicationConsumable[],
-    devices: ApplicationDevice[]
+    devices: ApplicationDevice[],
+    inArchive: boolean
 
 }
 export default Application;
