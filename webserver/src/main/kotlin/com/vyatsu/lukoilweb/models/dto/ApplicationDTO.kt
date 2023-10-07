@@ -10,5 +10,6 @@ data class ApplicationDTO(
     val period: Long? = null,
     val status: String,
     val devices: Set<ApplicationDeviceDTO>,
-    val consumables: Set<ApplicationConsumableDTO>
+    val consumables: Set<ApplicationConsumableDTO>,
+    val inArchive: Boolean
 )

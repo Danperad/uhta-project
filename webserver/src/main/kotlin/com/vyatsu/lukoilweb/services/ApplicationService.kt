@@ -26,7 +26,8 @@ class ApplicationService(
 ) {
     @Transactional
     fun getAllApplications(): Set<ApplicationDTO> {
-        return applicationRepository.findAll().map { it.mapToApplicationDTO() }.toSet()
+        //return applicationRepository.findAll().map { it.mapToApplicationDTO() }.toSet()
+        return  applicationRepository.findAllByInArchiveFalseAndIsDeletedFalse().map { it.mapToApplicationDTO() }.toSet()
     }
 
     @Transactional
@@ -47,7 +48,8 @@ class ApplicationService(
             applicationDTO.title,
             period,
             ApplicationStatusConverter().convertToEntityAttribute(applicationDTO.status),
-            number = applicationDTO.number
+            number = applicationDTO.number,
+            inArchive = false
         )
         val newApplication = applicationRepository.save(application)
 
@@ -109,5 +111,25 @@ class ApplicationService(
         val outputStream = ByteArrayOutputStream()
         workbook.write(outputStream)
         return ByteArrayResource(outputStream.toByteArray())
+    }
+    @Transactional
+    fun archiveApplicationById(id: Int): Boolean {
+        val application = applicationRepository.findApplicationByNumber(id)
+            ?.copy(inArchive = true) ?: return false
+        return try {
+            applicationRepository.save(application).inArchive
+        } catch (e: Exception) {
+            false
+        }
+    }
+    @Transactional
+    fun deleteApplication(id: Int): Boolean {
+        val application = applicationRepository.findApplicationByNumber(id)
+            ?.copy(isDeleted = true) ?: return false
+        return try {
+            applicationRepository.save(application).isDeleted
+        } catch (e: Exception) {
+            false
+        }
     }
 }

@@ -48,4 +48,24 @@ class ApplicationController(private val applicationService: ApplicationService) 
             ResponseEntity.badRequest().build()
         }
     }
+    @PostMapping("/archive", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun archiveApplication(@RequestParam id: Int): ResponseEntity<Boolean> {
+        logger.debug("Getting request archive application with id=$id")
+        val application = applicationService.archiveApplicationById(id)
+        return if (application) {
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(true)
+        } else {
+            ResponseEntity.badRequest().build()
+        }
+    }
+    @PostMapping("/delete", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun deleteApplication(@RequestParam id: Int): ResponseEntity<Boolean> {
+        logger.debug("Getting request delete application with id=$id")
+        val application = applicationService.deleteApplication(id)
+        return if (application) {
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(true)
+        } else {
+            ResponseEntity.badRequest().build()
+        }
+    }
 }

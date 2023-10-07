@@ -56,6 +56,8 @@ CREATE TABLE uhta.applications
     application_period  bigint,
     title               nvarchar(100) NOT NULL,
     applications_status nvarchar(20)  NOT NULL CHECK (applications_status IN (N'Новая', N'На согласование', N'Согласована')),
+    in_archive           bit           NOT NULL DEFAULT (0),
+    is_deleted           bit           NOT NULL DEFAULT (0),
     CONSTRAINT pk_application PRIMARY KEY (application_id)
 );
 

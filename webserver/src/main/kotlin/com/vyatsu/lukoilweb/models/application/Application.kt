@@ -28,7 +28,11 @@ class Application(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "application_id", nullable = false)
-    var number: Int? = null
+    var number: Int? = null,
+    @Column(name = "in_archive")
+    val inArchive: Boolean = false,
+    @Column(name = "is_deleted")
+    val isDeleted: Boolean = false
 ) {
     fun mapToApplicationDTO(): ApplicationDTO {
         val newDevices = this.devices.map {
@@ -45,7 +49,7 @@ class Application(
                 it.consumableCount
             )
         }.toSet()
-        return ApplicationDTO(number!!, date.time, title, period?.seconds, status.value, newDevices, newConsumables)
+        return ApplicationDTO(number!!, date.time, title, period?.seconds, status.value, newDevices, newConsumables, inArchive)
     }
 
     fun copy(
@@ -55,8 +59,10 @@ class Application(
         status: ApplicationStatuses = this.status,
         devices: MutableList<ApplicationDevice> = this.devices,
         consumables: MutableList<ApplicationConsumable> = this.consumables,
-        number: Int? = this.number
+        number: Int? = this.number,
+        inArchive: Boolean = this.inArchive,
+        isDeleted: Boolean = this.isDeleted
     ) : Application {
-        return Application(date, title, period, status, devices, consumables, number)
+        return Application(date, title, period, status, devices, consumables, number, inArchive, isDeleted)
     }
 }
