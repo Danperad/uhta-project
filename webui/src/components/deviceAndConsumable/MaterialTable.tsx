@@ -15,10 +15,10 @@ import {
 } from "@mui/material";
 import TableRowMaterial from "./TableRowMaterial";
 import {ReactNode, SyntheticEvent, useEffect, useState} from "react";
-import {Consumable} from "../models";
-import ConsumableService from "../services/ConsumableService";
+import {Consumable} from "../../models";
+import ConsumableService from "../../services/ConsumableService";
 import ChangeConsumableModal from "./ChangeConsumableModal";
-import {RootState} from "../redux/store";
+import {RootState} from "../../redux/store";
 import {useSelector} from "react-redux";
 
 export interface MaterialTableProps {
