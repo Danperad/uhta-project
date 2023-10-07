@@ -179,7 +179,8 @@ export default function ApplicationTable() {
             period: period,
             status: "Согласована",
             consumables: consumables,
-            devices: devices
+            devices: devices,
+            inArchive: false
         }
         const res = ApplicationService.addApplication(newApplication)
         if (!res) {
@@ -203,6 +204,29 @@ export default function ApplicationTable() {
         if (!res)
             return
         fileDownload(res, `application-${id}.xlsx`)
+    }
+
+    const archiveApplication = async (id: number) => {
+        const inArchive = await ApplicationService.deleteApplicationById(id)
+        if (!inArchive) {
+            dispatch(AddSnackbar({
+                messageText: "Не удалось архивировать заявку!",
+                messageType: "error",
+                key: +new Date()
+            }))
+            return
+        }
+        dispatch(AddSnackbar({
+            messageText: "Заявка успешно архивирована!",
+            messageType: "success",
+            key: +new Date()
+        }))
+
+        const allApplication = await ApplicationService.getAllApplications()
+        if (!allApplication)
+            return
+        setOrders(allApplication)
+        //dispatch(allApplication)
     }
 
     useEffect(() => {
@@ -272,7 +296,9 @@ export default function ApplicationTable() {
                                         handleOpenEditApplicationModal(row)
                                     }}>{row.status}</TableCell>
                                     <TableCell align="center"><Button
-                                        variant="outlined">Архивировать</Button>
+                                        variant="outlined" onClick={() => {
+                                            archiveApplication(row.number!)
+                                        }}>Архивировать</Button>
                                     </TableCell>
                                     <TableCell align="center">
                                         <Button variant="outlined" onClick={() => {

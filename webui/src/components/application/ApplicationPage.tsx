@@ -194,7 +194,8 @@ export default function ApplicationPage() {
             period: period,
             status: "Новая",
             consumables: consumables,
-            devices: devices
+            devices: devices,
+            inArchive: false
         }
         const res = ApplicationService.addApplication(newApplication)
         if (!res) {
