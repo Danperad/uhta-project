@@ -16,13 +16,13 @@ import {
     Typography
 } from "@mui/material";
 
-import style from "../assets/css/ChangeDeviceModal.module.css"
-import styl from "../assets/css/ChildModalDeleteMaterial.module.css"
-import {Device} from '../models';
-import {AddSnackbar} from "../redux/actions/snackbarAction";
+import style from "../../assets/css/ChangeDeviceModal.module.css"
+import styl from "../../assets/css/ChildModalDeleteMaterial.module.css"
+import {Device} from '../../models';
+import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
-import DeviceService from "../services/DeviceService";
+import {AppDispatch} from "../../redux/store";
+import DeviceService from "../../services/DeviceService";
 
 function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => void }) {
     const dispatch = useDispatch<AppDispatch>();

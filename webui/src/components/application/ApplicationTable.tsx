@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {Application} from "../models";
-import OrderService from "../services/ApplicationService";
+import {Application} from "../../models";
+import OrderService from "../../services/ApplicationService";
 import {
     Button,
     Paper,
