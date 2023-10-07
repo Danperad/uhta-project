@@ -12,16 +12,16 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import {style} from '../assets/css/CreateOrderModal';
-import DeviceService from "../services/DeviceService";
+import {style} from '../../assets/css/CreateOrderModal';
+import DeviceService from "../../services/DeviceService";
 import ApplicationTable from "./ApplicationTable";
-import {AddSnackbar} from "../redux/actions/snackbarAction";
+import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
-import {Application, ApplicationConsumable, ApplicationDevice} from "../models";
-import ConsumableService from "../services/ConsumableService";
+import {AppDispatch} from "../../redux/store";
+import {Application, ApplicationConsumable, ApplicationDevice} from "../../models";
+import ConsumableService from "../../services/ConsumableService";
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
-import ApplicationService from "../services/ApplicationService";
+import ApplicationService from "../../services/ApplicationService";
 
 export default function ApplicationPage() {
     const dispatch = useDispatch<AppDispatch>();

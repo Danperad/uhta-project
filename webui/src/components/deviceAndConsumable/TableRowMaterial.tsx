@@ -5,9 +5,9 @@ import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-import {Consumable, Device} from '../models';
-import DeviceService from "../services/DeviceService";
-import ConsumableService from "../services/ConsumableService";
+import {Consumable, Device} from '../../models';
+import DeviceService from "../../services/DeviceService";
+import ConsumableService from "../../services/ConsumableService";
 import ChangeDeviceModal from "./ChangeDeviceModal";
 import ChangeConsumableModal from "./ChangeConsumableModal"
 

@@ -1,17 +1,17 @@
 import {ChangeEvent, useRef, useState} from 'react';
 import {Autocomplete, Box, Button, Paper, Stack, TextField, Typography,} from '@mui/material';
 
-import "../assets/css/Scrollbar.css";
-import excelIcon from '../../public/image/excel.svg';
+import "../../assets/css/Scrollbar.css";
+import excelIcon from '../../../public/image/excel.svg';
 
 import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
-import {AddSnackbar} from "../redux/actions/snackbarAction";
+import {AppDispatch} from "../../redux/store";
+import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import MaterialTable from "./MaterialTable";
-import DeviceService from "../services/DeviceService";
-import ConsumableService from "../services/ConsumableService";
-import {Binding, Consumable, Device} from "../models";
-import FileUploadService from "../services/FileUploadService";
+import DeviceService from "../../services/DeviceService";
+import ConsumableService from "../../services/ConsumableService";
+import {Binding, Consumable, Device} from "../../models";
+import FileUploadService from "../../services/FileUploadService";
 
 //Dictionaries
 const Type = ['Прибор', 'Расходник']

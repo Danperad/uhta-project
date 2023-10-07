@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import fileDownload from "js-file-download";
-import {Application, ApplicationConsumable, ApplicationDevice} from "../models";
-import OrderService from "../services/ApplicationService";
-import ApplicationService from "../services/ApplicationService";
+import {Application, ApplicationConsumable, ApplicationDevice} from "../../models";
+import OrderService from "../../services/ApplicationService";
+import ApplicationService from "../../services/ApplicationService";
 import {
     Autocomplete,
     Box,
@@ -24,13 +24,13 @@ import {
     Typography
 } from "@mui/material";
 import moment from 'moment';
-import {style} from "../assets/css/CreateOrderModal";
+import {style} from "../../assets/css/CreateOrderModal";
 import IndeterminateCheckBoxOutlinedIcon from "@mui/icons-material/IndeterminateCheckBoxOutlined";
-import {AddSnackbar} from "../redux/actions/snackbarAction";
-import DeviceService from "../services/DeviceService";
-import ConsumableService from "../services/ConsumableService";
+import {AddSnackbar} from "../../redux/actions/snackbarAction";
+import DeviceService from "../../services/DeviceService";
+import ConsumableService from "../../services/ConsumableService";
 import {useDispatch} from "react-redux";
-import {AppDispatch} from "../redux/store";
+import {AppDispatch} from "../../redux/store";
 
 export default function ApplicationTable() {
     const [orders, setOrders] = useState<Application[]>([]);
