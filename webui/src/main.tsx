@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import SideBar from './components/SideBar';
 import DeviceAndConsumable from './components/deviceAndConsumable/DeviceAndConsumable';
 import ApplicationPage from './components/application/ApplicationPage';
+import ReportPage from './components/ReportPage';
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
 import {SnackbarProvider} from "notistack";
@@ -73,6 +74,7 @@ if (domNode !== null) {
                                 <Routes>
                                     <Route path={"device"} element={<DeviceAndConsumable/>}/>
                                     <Route path={"order"} element={<ApplicationPage/>}/>
+                                    <Route path={"report"} element={<ReportPage/>}/>
                                 </Routes>
                                 <SnackbarViewer/>
                             </Stack>
