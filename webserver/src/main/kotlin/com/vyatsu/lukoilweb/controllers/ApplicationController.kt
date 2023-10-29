@@ -20,6 +20,11 @@ class ApplicationController(private val applicationService: ApplicationService) 
         val applications = applicationService.getAllApplications()
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(applications)
     }
+    @GetMapping("/get-archive",produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getAllArchiveApplications() : ResponseEntity<Set<ApplicationDTO>>{
+        val applications = applicationService.getAllArchiveApplications()
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(applications)
+    }
     @GetMapping("{number}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getApplicationByNumber(@PathVariable number: Int) : ResponseEntity<ApplicationDTO?>{
         val application = applicationService.getApplicationById(number)
@@ -62,6 +67,16 @@ class ApplicationController(private val applicationService: ApplicationService) 
     fun deleteApplication(@RequestParam id: Int): ResponseEntity<Boolean> {
         logger.debug("Getting request delete application with id=$id")
         val application = applicationService.deleteApplication(id)
+        return if (application) {
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(true)
+        } else {
+            ResponseEntity.badRequest().build()
+        }
+    }
+    @PostMapping("/unarchive", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun unarchiveApplication(@RequestParam id: Int): ResponseEntity<Boolean> {
+        logger.debug("Getting request unarchive application with id=$id")
+        val application = applicationService.unarchiveApplicationById(id)
         return if (application) {
             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(true)
         } else {

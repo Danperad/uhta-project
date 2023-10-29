@@ -26,9 +26,13 @@ class ApplicationService(
 ) {
     @Transactional
     fun getAllApplications(): Set<ApplicationDTO> {
-        //return applicationRepository.findAll().map { it.mapToApplicationDTO() }.toSet()
         return  applicationRepository.findAllByInArchiveFalseAndIsDeletedFalse().map { it.mapToApplicationDTO() }.toSet()
     }
+    @Transactional
+    fun getAllArchiveApplications(): Set<ApplicationDTO> {
+        return  applicationRepository.findAllByInArchiveTrueAndIsDeletedFalse().map { it.mapToApplicationDTO() }.toSet()
+    }
+
 
     @Transactional
     fun getApplicationById(id: Int): ApplicationDTO? {
@@ -128,6 +132,16 @@ class ApplicationService(
             ?.copy(isDeleted = true) ?: return false
         return try {
             applicationRepository.save(application).isDeleted
+        } catch (e: Exception) {
+            false
+        }
+    }
+    @Transactional
+    fun unarchiveApplicationById(id: Int): Boolean {
+        val application = applicationRepository.findApplicationByNumber(id)
+            ?.copy(inArchive = false) ?: return false
+        return try {
+            applicationRepository.save(application).inArchive
         } catch (e: Exception) {
             false
         }
