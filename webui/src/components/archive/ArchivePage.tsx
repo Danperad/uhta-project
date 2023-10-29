@@ -1,6 +1,11 @@
 import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import ArchiveTable from "../archive/ArchiveTable";
+import {useState} from "react";
 
 export default function ReportPage(){
+    const [showArchiveTable, setShowArchiveTable] = useState(false);
+    const handleShowArchiveTable = () => setShowArchiveTable(true);
+
     return(
         <Box sx={{
             width: '100%',
@@ -35,12 +40,12 @@ export default function ReportPage(){
                                                shrink: true,
                                            }}
                                 />
-                                <Button variant="contained" >Показать</Button>
+                                <Button variant="contained" onClick={handleShowArchiveTable}>Показать</Button>
                             </Stack>
                     </Paper>
                 </Box>
                 <Box sx={{height: "84vh", gridArea: 'main'}}>
-
+                    {showArchiveTable && <ArchiveTable/>}
                 </Box>
             </Box>
         </Box>

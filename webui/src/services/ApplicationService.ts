@@ -18,6 +18,16 @@ class ApplicationService {
             return undefined
         }
     }
+    async getArchiveApplications() {
+        try {
+            const res = await axios.get(`${ApiUrl}get-archive`)
+            if (res.status % 100 > 3) return undefined
+            return res.data as Application[];
+        } catch (e) {
+            console.log(e);
+            return undefined
+        }
+    }
     async getApplicationByNumber(num: number) {
         try {
             const res = await axios.get(`${ApiUrl}${num}`)
@@ -56,6 +66,18 @@ class ApplicationService {
         params['id'] = id
         try {
             const res = await axios.post(`${ApiUrl}archive`, {}, {params: params})
+            if (res.status % 100 > 3) return false
+            return res.data as boolean;
+        } catch (e) {
+            console.log(e);
+            return false
+        }
+    }
+    async unarchiveApplicationById(id: number) {
+        const params: LooseObject = {}
+        params['id'] = id
+        try {
+            const res = await axios.post(`${ApiUrl}unarchive`, {}, {params: params})
             if (res.status % 100 > 3) return false
             return res.data as boolean;
         } catch (e) {
