@@ -4,7 +4,7 @@ import SideBar from './components/SideBar';
 import DeviceAndConsumable from './components/deviceAndConsumable/DeviceAndConsumable';
 import ApplicationPage from './components/application/ApplicationPage';
 import ReportPage from './components/ReportPage';
-import ArchivePage from './components/ArchivePage';
+import ArchivePage from './components/archive/ArchivePage';
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
 import {SnackbarProvider} from "notistack";
