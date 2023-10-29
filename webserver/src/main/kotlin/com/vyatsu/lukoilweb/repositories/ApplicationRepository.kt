@@ -9,4 +9,5 @@ interface ApplicationRepository : JpaRepository<Application, Int> {
     fun findApplicationByNumber(number: Int): Application?
     fun findAllByPeriodNotNull() : List<Application>
     fun findAllByInArchiveFalseAndIsDeletedFalse() : List<Application>
+    fun findAllByInArchiveTrueAndIsDeletedFalse() : List<Application>
 }
