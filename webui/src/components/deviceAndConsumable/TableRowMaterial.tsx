@@ -52,7 +52,7 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
 
     return (
         <Fragment>
-            <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
+            <TableRow sx={{'& > *': {borderBottom: 'unset', cursor: "pointer"}}}>
                 <TableCell>
                     {rowMaterial.consumables &&
                         <>
@@ -67,8 +67,12 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                 }}>
                     {rowMaterial.title}
                 </TableCell>
-                <TableCell align="right">{rowMaterial.nr3}</TableCell>
-                <TableCell align="right">{rowMaterial.csss}</TableCell>
+                <TableCell align="right" onClick={() => {
+                    handleOpenEditDeviceModal(rowMaterial.csss)
+                }}>{rowMaterial.nr3}</TableCell>
+                <TableCell align="right" onClick={() => {
+                    handleOpenEditDeviceModal(rowMaterial.csss)
+                }}>{rowMaterial.csss}</TableCell>
                 <TableCell align="right" onClick={() => {
                     handleOpenEditDeviceModal(rowMaterial.csss)
                 }}>{rowMaterial.inOperation}</TableCell>
@@ -80,15 +84,15 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                 <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{margin: 1}}>
-                            <Typography variant="h6" gutterBottom component="div" color='primary'>
+                            <Typography variant="h6" gutterBottom component="div" color='primary' sx={{cursor: "default"}}>
                                 Расходные материалы
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
-                                    <TableRow>
+                                    <TableRow sx={{cursor: "default"}}>
                                         <TableCell>Наименование</TableCell>
                                         <TableCell align="right">№R-3</TableCell>
-                                        <TableCell>№КССС</TableCell>
+                                        <TableCell align="right">№КССС</TableCell>
                                         <TableCell align="right">Количество в эксплуатации</TableCell>
                                         <TableCell align="right">Количество на складе</TableCell>
                                     </TableRow>
@@ -97,14 +101,14 @@ export default function TableRowMaterial(props: { rowMaterial: Device }) {
                                     {rowMaterial.consumables &&
                                         <>
                                             {rowMaterial.consumables.map((materialRow) => (
-                                                <TableRow>
+                                                <TableRow sx={{cursor: "pointer"}}>
                                                     <TableCell component="th" scope="row" onClick={() => {
                                                         handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}>{materialRow.consumable!.title}</TableCell>
-                                                    <TableCell onClick={() => {
+                                                    <TableCell align="right" onClick={() => {
                                                         handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}>{materialRow.consumable!.nr3}</TableCell>
-                                                    <TableCell onClick={() => {
+                                                    <TableCell align="right" onClick={() => {
                                                         handleOpenEditMaterialModal(materialRow.consumable!.csss)
                                                     }}>{materialRow.consumable!.csss}</TableCell>
                                                     <TableCell align="right" onClick={() => {

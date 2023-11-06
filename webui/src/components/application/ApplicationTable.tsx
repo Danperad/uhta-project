@@ -289,7 +289,7 @@ export default function ApplicationTable() {
                 <TableContainer component={Paper}>
                     <Table sx={{minWidth: 650}} aria-label="simple table">
                         <TableHead>
-                            <TableRow>
+                            <TableRow sx={{cursor: "default"}}>
                                 <TableCell>Номер</TableCell>
                                 <TableCell align="left">Тип закупа</TableCell>
                                 <TableCell align="center">Дата</TableCell>
@@ -302,7 +302,7 @@ export default function ApplicationTable() {
                             {orders.map((row) => (
                                 <TableRow
                                     key={row.number}
-                                    sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                                    sx={{'&:last-child td, &:last-child th': {border: 0, cursor: "pointer"}}}
                                 >
                                     <TableCell onClick={() => {
                                         handleOpenEditApplicationModal(row)
