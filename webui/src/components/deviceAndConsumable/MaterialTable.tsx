@@ -102,7 +102,7 @@ function MaterialTable() {
                     <TableContainer component={Paper}>
                         <Table aria-label="material table" sx={{width: '100%'}}>
                             <TableHead>
-                                <TableRow>
+                                <TableRow sx={{cursor: "default"}}>
                                     <TableCell/>
                                     <TableCell>Наименование</TableCell>
                                     <TableCell align="right">№R-3</TableCell>
@@ -136,7 +136,7 @@ function MaterialTable() {
                     <TableContainer component={Paper}>
                         <Table sx={{minWidth: 650}} aria-label="simple table">
                             <TableHead>
-                                <TableRow>
+                                <TableRow sx={{cursor: "default"}}>
                                     <TableCell>Наименование</TableCell>
                                     <TableCell align="right">№R-3</TableCell>
                                     <TableCell align="right">№КССС</TableCell>
@@ -148,7 +148,7 @@ function MaterialTable() {
                                 {state.consumables.map((materialRow) => (
                                     <TableRow
                                         key={materialRow.title}
-                                        sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                                        sx={{'&:last-child td, &:last-child th': {border: 0, cursor: "pointer"}}}
                                         onClick={() => {
                                             handleOpenEditMaterialModal(materialRow.csss)
                                         }}
