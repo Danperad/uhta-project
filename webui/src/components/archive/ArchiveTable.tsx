@@ -32,13 +32,10 @@ export default function ArchiveTable() {
     const [purchase, setPurchase] = useState<string>()
     const [interval, setInterval] = useState<number>()
     const [unit, setUnit] = useState<string>()
-    const [checked, setChecked] = useState(false);
+    const [checked, setChecked] = useState<boolean>();
     const [devices, setDevices] = useState<ApplicationDevice[]>([]);
     const [consumables, setConsumables] = useState<ApplicationConsumable[]>([]);
 
-    const handleChangeChecked = () => {
-        setChecked(prev => !prev)
-    }
     //Dictionaries
     const Unit = [
         'Дни',
@@ -56,6 +53,29 @@ export default function ArchiveTable() {
         console.log(application)
         if (!application) return;
         setApplication(application);
+        setConsumables(application.consumables);
+        setDevices(application.devices);
+        setDate(new Date(application.date  + (1000 * 60 * 60 * 24)).toISOString().substring(0, 10));
+
+        if(application.period != null){
+            setChecked(true);
+
+            let days = application.period/86400;
+
+            if(days % 30 == 0){
+                days = days/30;
+                setUnit(Unit[1]);
+            }else{
+                setUnit(Unit[0]);
+            }
+
+            setInterval(days);
+        }
+        else{
+            setUnit(undefined);
+            setInterval(undefined);
+            setChecked(false);
+        }
     }
     const handleCloseEditApplicationModal = () => {
         setApplication(undefined);
@@ -83,7 +103,7 @@ export default function ArchiveTable() {
             key: +new Date()
         }))
 
-        const allArchiveApplication = await ApplicationService.getArchiveApplications()
+        const allArchiveApplication = await ApplicationService.getAllApplications(null, true)
         if (!allArchiveApplication)
             return
         setArchiveApplications(allArchiveApplication)
@@ -104,7 +124,7 @@ export default function ArchiveTable() {
             key: +new Date()
         }))
 
-        const allArchiveApplication = await ApplicationService.getArchiveApplications()
+        const allArchiveApplication = await ApplicationService.getAllApplications(null, true)
         if (!allArchiveApplication)
             return
         setArchiveApplications(allArchiveApplication)
@@ -118,7 +138,7 @@ export default function ArchiveTable() {
     useEffect(() => {
         if (key) return;
         setKey(true);
-        OrderService.getArchiveApplications().then((res) => {
+        OrderService.getAllApplications(null, true).then((res) => {
             if (!res) return
             setArchiveApplications(res);
         }).catch(err => console.log(err));
@@ -224,7 +244,7 @@ export default function ArchiveTable() {
 
                                             />
 
-                                            <FormControlLabel control={<Checkbox disabled onChange={handleChangeChecked}/>}
+                                            <FormControlLabel disabled control={<Checkbox checked={checked} />}
                                                               label="Период"/>
                                             {checked &&
                                                 <Stack direction="row" spacing={2} sx={{width: '40%'}}>
@@ -237,10 +257,14 @@ export default function ArchiveTable() {
                                                     />
                                                     <Autocomplete disabled disablePortal size='small' options={Unit}
                                                                   sx={{width: '40%'}}
-                                                                  renderInput={(params) => <TextField {...params}
-                                                                                                      value={unit}
-                                                                                                      onChange={(newValue) => setUnit(newValue.target.value)}
-                                                                                                      label="Ед. измерения"/>}
+                                                                  onInputChange={(e, value) => {
+                                                                      setUnit(value)
+                                                                  }}
+                                                                  value={unit}
+                                                                  renderInput={(params) => <TextField
+                                                                      value={unit}
+                                                                      onChange={(newValue) => setUnit(newValue.target.value)} {...params}
+                                                                      label="Ед. измерения"/>}
                                                     />
                                                 </Stack>
                                             }

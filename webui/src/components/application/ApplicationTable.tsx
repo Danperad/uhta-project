@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import fileDownload from "js-file-download";
 import {Application} from "../../models";
-import OrderService from "../../services/ApplicationService";
 import ApplicationService from "../../services/ApplicationService";
 import {
     Button,
@@ -22,7 +21,8 @@ import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../redux/store";
 import ChangeApplicationModal from "./ChangeApplicationModal";
 
-export default function ApplicationTable() {
+export default function ApplicationTable(props: { applications: Application[] }) {
+    const {applications} = props;
     const [orders, setOrders] = useState<Application[]>([]);
     const [key, setKey] = useState<boolean>(false);
 
@@ -63,7 +63,7 @@ export default function ApplicationTable() {
             key: +new Date()
         }))
 
-        const allApplication = await ApplicationService.getAllApplications()
+        const allApplication = await ApplicationService.getAllApplications(null, false,)
         if (!allApplication)
             return
         setOrders(allApplication)
@@ -79,10 +79,11 @@ export default function ApplicationTable() {
     useEffect(() => {
         if (key) return;
         setKey(true);
-        OrderService.getAllApplications().then((res) => {
-            if (!res) return
-            setOrders(res);
-        }).catch(err => console.log(err));
+        setOrders(applications)
+        // ApplicationService.getAllApplications(null, false).then((res) => {
+        //     if (!res) return
+        //     setOrders(res);
+        // }).catch(err => console.log(err));
     }, [])
 
     return (

@@ -7,7 +7,7 @@ import {
     FormControlLabel,
     IconButton,
     Modal,
-    Paper,
+    Paper, Skeleton,
     Stack,
     TextField,
     Typography
@@ -58,16 +58,26 @@ export default function ApplicationPage() {
         setChecked(prev => !prev)
     }
     //Dictionaries
-    const Unit = [
-        'Дни',
-        'Месяцы',
-    ]
-    const Purchase = [
-        'Внутренний',
-        'Внешний',
-    ]
+    const Unit = ['Дни', 'Месяцы',]
+    const Purchase = ['Внутренний', 'Внешний',]
+    const Statuses = ['Новая', 'На согласование', 'Согласована']
 
-    const handleShowApplicationTable = () => setShowApplicationTable(true);
+    const [search, setSearch] = useState<string>('');
+    const [dateStart, setDateStart] = useState<string | undefined>();
+    const [dateEnd, setDateEnd] = useState<string | undefined>();
+    const [status, setStatus] = useState<string | undefined>();
+    const [autocompleteStatusValue, setAutocompleteStatusValue] = useState<string>('');
+    function CheckStatus(event: any, value: string) {
+        setStatus(value);
+        setAutocompleteStatusValue(value);
+    }
+
+    const [searchApplications, setSearchApplications] = useState<Application[]>();
+    const handleShowApplicationTable = async () => {
+        const application = await ApplicationService.getAllApplications(search, false,  status, dateStart, dateEnd);
+        setSearchApplications(application);
+        setShowApplicationTable(true);
+    }
 
     const addMaterial = async () => {
         if (!csss) return
@@ -173,12 +183,17 @@ export default function ApplicationPage() {
 
     const calculatePeriod = () => {
         let period = 86400 * interval!
+        console.log(unit);
         if (unit === Unit[1])
             period = period * 30
         return period
     }
 
     const addApplication = ()=> {
+
+        console.log(unit);
+        console.log(purchase);
+
 
         if (!date || !purchase || consumables.length === undefined || devices.length === undefined)
             return;
@@ -236,17 +251,30 @@ export default function ApplicationPage() {
                         <Typography mb={1}>Заявки</Typography>
                         <Stack direction="row" justifyContent="space-between" width='100%' height='100%'>
                             <Stack direction="row" spacing={2} style={{width: "100%"}} height='100%'>
-                                <TextField sx={{width: '30%'}} label="Поиск" variant="outlined"
-                                           size='small' type="search"/>
-                                <TextField label="От" type="date" size='small' sx={{width: '16%'}}
+                                <TextField sx={{width: '30%'}} label="Поиск" variant="outlined" size='small'
+                                           type="search" value={search}
+                                           onChange={(newValue) => setSearch(newValue.target.value)}/>
+                                <TextField label="От" type="date" size='small' sx={{width: '10%'}}
                                            InputLabelProps={{
                                                shrink: true,
                                            }}
+                                           value={dateStart}
+                                           onChange={(newValue) => setDateStart(newValue.target.value)}
                                 />
-                                <TextField label="До" type="date" size='small' sx={{width: '16%'}}
+                                <TextField label="До" type="date" size='small' sx={{width: '10%'}}
                                            InputLabelProps={{
                                                shrink: true,
                                            }}
+                                           value={dateEnd}
+                                           onChange={(newValue) => setDateEnd(newValue.target.value)}
+                                />
+                                <Autocomplete disablePortal size='small' sx={{width: '16%'}} options={Statuses}
+                                              onInputChange={CheckStatus}
+                                              value={autocompleteStatusValue}
+
+                                              renderInput={(params) => <TextField {...params} label="Статус"
+                                                                                  value={status}
+                                                                                  onChange={(newValue) => setStatus(newValue.target.value)}/>}
                                 />
                                 <Button variant="contained" onClick={handleShowApplicationTable}>Показать</Button>
                             </Stack>
@@ -255,7 +283,15 @@ export default function ApplicationPage() {
                     </Paper>
                 </Box>
                 <Box sx={{height: "84vh", gridArea: 'main'}}>
-                    {showOrderTable && <ApplicationTable/>}
+                    {searchApplications !== null /*&& searchApplications!.length !== 0*/ ?
+                        (showOrderTable && <ApplicationTable applications={searchApplications!}/>
+                        ) : (
+                        <Stack spacing={2}>
+                            {[0, 1, 2, 3, 4].map((i) => (
+                                <Skeleton variant="rounded" height={100} sx={{width: '100%'}} key={i}/>
+                            ))}
+                        </Stack>
+                    )}
                 </Box>
             </Box>
             <Modal
@@ -308,10 +344,15 @@ export default function ApplicationPage() {
                                                 />
                                                 <Autocomplete disablePortal size='small' options={Unit}
                                                               sx={{width: '40%'}}
-                                                              renderInput={(params) => <TextField {...params}
-                                                                                                  value={unit}
-                                                                                                  onChange={(newValue) => setUnit(newValue.target.value)}
-                                                                                                  label="Ед. измерения"/>}
+                                                              onInputChange={(e, value) => {
+                                                                  setUnit(value)
+                                                              }}
+                                                              value={unit}
+                                                              renderInput={(params) => <TextField
+                                                                  value={unit}
+                                                                  onChange={(newValue) => setUnit(newValue.target.value)} {...params}
+                                                                  label="Ед. измерения"/>}
+
                                                 />
                                             </Stack>
                                         }

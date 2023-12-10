@@ -34,7 +34,6 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
     const [devices, setDevices] = useState<ApplicationDevice[]>([]);
     const [consumables, setConsumables] = useState<ApplicationConsumable[]>([]);
     const [materialAmount, setMaterialAmount] = useState<string | undefined>();
-    const [orders, setOrders] = useState<Application[]>([]);
 
 
     const handleChangeChecked = () => {
@@ -131,7 +130,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
             key: +new Date()
         }))
 
-        const allApplication = await ApplicationService.getAllApplications()
+        const allApplication = await ApplicationService.getAllApplications(null, false)
         if (!allApplication)
             return
         setOrders(allApplication)
@@ -152,7 +151,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
         const period = checked ? calculatePeriod() : undefined
 
         const newApplication: Application = {
-            number: undefined,
+            number: application.number,
             date: milleseconds,
             title: purchase!,
             period: period,
@@ -175,7 +174,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
             messageType: "success",
             key: +new Date()
         }))
-        // setChangeApplicationModal(false);
+        //setChangeApplicationModal(false);
     }
 
     function changeConsumableAmountInApplication(newValue: number, csss: number) {
@@ -214,7 +213,26 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
     }
 
     useEffect(() => {
-        setDate(new Date(application.date).toISOString().substring(0, 10))
+        setDate(new Date(application.date  + (1000 * 60 * 60 * 24)).toISOString().substring(0, 10))
+        setConsumables(application.consumables);
+        setDevices(application.devices);
+        if(application.period != null){
+            setChecked(true);
+            let days = application.period/86400;
+
+            if(days % 30 == 0){
+                days = days/30;
+                setUnit(Unit[1]);
+            }else{
+                setUnit(Unit[0]);
+            }
+
+            setInterval(days);
+        }else{
+            setUnit(undefined);
+            setInterval(undefined);
+            setChecked(false);
+        }
     })
 
     return (
@@ -253,7 +271,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
 
                                 />
 
-                                <FormControlLabel control={<Checkbox onChange={handleChangeChecked}/>}
+                                <FormControlLabel control={<Checkbox onChange={handleChangeChecked} checked={checked}/>}
                                                   label="Период"/>
                                 {checked &&
                                     <Stack direction="row" spacing={2} sx={{width: '40%'}}>
@@ -266,10 +284,14 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
                                         />
                                         <Autocomplete disablePortal size='small' options={Unit}
                                                       sx={{width: '40%'}}
-                                                      renderInput={(params) => <TextField {...params}
-                                                                                          value={unit}
-                                                                                          onChange={(newValue) => setUnit(newValue.target.value)}
-                                                                                          label="Ед. измерения"/>}
+                                                      onInputChange={(e, value) => {
+                                                          setUnit(value)
+                                                      }}
+                                                      value={unit}
+                                                      renderInput={(params) => <TextField
+                                                          value={unit}
+                                                          onChange={(newValue) => setUnit(newValue.target.value)} {...params}
+                                                          label="Ед. измерения"/>}
                                         />
                                     </Stack>
                                 }
@@ -300,13 +322,13 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
                         {consumables && consumables!.length !== 0 && consumables!.map(
                             (row: ApplicationConsumable) => (
                                 <Stack direction="row" width='100%' spacing={1} mb={1}>
-                                    <TextField label="Наименование" variant="outlined"
+                                    <TextField label="Наименование" variant="outlined" disabled
                                                size='small'
                                                type="string"
                                                value={row.consumable.title}
                                                style={{width: '30%'}}
                                     />
-                                    <TextField label="КССС" variant="outlined" size='small'
+                                    <TextField label="КССС" variant="outlined" size='small' disabled
                                                type="number"
                                                value={row.consumable.csss}
                                                InputProps={{
@@ -333,13 +355,13 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
                         {devices && devices!.length !== 0 && (
                             devices!.map((row: ApplicationDevice) => (
                                 <Stack direction="row" width='100%' spacing={1} mb={1}>
-                                    <TextField label="Наименование" variant="outlined"
+                                    <TextField label="Наименование" variant="outlined" disabled
                                                size='small'
                                                type="string"
                                                value={row.device.title}
                                                style={{width: '30%'}}
                                     />
-                                    <TextField label="КССС" variant="outlined" size='small'
+                                    <TextField label="КССС" variant="outlined" size='small' disabled
                                                type="number"
                                                value={row.device.csss}
                                                InputProps={{
