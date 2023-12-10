@@ -8,19 +8,30 @@ interface LooseObject {
 }
 
 class ApplicationService {
-    async getAllApplications() {
-        try {
-            const res = await axios.get(ApiUrl)
-            if (res.status % 100 > 3) return undefined
-            return res.data as Application[];
-        } catch (e) {
-            console.log(e);
-            return undefined
+    async getAllApplications(
+        search: string | null = null,
+        inArchive: boolean,
+        status: string | null = null,
+        dateStart: string | null = null,
+        dateEnd: string | null = null
+    ) {
+        const params: LooseObject = {}
+        params['count'] = 20
+        params['inArchive'] = inArchive
+        if (search !== null && search !== '') {
+            params["search"] = search
         }
-    }
-    async getArchiveApplications() {
+        if(status !== null){
+            params["status"] = status
+        }
+        if(dateStart !== null){
+            params["dateStart"] = dateStart
+        }
+        if(dateEnd !== null){
+            params["dateEnd"] = dateEnd
+        }
         try {
-            const res = await axios.get(`${ApiUrl}get-archive`)
+            const res = await axios.get(ApiUrl, {params: params})
             if (res.status % 100 > 3) return undefined
             return res.data as Application[];
         } catch (e) {
