@@ -7,6 +7,7 @@ import com.vyatsu.lukoilweb.utils.ApplicationStatusConverter
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.ClassPathResource
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.ByteArrayOutputStream
@@ -25,14 +26,42 @@ class ApplicationService(
     private val dateFormat: DateFormat
 ) {
     @Transactional
-    fun getAllApplications(): Set<ApplicationDTO> {
-        return  applicationRepository.findAllByInArchiveFalseAndIsDeletedFalse().map { it.mapToApplicationDTO() }.toSet()
+    fun getAllApplications(limit: Pageable,
+                           inArchive: Boolean,
+                           search: String?,
+                           status: String?,
+                           startDate: String?,
+                           endDate: String?,): Set<ApplicationDTO> {
+        val applications = if (search == null && status == null && startDate == null && endDate == null) {
+            if(inArchive){
+                applicationRepository.findAllByInArchiveTrueAndIsDeletedFalse(limit)
+            }else{
+                applicationRepository.findAllByInArchiveFalseAndIsDeletedFalse(limit)
+            }
+        } else {
+            applicationRepository.findAllBySearch(
+                limit,
+                search,
+                inArchive,
+                if(status == null){
+                    null
+                }else{
+                    ApplicationStatusConverter().convertToEntityAttribute(status)
+                },
+                if(startDate == null){
+                    null
+                }else{
+                    dateFormat.parse(startDate)
+                },
+                if(endDate == null){
+                    null
+                }else{
+                    dateFormat.parse(endDate)
+                }
+            )
+        }
+        return applications.map { it.mapToApplicationDTO() }.toSet()
     }
-    @Transactional
-    fun getAllArchiveApplications(): Set<ApplicationDTO> {
-        return  applicationRepository.findAllByInArchiveTrueAndIsDeletedFalse().map { it.mapToApplicationDTO() }.toSet()
-    }
-
 
     @Transactional
     fun getApplicationById(id: Int): ApplicationDTO? {

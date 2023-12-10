@@ -4,6 +4,7 @@ import com.vyatsu.lukoilweb.models.dto.ApplicationDTO
 import com.vyatsu.lukoilweb.services.ApplicationService
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.Resource
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -14,15 +15,19 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("api/applications")
 class ApplicationController(private val applicationService: ApplicationService) {
     private val logger = LoggerFactory.getLogger(ApplicationController::class.java)
-
-    @GetMapping("/",produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getAllApplications() : ResponseEntity<Set<ApplicationDTO>>{
-        val applications = applicationService.getAllApplications()
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(applications)
-    }
-    @GetMapping("/get-archive",produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getAllArchiveApplications() : ResponseEntity<Set<ApplicationDTO>>{
-        val applications = applicationService.getAllArchiveApplications()
+    @GetMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getAllApplications(
+        @RequestParam(required = false) start: Int?,
+        @RequestParam(required = false) count: Int?,
+        @RequestParam(required = false) inArchive: Boolean,
+        @RequestParam(required = false) search: String?,
+        @RequestParam(required = false) status: String?,
+        @RequestParam(required = false) dateStart: String?,
+        @RequestParam(required = false) dateEnd: String?,
+    ): ResponseEntity<Set<ApplicationDTO>> {
+        logger.debug("Getting request get all application with start=$start, count=$count, search=$search, status=$status, dateStart=$dateStart, dateEnd=$dateEnd", )
+        val applications = applicationService.getAllApplications(
+            PageRequest.of(start ?: 0, count ?: 10), inArchive, search, status, dateStart, dateEnd)
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(applications)
     }
     @GetMapping("{number}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -36,6 +41,7 @@ class ApplicationController(private val applicationService: ApplicationService) 
     }
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun saveApplication(@RequestBody @Validated applicationDTO: ApplicationDTO) : ResponseEntity<ApplicationDTO?> {
+        logger.debug(applicationDTO.toString())
         return try {
             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(applicationService.saveApplication(applicationDTO))
         } catch (e: Exception){
