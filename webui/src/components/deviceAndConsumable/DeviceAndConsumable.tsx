@@ -115,7 +115,7 @@ export default function DeviceAndConsumable() {
                 const res = await DeviceService.getDeviceByCsss(parseInt(parentCsss!))
                 const newDevice = {
                     device: res,
-                    count: +amount!
+                    count: 0
                 } as Binding
                 const newConsumable: Consumable = {
                     id: undefined,
