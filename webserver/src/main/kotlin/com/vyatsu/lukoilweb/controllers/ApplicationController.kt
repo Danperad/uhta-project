@@ -42,11 +42,8 @@ class ApplicationController(private val applicationService: ApplicationService) 
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun saveApplication(@RequestBody @Validated applicationDTO: ApplicationDTO) : ResponseEntity<ApplicationDTO?> {
         logger.debug(applicationDTO.toString())
-        return try {
-            ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(applicationService.saveApplication(applicationDTO))
-        } catch (e: Exception){
-            ResponseEntity.badRequest().build()
-        }
+        val res = applicationService.saveApplication(applicationDTO)
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(res)
     }
     @GetMapping("/get-xlsx", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun getApplicationXlsx(@RequestParam number: Int) : ResponseEntity<Resource>{

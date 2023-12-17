@@ -37,8 +37,6 @@ class DeviceService(
             TODO()
 
         if (csssDevice != null && csssDevice.consumables.isNotEmpty()) {
-            if (deviceDTO.consumables.any { it.device == null })
-                TODO()
             if (deviceDTO.consumables.any { consumableRepository.findConsumableByCsssAndIsDeletedFalse(it.consumable!!.csss) == null })
                 TODO()
             if (!csssDevice.consumables.all { first -> device.consumables.any { it.consumable.csss == first.consumable.csss } }) {
