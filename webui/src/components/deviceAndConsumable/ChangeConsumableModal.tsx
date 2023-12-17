@@ -74,19 +74,25 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
         dispatch(consumables)
     }
 
-    function changeMaterialInOperation(newValue: number) {
+    function changeMaterialInOperation(id : number, newValue: number) {
         if (newValue < 0) return
-
-        if (newValue < consumable!.inOperation && consumable!.inOperation - 1 >= 0) {
-            setConsumable({...consumable!, inOperation: consumable!.inOperation - 1})
+        let bind = consumable.devices.find(d => d.id === +id);
+        if (newValue < bind!.count && consumable!.inOperation - 1 >= 0) {
+            if(bind){
+                bind!.count = newValue;
+                setConsumable({...consumable!, inOperation: consumable!.inOperation - 1})
+            }
             return;
         }
-        if (newValue > consumable!.inOperation && consumable!.inStock - 1 >= 0) {
-            setConsumable({
-                ...consumable!,
-                inOperation: consumable!.inOperation + 1,
-                inStock: consumable!.inStock - 1
-            })
+        else if (newValue > bind!.count && consumable!.inStock - 1 >= 0) {
+            if(bind){
+                bind!.count = newValue;
+                setConsumable({
+                    ...consumable!,
+                    inOperation: consumable!.inOperation + 1,
+                    inStock: consumable!.inStock - 1
+                })
+                }
         } else {
             dispatch(AddSnackbar({
                 messageText: "Приборы на складе закончились!",
@@ -273,13 +279,13 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                                 {consumable && consumable!.devices && consumable!.devices.length !== 0 && (
                                     consumable!.devices.map((row) => (
                                         <Stack direction="row" width='100%' spacing={1} mb={1}>
-                                            <TextField label="Наименование" variant="outlined"
+                                            <TextField label="Наименование" variant="outlined" disabled
                                                        size='small'
                                                        type="string"
                                                        value={row.device!.title}
                                                        style={{width: '30%'}}
                                             />
-                                            <TextField label="КССС" variant="outlined" size='small'
+                                            <TextField label="КССС" variant="outlined" size='small' disabled
                                                        type="number"
                                                        value={row.device!.csss}
                                                        InputProps={{
@@ -291,7 +297,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                                                        size='small'
                                                        type="number"
                                                        value={row.count}
-                                                       onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                                                       onChange={(newValue) => changeMaterialInOperation(row.id!, parseInt(newValue.target.value))}
                                             />
                                             <Button variant="outlined" onClick={() => {
                                                 delBind(row.device!.csss)

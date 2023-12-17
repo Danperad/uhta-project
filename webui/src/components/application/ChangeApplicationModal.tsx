@@ -133,7 +133,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
         const allApplication = await ApplicationService.getAllApplications(null, false)
         if (!allApplication)
             return
-        setOrders(allApplication)
+        //setOrders(allApplication)
     }
     const calculatePeriod = () => {
         let period = 86400 * interval!
