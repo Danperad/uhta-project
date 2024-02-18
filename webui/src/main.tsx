@@ -4,6 +4,7 @@ import SideBar from './components/SideBar';
 import DeviceAndConsumable from './components/deviceAndConsumable/DeviceAndConsumable';
 import ApplicationPage from './components/application/ApplicationPage';
 import ReportPage from './components/ReportPage';
+import EmployeePage from './components/EmployeePage';
 import ArchivePage from './components/archive/ArchivePage';
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
@@ -76,6 +77,7 @@ if (domNode !== null) {
                                     <Route path={"device"} element={<DeviceAndConsumable/>}/>
                                     <Route path={"order"} element={<ApplicationPage/>}/>
                                     <Route path={"report"} element={<ReportPage/>}/>
+                                    <Route path={"employee"} element={<EmployeePage/>}/>
                                     <Route path={"archive"} element={<ArchivePage/>}/>
                                 </Routes>
                                 <SnackbarViewer/>

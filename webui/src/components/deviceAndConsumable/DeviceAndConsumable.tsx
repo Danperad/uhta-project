@@ -231,8 +231,8 @@ export default function DeviceAndConsumable() {
                 <Box sx={{gridArea: 'header'}}>
                     <Paper style={{padding: "20px"}}>
                         <Typography mb={1}>Приборы и расходники</Typography>
-                        <Stack direction="row" spacing={1}>
-                            <TextField sx={{width: '40%'}} label="Поиск" variant="outlined" size='small'
+                        <Stack direction="row" spacing={2}>
+                            <TextField sx={{width: '30%'}} label="Поиск" variant="outlined" size='small'
                                        type="search" value={search}
                                        onChange={(newValue) => setSearch(newValue.target.value)}/>
                             <Button variant="contained" onClick={handleShowMaterialTable}>Показать</Button>
