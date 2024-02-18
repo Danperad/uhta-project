@@ -307,8 +307,8 @@ export default function DeviceAndConsumable() {
                                 <Autocomplete disablePortal size='small' options={Unit}
                                               onInputChange={CheckMaterialUnit} value={autocompleteUnitValue}
                                               renderInput={(params) => <TextField {...params} label="Ед. измерения"
-                                                                                  value={materialUnit} required
-                                                                                  onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
+                                              value={materialUnit} required
+                                              onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
                                 />
                             </Stack>
                             <Stack direction='row' spacing={1} justifyContent='center'>

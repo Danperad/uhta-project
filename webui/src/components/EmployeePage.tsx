@@ -1,11 +1,47 @@
-import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Paper,
+    Skeleton,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    TextField,
+    Autocomplete
+} from "@mui/material";
 import {useState} from "react";
+import User from "../models/UserModel";
+
+const Role = ['Администратор', 'Пользователь', 'Гость']
 
 export default function EmployeePage() {
+    const [employees, setEmployees] = useState<User[]>([]);
 
     const [surname, setSurname] = useState<string | undefined>();
     const [name, setName] = useState<string | undefined>();
     const [middleName, setMiddleName] = useState<string | undefined>();
+    const [login, setLogin] = useState<string | undefined>();
+    const [password, setPassword] = useState<string | undefined>();
+    const [employeeRole, setEmployeeRole] = useState<string | undefined>();
+    const [autocompleteRoleValue, setAutocompleteRoleValue] = useState<string>('');
+
+    const deleteUser = async (id: number) => {
+
+    }
+
+    function CheckRole(event: any, value: string) {
+        if (!Role.some((v, _, __) => v === value)) {
+            setAutocompleteRoleValue('');
+            return;
+        }
+        setEmployeeRole(value);
+        setAutocompleteRoleValue(value);
+    }
 
     return (
         <Box sx={{
@@ -38,7 +74,51 @@ export default function EmployeePage() {
                     </Paper>
                 </Box>
                 <Box sx={{gridArea: 'main', height: "80vh"}}>
+                    <div className='section' style={{height: '100%', width: '100%'}}>
+                        {employees.length !== 0 ? (
+                            <TableContainer component={Paper}>
+                                <Table sx={{minWidth: 650}} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow sx={{cursor: "default"}}>
+                                            <TableCell>Номер</TableCell>
+                                            <TableCell align="left">Тип закупа</TableCell>
+                                            <TableCell align="center">Дата</TableCell>
+                                            <TableCell align="center">Статус</TableCell>
+                                            <TableCell align="center">Архивация</TableCell>
+                                            <TableCell align="center">Скачивание</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {employees.map((row) => (
+                                            <TableRow
+                                                key={row.id}
+                                                sx={{'&:last-child td, &:last-child th': {border: 0, cursor: "pointer"}}}
+                                            >
+                                                <TableCell>{row.surname}</TableCell>
+                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{row.middleName}</TableCell>
+                                                <TableCell>{row.login}</TableCell>
+                                                <TableCell>{row.role}</TableCell>
 
+                                                <TableCell align="center">
+                                                    <Button variant="outlined" onClick={() => {
+                                                        deleteUser(row.id!)
+                                                    }}>Удалить</Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+
+                        ) : (
+                            <Stack spacing={2}>
+                                {[0, 1, 2, 3, 4].map((i) => (
+                                    <Skeleton variant="rounded" height={100} sx={{width: '100%'}} key={i}/>
+                                ))}
+                            </Stack>
+                        )}
+                    </div>
                 </Box>
                 <Box sx={{gridArea: 'sidebar', height: "76vh"}} component="form">
                     <Paper
@@ -70,6 +150,22 @@ export default function EmployeePage() {
                                            required
                                            value={middleName}
                                            onChange={(newValue) => setMiddleName(newValue.target.value)}/>
+                                <TextField label="Логин" variant="outlined"
+                                           size='small'
+                                           required
+                                           value={login}
+                                           onChange={(newValue) => setLogin(newValue.target.value)}/>
+                                <TextField label="Пароль" variant="outlined"
+                                           size='small'
+                                           required
+                                           value={password}
+                                           onChange={(newValue) => setPassword(newValue.target.value)}/>
+                                <Autocomplete disablePortal size='small' options={Role}
+                                              onInputChange={CheckRole} value={autocompleteRoleValue}
+                                              renderInput={(params) => <TextField {...params} label="Роль"
+                                                                                  value={employeeRole} required
+                                                                                  onChange={(newValue) => setEmployeeRole(newValue.target.value)}/>}
+                                />
                             </Stack>
                             <Stack direction='row' spacing={1} justifyContent='center'>
                                 <Button variant="contained">Добавить</Button>
