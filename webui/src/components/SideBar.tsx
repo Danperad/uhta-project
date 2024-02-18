@@ -92,9 +92,9 @@ export default function SideBar() {
                     </Button>
                     <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                             startIcon={<PeopleAltIcon/>} onClick={() => {
-                        navigate("/")
+                        navigate("/employee")
                     }}>
-                        Персонал
+                        Сотрудники
                     </Button>
                     <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                             startIcon={<ArchiveIcon/>} onClick={() => {

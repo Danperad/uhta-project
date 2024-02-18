@@ -7,7 +7,8 @@ import {
     FormControlLabel,
     IconButton,
     Modal,
-    Paper, Skeleton,
+    Paper,
+    Skeleton,
     Stack,
     TextField,
     Typography
@@ -251,7 +252,7 @@ export default function ApplicationPage() {
                         <Typography mb={1}>Заявки</Typography>
                         <Stack direction="row" justifyContent="space-between" width='100%' height='100%'>
                             <Stack direction="row" spacing={2} style={{width: "100%"}} height='100%'>
-                                <TextField sx={{width: '30%'}} label="Поиск" variant="outlined" size='small'
+                                <TextField sx={{width: '32%'}} label="Поиск" variant="outlined" size='small'
                                            type="search" value={search}
                                            onChange={(newValue) => setSearch(newValue.target.value)}/>
                                 <TextField label="От" type="date" size='small' sx={{width: '10%'}}
