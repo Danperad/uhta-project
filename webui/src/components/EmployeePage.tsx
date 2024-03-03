@@ -20,13 +20,14 @@ import {AddSnackbar} from "../redux/actions/snackbarAction";
 import UserService from "../services/UserService";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store";
+import {NewUser} from "../models";
 
-const Role = ['Администратор', 'Пользователь', 'Гость']
+const Role = ['Администратор', 'Пользователь']
 
 export default function EmployeePage() {
     const dispatch = useDispatch<AppDispatch>();
     const state = useSelector((state: RootState) => state);
-    const [employees, setEmployees] = useState<User[]>([]);
+    const [search, setSearch] = useState<string>('');
 
     const [surname, setSurname] = useState<string | undefined>();
     const [name, setName] = useState<string | undefined>();
@@ -36,8 +37,8 @@ export default function EmployeePage() {
     const [employeeRole, setEmployeeRole] = useState<string | undefined>();
     const [autocompleteRoleValue, setAutocompleteRoleValue] = useState<string>('');
 
-    const deleteUser = async (login: string, passwowd: string) => {
-        const res = await UserService.deleteUserByLoginAndPassword(login, passwowd)
+    const deleteUser = async (login: string) => {
+        const res = await UserService.deleteUserByLogin(login)
         if (!res) return
         dispatch(AddSnackbar({
             messageText: "Пользователь успешно удален!",
@@ -53,15 +54,15 @@ export default function EmployeePage() {
     const addNewEmployee = async () => {
         const check = CheckRequiredFields();
 
-        if(check){
-            const newEmployee: User = {
+        if (check) {
+            const newEmployee: NewUser = {
                 id: undefined,
-                surname: surname!,
-                name: name!,
+                lastName: surname!,
+                firstName: name!,
                 middleName: middleName,
                 login: login!,
                 password: password!,
-                role: employeeRole!
+                role: RoleConverter(employeeRole!)!
             }
             const res = await UserService.saveUser(newEmployee)
             if (!res) return
@@ -74,8 +75,7 @@ export default function EmployeePage() {
             if (!allUsers) return
             dispatch(allUsers)
             ClearFields();
-        }
-        else {
+        } else {
             dispatch(AddSnackbar({
                 messageText: "Не все поля заполнены!",
                 messageType: "error",
@@ -87,6 +87,21 @@ export default function EmployeePage() {
     const CheckRequiredFields = () => {
         return !(surname === undefined || name === undefined || login === undefined || password === undefined || employeeRole === undefined ||
             surname === "" || name === "" || login === "" || password === "" || employeeRole === "");
+    }
+
+    const handleShowUsersTable = async () => {
+        const users = await UserService.getAllUsers(search)
+        if (users)
+            dispatch(users)
+    }
+
+    function RoleConverter(role: string) {
+        switch (role) {
+            case "Администратор":
+                return "ADMIN"
+            case "Пользователь":
+                return "WORKER"
+        }
     }
 
     function ClearFields() {
@@ -133,8 +148,9 @@ export default function EmployeePage() {
                         <Typography mb={1}>Сотрудники</Typography>
                         <Stack direction="row" spacing={2} style={{width: "100%"}} height='100%'>
                             <TextField sx={{width: '30%'}} label="Поиск" variant="outlined"
-                                       size='small' type="search"/>
-                            <Button variant="contained">Показать</Button>
+                                       size='small' type="search" value={search}
+                                       onChange={(newValue) => setSearch(newValue.target.value)}/>
+                            <Button variant="contained" onClick={handleShowUsersTable}>Показать</Button>
                         </Stack>
                     </Paper>
                 </Box>
@@ -151,24 +167,30 @@ export default function EmployeePage() {
                                             <TableCell align="left">Отчество</TableCell>
                                             <TableCell align="left">Логин</TableCell>
                                             <TableCell align="left">Роль</TableCell>
-                                            <TableCell align="center">Скачивание</TableCell>
+                                            <TableCell align="center">Удаление</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {employees.map((row) => (
+                                        {state.users.map((row) => (
                                             <TableRow
                                                 key={row.id}
-                                                sx={{'&:last-child td, &:last-child th': {border: 0, cursor: "pointer"}}}
+                                                sx={{
+                                                    '&:last-child td, &:last-child th': {
+                                                        border: 0,
+                                                        cursor: "pointer"
+                                                    }
+                                                }}
                                             >
-                                                <TableCell>{row.surname}</TableCell>
-                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{row.id}</TableCell>
+                                                <TableCell>{row.lastName}</TableCell>
+                                                <TableCell>{row.firstName}</TableCell>
                                                 <TableCell>{row.middleName}</TableCell>
                                                 <TableCell>{row.login}</TableCell>
                                                 <TableCell>{row.role}</TableCell>
 
                                                 <TableCell align="center">
                                                     <Button variant="outlined" onClick={() => {
-                                                        deleteUser(row.login, row.password)
+                                                        deleteUser(row.login)
                                                     }}>Удалить</Button>
                                                 </TableCell>
                                             </TableRow>

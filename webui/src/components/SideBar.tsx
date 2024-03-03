@@ -12,6 +12,7 @@ import {
     Stack,
     TextField,
     Typography,
+    Avatar
 } from "@mui/material";
 import {useNavigate} from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
@@ -77,7 +78,10 @@ export default function SideBar() {
             borderRadius: '0 8px 8px 0',
         }}>
             <Stack justifyContent='space-between' height='100%'>
-                <Stack spacing={2} marginTop={8} >
+                <Stack spacing={2} marginTop={8}>
+                    <Avatar sx={{width: 80, height: 80, ml: 6, cursor: "pointer"}} onClick={() => {
+                        navigate("/account")
+                    }}>Г</Avatar>
                     <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                             startIcon={<FormatListBulletedIcon/>} onClick={() => {
                         navigate("/order")
