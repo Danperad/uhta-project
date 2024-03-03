@@ -1,5 +1,5 @@
 import axios from "axios";
-import {User} from "../models";
+import {NewUser, User} from "../models";
 import {UserLoaded} from "../redux/actions/userAction";
 
 const ApiUrl = `${import.meta.env.VITE_API_URL}/api/user/`
@@ -27,7 +27,7 @@ class UserService{
 
     async getUserByLoginAndPassword(login: string, password: string) {
         try {
-            const res = await axios.get(`${ApiUrl}${login}${password}`)
+            const res = await axios.post(`${ApiUrl}/auth`, {login, password})
             if (res.status % 100 > 3) return undefined
             return res.data as User
         } catch (e) {
@@ -35,7 +35,7 @@ class UserService{
             return undefined
         }
     }
-    async saveUser(user: User) {
+    async saveUser(user: NewUser) {
         try {
             const res = await axios.post(ApiUrl, user)
             if (res.status % 100 > 3) return undefined
@@ -45,10 +45,9 @@ class UserService{
             return undefined
         }
     }
-    async deleteUserByLoginAndPassword(login: string, password: string) {
+    async deleteUserByLogin(login: string) {
         const params: LooseObject = {}
         params['login'] = login
-        params['password'] = password
         try {
             const res = await axios.post(`${ApiUrl}delete`, {}, {params: params})
             if (res.status % 100 > 3) return false

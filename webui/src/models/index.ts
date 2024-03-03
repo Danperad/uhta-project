@@ -7,3 +7,4 @@ export type {default as Application} from "./Application";
 export type {default as Binding} from "./Binding";
 export type {default as ApplicationDevice} from  "./ApplicationDevice";
 export type {default as ApplicationConsumable} from "./ApplicationConsumable";
+export type {default as NewUser} from "./NewUserModel";
