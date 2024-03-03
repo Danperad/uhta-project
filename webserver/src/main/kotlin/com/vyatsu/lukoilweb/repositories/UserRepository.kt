@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : JpaRepository<User, Int> {
     fun getUserByLoginAndPassword(login: String, password: String) : User?
+    fun getUserByLogin(login: String) : User?
+//    fun findAllByIsDeletedFalse(pageable: Pageable): List<User>
 }

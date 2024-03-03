@@ -84,32 +84,47 @@ class ApplicationService(
             number = applicationDTO.number,
             inArchive = false
         )
-        val newApplication = applicationRepository.save(application)
+        val newApplication = application;
 
         if (applicationDTO.devices.any { it.device.id == null } || applicationDTO.consumables.any { it.consumable.id == null })
             TODO()
         val devices = applicationDTO.devices.map {
-            applicationDeviceRepository.save(
-                ApplicationDevice(
-                    device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.device.csss) ?: TODO(),
-                    application = newApplication,
-                    deviceCount = it.count
+            val binding = applicationDeviceRepository.findById(ApplicationDeviceKey(it.device.id, application.number))
+            if(!binding.isPresent){
+                applicationDeviceRepository.save(
+                    ApplicationDevice(
+                        device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.device.csss) ?: TODO(),
+                        application = newApplication,
+                        deviceCount = it.count
+                    )
                 )
-            )
+            }
+            else{
+                applicationDeviceRepository.save(binding.get().copy(deviceCount = it.count))
+            }
+
         }
         val consumables = applicationDTO.consumables.map {
-            applicationConsumableRepository.save(
-                ApplicationConsumable(
-                    consumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(it.consumable.csss)
-                        ?: TODO(),
-                    application = newApplication,
-                    consumableCount = it.count
+            val binding = applicationConsumableRepository.findById(ApplicationConsumableKey(it.consumable.id, application.number))
+            if(!binding.isPresent){
+                applicationConsumableRepository.save(
+                    ApplicationConsumable(
+                        consumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(it.consumable.csss)
+                            ?: TODO(),
+                        application = newApplication,
+                        consumableCount = it.count
+                    )
                 )
-            )
+            }
+            else{
+                applicationConsumableRepository.save(binding.get().copy(consumableCount = it.count))
+            }
+
         }
         newApplication.devices.addAll(devices)
         newApplication.consumables.addAll(consumables)
-        return applicationRepository.save(newApplication).mapToApplicationDTO()
+        val test = applicationRepository.save(newApplication)
+        return test.mapToApplicationDTO()
     }
 
     @Transactional
