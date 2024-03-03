@@ -16,10 +16,16 @@ import {
 } from "@mui/material";
 import {useState} from "react";
 import User from "../models/UserModel";
+import {AddSnackbar} from "../redux/actions/snackbarAction";
+import UserService from "../services/UserService";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../redux/store";
 
 const Role = ['Администратор', 'Пользователь', 'Гость']
 
 export default function EmployeePage() {
+    const dispatch = useDispatch<AppDispatch>();
+    const state = useSelector((state: RootState) => state);
     const [employees, setEmployees] = useState<User[]>([]);
 
     const [surname, setSurname] = useState<string | undefined>();
@@ -30,8 +36,67 @@ export default function EmployeePage() {
     const [employeeRole, setEmployeeRole] = useState<string | undefined>();
     const [autocompleteRoleValue, setAutocompleteRoleValue] = useState<string>('');
 
-    const deleteUser = async (id: number) => {
+    const deleteUser = async (login: string, passwowd: string) => {
+        const res = await UserService.deleteUserByLoginAndPassword(login, passwowd)
+        if (!res) return
+        dispatch(AddSnackbar({
+            messageText: "Пользователь успешно удален!",
+            messageType: "success",
+            key: +new Date()
+        }))
+        const allUsers = await UserService.getAllUsers()
+        if (!allUsers) return
+        dispatch(allUsers)
+        ClearFields();
+    }
 
+    const addNewEmployee = async () => {
+        const check = CheckRequiredFields();
+
+        if(check){
+            const newEmployee: User = {
+                id: undefined,
+                surname: surname!,
+                name: name!,
+                middleName: middleName,
+                login: login!,
+                password: password!,
+                role: employeeRole!
+            }
+            const res = await UserService.saveUser(newEmployee)
+            if (!res) return
+            dispatch(AddSnackbar({
+                messageText: "Пользователь успешно добавлен!",
+                messageType: "success",
+                key: +new Date()
+            }))
+            const allUsers = await UserService.getAllUsers()
+            if (!allUsers) return
+            dispatch(allUsers)
+            ClearFields();
+        }
+        else {
+            dispatch(AddSnackbar({
+                messageText: "Не все поля заполнены!",
+                messageType: "error",
+                key: +new Date()
+            }))
+        }
+    }
+
+    const CheckRequiredFields = () => {
+        return !(surname === undefined || name === undefined || login === undefined || password === undefined || employeeRole === undefined ||
+            surname === "" || name === "" || login === "" || password === "" || employeeRole === "");
+    }
+
+    function ClearFields() {
+        setName("");
+        setSurname("");
+        setMiddleName("");
+        setLogin("");
+        setPassword("");
+        setEmployeeRole("");
+        setAutocompleteRoleValue("");
     }
 
     function CheckRole(event: any, value: string) {
@@ -75,16 +140,17 @@ export default function EmployeePage() {
                 </Box>
                 <Box sx={{gridArea: 'main', height: "80vh"}}>
                     <div className='section' style={{height: '100%', width: '100%'}}>
-                        {employees.length !== 0 ? (
+                        {state.users.length !== 0 ? (
                             <TableContainer component={Paper}>
                                 <Table sx={{minWidth: 650}} aria-label="simple table">
                                     <TableHead>
                                         <TableRow sx={{cursor: "default"}}>
                                             <TableCell>Номер</TableCell>
-                                            <TableCell align="left">Тип закупа</TableCell>
-                                            <TableCell align="center">Дата</TableCell>
-                                            <TableCell align="center">Статус</TableCell>
-                                            <TableCell align="center">Архивация</TableCell>
+                                            <TableCell align="left">Фамилия</TableCell>
+                                            <TableCell align="left">Имя</TableCell>
+                                            <TableCell align="left">Отчество</TableCell>
+                                            <TableCell align="left">Логин</TableCell>
+                                            <TableCell align="left">Роль</TableCell>
                                             <TableCell align="center">Скачивание</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -102,7 +168,7 @@ export default function EmployeePage() {
 
                                                 <TableCell align="center">
                                                     <Button variant="outlined" onClick={() => {
-                                                        deleteUser(row.id!)
+                                                        deleteUser(row.login, row.password)
                                                     }}>Удалить</Button>
                                                 </TableCell>
                                             </TableRow>
@@ -147,7 +213,6 @@ export default function EmployeePage() {
                                            onChange={(newValue) => setName(newValue.target.value)}/>
                                 <TextField label="Отчество" variant="outlined"
                                            size='small'
-                                           required
                                            value={middleName}
                                            onChange={(newValue) => setMiddleName(newValue.target.value)}/>
                                 <TextField label="Логин" variant="outlined"
@@ -168,7 +233,9 @@ export default function EmployeePage() {
                                 />
                             </Stack>
                             <Stack direction='row' spacing={1} justifyContent='center'>
-                                <Button variant="contained">Добавить</Button>
+                                <Button variant="contained" onClick={() => {
+                                    addNewEmployee()
+                                }}>Добавить</Button>
                             </Stack>
                         </Stack>
                     </Paper>

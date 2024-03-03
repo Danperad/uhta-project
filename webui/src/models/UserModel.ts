@@ -1,9 +1,10 @@
 declare type User = {
-    id: number,
+    id: number | undefined,
     surname: string,
     name: string,
-    middleName: string | null,
+    middleName: string | undefined,
     login: string,
+    password: string,
     role: string,
 }
 export default User
