@@ -23,6 +23,33 @@ import {Application, ApplicationConsumable, ApplicationDevice} from "../../model
 import ConsumableService from "../../services/ConsumableService";
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 import ApplicationService from "../../services/ApplicationService";
+import {Steps} from "intro.js-react";
+import 'intro.js/introjs.css';
+
+const steps = [
+    {
+        element: '#create',
+        intro: 'Для создания заявки нажмите на "СОЗДАТЬ"',
+        position: 'left',
+    }
+];
+const steps2 = [
+    {
+        element: '#applicationData',
+        intro: 'Укажите дату, тип закупа и период, еслм заявка будет периодическая',
+        position: 'right',
+    },
+    {
+        element: '#applicationMaterial',
+        intro: 'Добавьте материалы в заявку',
+        position: 'right',
+    },
+    {
+        element: '#applicationCreate',
+        intro: 'Нажмите на "СОЗДАТЬ"',
+        position: 'right',
+    }
+]
 
 export default function ApplicationPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -43,11 +70,16 @@ export default function ApplicationPage() {
     const [interval, setInterval] = useState<number>()
     const [unit, setUnit] = useState<string>()
 
+    const [stepsEnabled, setStepsEnabled] = useState(true)
+    const [stepsEnabled2, setStepsEnabled2] = useState(false)
+
     const handleOpenCreateApplicationModal = () => {
         setCreateApplicationModalOpen(true)
         DeviceService.getAllDevices().then((res) => {
             if (res) dispatch(res);
         });
+        setStepsEnabled(false)
+        setStepsEnabled2(true);
     }
     const handleCloseCreateOrderModal = () => {
         setCreateApplicationModalOpen(false);
@@ -231,6 +263,16 @@ export default function ApplicationPage() {
     }
 
     return (
+        <>
+            <Steps
+                options={{skipLabel: "<h6 style='margin: 0 0 0 -70px; padding: 0; color: #0D47A1'>Пропустить</h6>",
+                    hideNext: true,
+                    showBullets: false}}
+                enabled={stepsEnabled}
+                steps={steps}
+                initialStep={0}
+                onExit={() => {setStepsEnabled(false)}}
+            />
         <Box sx={{
             width: '100%',
             height: '100vh',
@@ -238,6 +280,8 @@ export default function ApplicationPage() {
                 p: 1,
             },
         }}>
+
+
             <Box sx={{
                 display: 'grid',
                 height: "98.5%",
@@ -277,9 +321,9 @@ export default function ApplicationPage() {
                                                                                   value={status}
                                                                                   onChange={(newValue) => setStatus(newValue.target.value)}/>}
                                 />
-                                <Button variant="contained" onClick={handleShowApplicationTable}>Показать</Button>
+                                <Button variant="contained" id={"view"} onClick={handleShowApplicationTable}>Показать</Button>
                             </Stack>
-                            <Button variant="contained" onClick={handleOpenCreateApplicationModal}>Создать</Button>
+                            <Button variant="contained" id={"create"} onClick={handleOpenCreateApplicationModal}>Создать</Button>
                         </Stack>
                     </Paper>
                 </Box>
@@ -300,7 +344,22 @@ export default function ApplicationPage() {
                 onClose={handleCloseCreateOrderModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
+
             >
+                <>
+                <Steps
+                    enabled={stepsEnabled2}
+                    steps={steps2}
+                    initialStep={0}
+                    onExit={() => {setStepsEnabled2(false)}}
+                    options={{showProgress: true,
+                            skipLabel: "<h6 style='margin: 0 0 0 -70px; padding: 0; color: #0D47A1'>Пропустить</h6>",
+                            nextLabel: "<p style='margin: 0; color: #0D47A1;'>Далее</p>",
+                            prevLabel: "<p style='margin: 0; color: #0D47A1;'>Назад</p>",
+                            doneLabel: "<a target='_blank' href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\" style='text-decoration: none; color: #0D47A1'>Готово</a>",
+                            hidePrev: true,
+                            showBullets: false}}
+                />
                 <Box sx={style}>
                     <Stack direction="column" justifyContent="space-between" spacing={1}
                            sx={{width: '97%', height: '100%'}} style={{margin: '0px'}}>
@@ -309,8 +368,8 @@ export default function ApplicationPage() {
                                    style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                                 <Typography mb={2}>Создание заявки</Typography>
                                 <Stack direction="column" spacing={2}>
-                                    <Stack direction="row" spacing={2}>
-                                        <TextField label="Дата" type="date" size='small' sx={{width: '16%'}}
+                                    <Stack direction="row" spacing={2} id={"applicationData"}>
+                                        <TextField  label="Дата" type="date" size='small' sx={{width: '16%'}}
                                                    defaultValue={+Date()} value={date}
                                                    onChange={e=>{
                                                        setDate((e.target.value))
@@ -319,7 +378,7 @@ export default function ApplicationPage() {
                                                        shrink: true,
                                                    }}
                                         />
-                                        <Autocomplete disablePortal size='small' options={Purchase}
+                                        <Autocomplete className={"date"} disablePortal size='small' options={Purchase}
                                                       sx={{width: '16%'}}
                                                       onInputChange={(e, value) => {
                                                           setPurchase(value)
@@ -359,7 +418,7 @@ export default function ApplicationPage() {
                                         }
                                     </Stack>
                                     <Typography mb={2}>Добавление материалов в заявку</Typography>
-                                    <Stack direction="row" spacing={2}>
+                                    <Stack direction="row" spacing={2} id={"applicationMaterial"}>
                                         <TextField label="КССС" variant="outlined" size='small' type="number"
                                                    required
                                                    value={csss} onChange={(newValue) => setCsss(newValue.target.value)}
@@ -450,13 +509,14 @@ export default function ApplicationPage() {
                         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                             <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
                                 <Button variant="contained" onClick={handleCloseCreateOrderModal}>Отмена</Button>
-                                <Button variant="contained" onClick={addApplication}>Создать</Button>
+                                <Button variant="contained" onClick={addApplication} id={"applicationCreate"}>Создать</Button>
                             </Stack>
                         </Paper>
                     </Stack>
                 </Box>
+                </>
             </Modal>
         </Box>
-
+        </>
     )
 }
