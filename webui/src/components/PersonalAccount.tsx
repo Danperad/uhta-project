@@ -70,21 +70,23 @@ export default function PersonalAccount() {
                             </Box>
                             <Box sx={{gridArea: 'info', width: "80%"}}>
                                 <Stack spacing={3}>
-                                    <TextField label="Логин" variant="outlined"
-                                               size='small'
-                                               required
-                                               value={login}
-                                               onChange={(newValue) => setLogin(newValue.target.value)}/>
-                                    <TextField label="Пароль" variant="outlined"
-                                               size='small'
-                                               required
-                                               value={password}
-                                               onChange={(newValue) => setPassword(newValue.target.value)}/>
                                     <TextField label="Роль" variant="outlined"
                                                size='small'
                                                required
                                                disabled={true}
                                                value={role}/>
+                                    <TextField label="Логин" variant="outlined"
+                                               size='small'
+                                               required
+                                               value={login}
+                                               disabled={true}
+                                    />
+                                    <TextField label="Пароль" variant="outlined"
+                                               size='small'
+                                               required
+                                               value={password}
+                                               type="password"
+                                               onChange={(newValue) => setPassword(newValue.target.value)}/>
                                 </Stack>
                             </Box>
                         </Box>
