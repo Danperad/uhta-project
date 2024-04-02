@@ -12,7 +12,8 @@ data class NewUserDTO(
     val lastName: String,
     val firstName: String,
     val middleName: String? = null,
-    val role: String
+    val role: String,
+    val isDeleted: Boolean
 ){
     fun mapToUser(): User {
         val user = User(
@@ -22,6 +23,7 @@ data class NewUserDTO(
             firstName,
             middleName,
             RoleConverter().convertToEntityAttribute(role),
+            isDeleted,
             id = id
         )
         return user
