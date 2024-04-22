@@ -278,14 +278,14 @@ export default function DeviceAndConsumable() {
                                            }}
                                 />
 
-                                <Autocomplete disablePortal size='small' options={Producers}
-                                              onInputChange={CheckMaterialProducer}
-                                              value={autocompleteProducerValue}
+                                {/*<Autocomplete disablePortal size='small' options={Producers}*/}
+                                {/*              onInputChange={CheckMaterialProducer}*/}
+                                {/*              value={autocompleteProducerValue}*/}
 
-                                              renderInput={(params) => <TextField {...params} label="Производитель"
-                                                                                  value={producer}
-                                                                                  onChange={(newValue) => setProducer(newValue.target.value)}/>}
-                                />
+                                {/*              renderInput={(params) => <TextField {...params} label="Производитель"*/}
+                                {/*                                                  value={producer}*/}
+                                {/*                                                  onChange={(newValue) => setProducer(newValue.target.value)}/>}*/}
+                                {/*/>*/}
 
                                 <Autocomplete disablePortal size='small' options={Type}
                                               onInputChange={CheckMaterialType} value={autocompleteTypeValue}

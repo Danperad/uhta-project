@@ -79,7 +79,7 @@ export default function SideBar() {
         }}>
             <Stack justifyContent='space-between' height='100%'>
                 <Stack spacing={2} marginTop={8}>
-                    <Avatar sx={{width: 80, height: 80, ml: 6, cursor: "pointer"}} onClick={() => {
+                    <Avatar sx={{width: 80, height: 80, cursor: "pointer"}} style={{marginLeft: "auto", marginRight: "auto"}} onClick={() => {
                         navigate("/account")
                     }}>Г</Avatar>
                     <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
