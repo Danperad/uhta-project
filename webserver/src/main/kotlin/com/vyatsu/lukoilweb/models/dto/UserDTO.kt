@@ -9,5 +9,6 @@ data class UserDTO(
     val lastName: String,
     val firstName: String,
     val middleName: String? = null,
-    val role: String
+    val role: String,
+    val isDeleted: Boolean
 )
