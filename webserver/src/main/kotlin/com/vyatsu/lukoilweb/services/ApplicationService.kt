@@ -84,12 +84,12 @@ class ApplicationService(
             number = applicationDTO.number,
             inArchive = false
         )
-        val newApplication = application;
+        val newApplication = applicationRepository.save(application);
 
         if (applicationDTO.devices.any { it.device.id == null } || applicationDTO.consumables.any { it.consumable.id == null })
             TODO()
         val devices = applicationDTO.devices.map {
-            val binding = applicationDeviceRepository.findById(ApplicationDeviceKey(it.device.id, application.number))
+            val binding = applicationDeviceRepository.findById(ApplicationDeviceKey(it.device.id, newApplication.number))
             if(!binding.isPresent){
                 applicationDeviceRepository.save(
                     ApplicationDevice(
@@ -105,7 +105,7 @@ class ApplicationService(
 
         }
         val consumables = applicationDTO.consumables.map {
-            val binding = applicationConsumableRepository.findById(ApplicationConsumableKey(it.consumable.id, application.number))
+            val binding = applicationConsumableRepository.findById(ApplicationConsumableKey(it.consumable.id, newApplication.number))
             if(!binding.isPresent){
                 applicationConsumableRepository.save(
                     ApplicationConsumable(
@@ -121,6 +121,8 @@ class ApplicationService(
             }
 
         }
+        newApplication.devices.clear()
+        newApplication.consumables.clear()
         newApplication.devices.addAll(devices)
         newApplication.consumables.addAll(consumables)
         val test = applicationRepository.save(newApplication)
