@@ -26,7 +26,7 @@ class UserService(private val userRepository: UserRepository) {
     }
     @Transactional
     fun findAllUsersPage(limit: Pageable, search: String?): Set<UserDTO> {
-        val users = userRepository.findAll(limit)
+        val users = userRepository.findAllByIsDeletedFalseOrderByIdDesc(limit)
 
         return users.map { it.mapToUserDTO() }.toSet()
     }

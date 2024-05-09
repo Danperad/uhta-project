@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository
 interface ApplicationRepository : JpaRepository<Application, Int>, ApplicationRepositoryCustom {
     fun findApplicationByNumber(number: Int): Application?
     fun findAllByPeriodNotNull() : List<Application>
-    fun findAllByInArchiveFalseAndIsDeletedFalse(pageable: Pageable) : List<Application>
-    fun findAllByInArchiveTrueAndIsDeletedFalse(pageable: Pageable) : List<Application>
+    fun findAllByInArchiveFalseAndIsDeletedFalseOrderByNumberDesc(pageable: Pageable) : List<Application>
+    fun findAllByInArchiveTrueAndIsDeletedFalseOrderByNumberDesc(pageable: Pageable) : List<Application>
 }

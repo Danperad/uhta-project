@@ -22,7 +22,7 @@ class DeviceService(
     @Transactional
     fun findAllDevicePage(limit: Pageable, search: String?): Set<DeviceDTO> {
         val devices = if (search == null) {
-            deviceRepository.findAllByIsDeletedFalse(limit)
+            deviceRepository.findAllByIsDeletedFalseOrderByIdDesc(limit)
         } else {
             deviceRepository.findAllBySearch(limit, search)
         }

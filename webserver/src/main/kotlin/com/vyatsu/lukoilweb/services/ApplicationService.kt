@@ -34,9 +34,9 @@ class ApplicationService(
                            endDate: String?,): Set<ApplicationDTO> {
         val applications = if (search == null && status == null && startDate == null && endDate == null) {
             if(inArchive){
-                applicationRepository.findAllByInArchiveTrueAndIsDeletedFalse(limit)
+                applicationRepository.findAllByInArchiveTrueAndIsDeletedFalseOrderByNumberDesc(limit)
             }else{
-                applicationRepository.findAllByInArchiveFalseAndIsDeletedFalse(limit)
+                applicationRepository.findAllByInArchiveFalseAndIsDeletedFalseOrderByNumberDesc(limit)
             }
         } else {
             applicationRepository.findAllBySearch(
