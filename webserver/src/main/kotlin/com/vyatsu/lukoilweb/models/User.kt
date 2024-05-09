@@ -20,12 +20,12 @@ class User(
     @Column(name = "user_role")
     @Convert(converter = RoleConverter::class)
     val role: Roles,
-    @Column(name = "is_deleted")
+    @Column(name = "deleted")
     val isDeleted: Boolean = false,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     var id: Int? = null
 ) {
-    fun mapToUserDTO() = UserDTO(id!!, login, lastName, firstName, middleName, role.value, isDeleted)
+    fun mapToUserDTO() = UserDTO(id!!, login, password, lastName, firstName, middleName, role.value, isDeleted)
 }

@@ -21,6 +21,7 @@ import UserService from "../services/UserService";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store";
 import {NewUser} from "../models";
+import digestMessage from "../hashGenerator";
 
 const Role = ['Администратор', 'Пользователь']
 
@@ -55,14 +56,16 @@ export default function EmployeePage() {
         const check = CheckRequiredFields();
 
         if (check) {
+            const hashPassword = await digestMessage(password!);
             const newEmployee: NewUser = {
                 id: undefined,
                 lastName: surname!,
                 firstName: name!,
                 middleName: middleName,
                 login: login!,
-                password: password!,
-                role: RoleConverter(employeeRole!)!
+                password: hashPassword,
+                role: RoleConverter(employeeRole!)!,
+                isDeleted: false
             }
             const res = await UserService.saveUser(newEmployee)
             if (!res) return
@@ -244,6 +247,7 @@ export default function EmployeePage() {
                                            onChange={(newValue) => setLogin(newValue.target.value)}/>
                                 <TextField label="Пароль" variant="outlined"
                                            size='small'
+                                           type="password"
                                            required
                                            value={password}
                                            onChange={(newValue) => setPassword(newValue.target.value)}/>

@@ -6,5 +6,6 @@ declare type NewUser = {
     login: string,
     password: string,
     role: string,
+    isDeleted: boolean
 }
 export default NewUser
