@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ConsumableRepository : JpaRepository<Consumable, Int>, ConsumableRepositoryCustom{
-    fun findAllByIsDeletedFalse(pageable: Pageable) : List<Consumable>
+    fun findAllByIsDeletedFalseOrderByIdDesc(pageable: Pageable) : List<Consumable>
     fun findConsumableByCsssAndIsDeletedFalse(csss: Int) : Consumable?
 }

@@ -17,7 +17,7 @@ class ConsumableService(
     @Transactional
     fun findAllConsumablesPage(limit: Pageable, search: String?): Set<ConsumableDTO> {
         val consumables = if (search == null) {
-            consumableRepository.findAllByIsDeletedFalse(limit)
+            consumableRepository.findAllByIsDeletedFalseOrderByIdDesc(limit)
         } else {
             consumableRepository.findAllBySearch(limit, search)
         }

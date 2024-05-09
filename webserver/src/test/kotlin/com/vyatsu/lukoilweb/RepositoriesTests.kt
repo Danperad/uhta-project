@@ -40,13 +40,13 @@ class RepositoriesTests {
 
     @Test
     fun gettingAllDevices() {
-        val devices = deviceRepository.findAllByIsDeletedFalse(PageRequest.of(0, 20))
+        val devices = deviceRepository.findAllByIsDeletedFalseOrderByIdDesc(PageRequest.of(0, 20))
         assert(devices.size == 2)
     }
 
     @Test
     fun gettingAllConsumables() {
-        val consumables = consumableRepository.findAllByIsDeletedFalse(PageRequest.of(0, 20))
+        val consumables = consumableRepository.findAllByIsDeletedFalseOrderByIdDesc(PageRequest.of(0, 20))
         assert(consumables.size == 2)
     }
 

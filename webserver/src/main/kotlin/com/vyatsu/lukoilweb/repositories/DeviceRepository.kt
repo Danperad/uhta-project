@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface DeviceRepository : JpaRepository<Device, Int>, DeviceRepositoryCustom {
-    fun findAllByIsDeletedFalse(pageable: Pageable): List<Device>
+    fun findAllByIsDeletedFalseOrderByIdDesc(pageable: Pageable): List<Device>
     fun findDeviceByCsssAndIsDeletedFalse(csss: Int): Device?
 }
