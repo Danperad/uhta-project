@@ -1,17 +1,17 @@
 .section {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 
 .section::-webkit-scrollbar {
-    width: 14px;
+  width: 14px;
 }
 
 .section::-webkit-scrollbar-track {
-    background-color: #727272;
-    border-radius: 0 10px 10px 0;
+  background-color: #727272;
+  border-radius: 0 10px 10px 0;
 }
 
 .section::-webkit-scrollbar-thumb {
-    background-color: #0D47A1;
-    border-radius: 10px;
+  background-color: #0D47A1;
+  border-radius: 10px;
 }

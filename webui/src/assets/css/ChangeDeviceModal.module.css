@@ -1,14 +1,14 @@
 .modalStyle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90vw;
-    height: 90vh;
-    background-color: #C2C2C2;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 90vh;
+  background-color: #C2C2C2;
 
-    border: 2px solid #0D47A1;
-    border-radius: 10px;
-    box-shadow: 0 5px 10px black;
-    padding: 10px;
+  border: 2px solid #0D47A1;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px black;
+  padding: 10px;
 }
