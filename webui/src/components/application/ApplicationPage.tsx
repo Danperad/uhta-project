@@ -134,9 +134,8 @@ export default function ApplicationPage() {
             tmp.push({applicationNumber: undefined, consumable: resConsumable!, count: +materialAmount})
             setConsumables(tmp)
         }
-        setMaterialAmount(undefined)
-        setCsss(undefined)
-
+        setMaterialAmount("")
+        setCsss("")
     }
 
     const delDevice = (csss: number) => {
@@ -228,6 +227,13 @@ export default function ApplicationPage() {
             key: +new Date()
         }))
         setCreateApplicationModalOpen(false);
+        setDate("");
+        setPurchase("");
+        setInterval(undefined);
+        setDevices([]);
+        setConsumables([]);
+        setUnit("");
+        setChecked(false);
     }
 
     return (
