@@ -343,7 +343,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
               <Typography color="primary">{consumable ? consumable!.nr3 : ""}</Typography>
             </Stack>
             <Stack direction='row' justifyContent="space-between" m={8}>
-              <Button onClick={handleClose} variant="contained">Отмена</Button>
+              <Button onClick={handleClose} variant="outlined">Отмена</Button>
               <Button onClick={deleteConsumable} variant="contained">Удалить</Button>
             </Stack>
           </Box>
@@ -365,7 +365,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                 <Typography color="primary">{device ? device!.csss : ""}</Typography>
               </Stack>
               <Stack direction='row' justifyContent="space-between" m={8}>
-                <Button onClick={handleCloseAddParent} variant="contained">Отмена</Button>
+                <Button onClick={handleCloseAddParent} variant="outlined">Отмена</Button>
                 <Button onClick={bind} variant="contained">Привязать</Button>
               </Stack>
             </Box>
