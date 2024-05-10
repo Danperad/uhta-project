@@ -25,6 +25,7 @@ import digestMessage from "../hashGenerator";
 const Role = ['Администратор', 'Пользователь']
 
 export default function EmployeePage() {
+  const user = useSelector((state: RootState) => state.currentUser.user);
   const dispatch = useDispatch<AppDispatch>();
   const state = useSelector((state: RootState) => state);
   const [search, setSearch] = useState<string>('');
@@ -105,7 +106,14 @@ export default function EmployeePage() {
         return "WORKER"
     }
   }
-
+  function ReRoleConverter(role: string) {
+    switch (role) {
+      case "ADMIN":
+        return "Администратор"
+      case "WORKER":
+        return "Пользователь"
+    }
+  }
   function ClearFields() {
     setName("");
     setSurname("");
@@ -169,7 +177,11 @@ export default function EmployeePage() {
                       <TableCell align="left">Отчество</TableCell>
                       <TableCell align="left">Логин</TableCell>
                       <TableCell align="left">Роль</TableCell>
-                      <TableCell align="center">Удаление</TableCell>
+                      {user && user.role === "ADMIN" ? (
+                        <TableCell align="center">Удаление</TableCell>
+                      ) : (
+                        <></>
+                      )}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -188,13 +200,16 @@ export default function EmployeePage() {
                         <TableCell>{row.firstName}</TableCell>
                         <TableCell>{row.middleName}</TableCell>
                         <TableCell>{row.login}</TableCell>
-                        <TableCell>{row.role}</TableCell>
-
-                        <TableCell align="center">
-                          <Button variant="outlined" onClick={() => {
-                            deleteUser(row.login)
-                          }}>Удалить</Button>
-                        </TableCell>
+                        <TableCell>{ReRoleConverter(row.role)}</TableCell>
+                        {user && user.role === "ADMIN" ? (
+                          <TableCell align="center">
+                            <Button variant="outlined" onClick={() => {
+                              deleteUser(row.login)
+                            }}>Удалить</Button>
+                          </TableCell>
+                        ) : (
+                          <></>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -210,61 +225,65 @@ export default function EmployeePage() {
             )}
           </div>
         </Box>
-        <Box sx={{gridArea: 'sidebar', height: "76vh"}} component="form">
-          <Paper
-            style={{
-              padding: "20px",
-              textAlign: "center",
-              height: '100%'
-            }}>
-            <Stack
-              justifyContent="space-between"
-              alignItems="center"
-              spacing={2}
-              style={{height: '100%'}}
-            >
-              <Stack spacing={2}>
-                <Typography>Добавление</Typography>
-                <TextField label="Фамилия" variant="outlined"
-                           size='small'
-                           required
-                           value={surname}
-                           onChange={(newValue) => setSurname(newValue.target.value)}/>
-                <TextField label="Имя" variant="outlined"
-                           size='small'
-                           required
-                           value={name}
-                           onChange={(newValue) => setName(newValue.target.value)}/>
-                <TextField label="Отчество" variant="outlined"
-                           size='small'
-                           value={middleName}
-                           onChange={(newValue) => setMiddleName(newValue.target.value)}/>
-                <TextField label="Логин" variant="outlined"
-                           size='small'
-                           required
-                           value={login}
-                           onChange={(newValue) => setLogin(newValue.target.value)}/>
-                <TextField label="Пароль" variant="outlined"
-                           size='small'
-                           type="password"
-                           required
-                           value={password}
-                           onChange={(newValue) => setPassword(newValue.target.value)}/>
-                <Autocomplete disablePortal size='small' options={Role}
-                              onInputChange={CheckRole} value={autocompleteRoleValue}
-                              renderInput={(params) => <TextField {...params} label="Роль"
-                                                                  value={employeeRole} required
-                                                                  onChange={(newValue) => setEmployeeRole(newValue.target.value)}/>}
-                />
+        {user && user.role === "ADMIN" ? (
+          <Box sx={{gridArea: 'sidebar', height: "76vh"}} component="form">
+            <Paper
+              style={{
+                padding: "20px",
+                textAlign: "center",
+                height: '100%'
+              }}>
+              <Stack
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={2}
+                style={{height: '100%'}}
+              >
+                <Stack spacing={2}>
+                  <Typography>Добавление</Typography>
+                  <TextField label="Фамилия" variant="outlined"
+                             size='small'
+                             required
+                             value={surname}
+                             onChange={(newValue) => setSurname(newValue.target.value)}/>
+                  <TextField label="Имя" variant="outlined"
+                             size='small'
+                             required
+                             value={name}
+                             onChange={(newValue) => setName(newValue.target.value)}/>
+                  <TextField label="Отчество" variant="outlined"
+                             size='small'
+                             value={middleName}
+                             onChange={(newValue) => setMiddleName(newValue.target.value)}/>
+                  <TextField label="Логин" variant="outlined"
+                             size='small'
+                             required
+                             value={login}
+                             onChange={(newValue) => setLogin(newValue.target.value)}/>
+                  <TextField label="Пароль" variant="outlined"
+                             size='small'
+                             type="password"
+                             required
+                             value={password}
+                             onChange={(newValue) => setPassword(newValue.target.value)}/>
+                  <Autocomplete disablePortal size='small' options={Role}
+                                onInputChange={CheckRole} value={autocompleteRoleValue}
+                                renderInput={(params) => <TextField {...params} label="Роль"
+                                                                    value={employeeRole} required
+                                                                    onChange={(newValue) => setEmployeeRole(newValue.target.value)}/>}
+                  />
+                </Stack>
+                <Stack direction='row' spacing={1} justifyContent='center'>
+                  <Button variant="contained" onClick={() => {
+                    addNewEmployee()
+                  }}>Добавить</Button>
+                </Stack>
               </Stack>
-              <Stack direction='row' spacing={1} justifyContent='center'>
-                <Button variant="contained" onClick={() => {
-                  addNewEmployee()
-                }}>Добавить</Button>
-              </Stack>
-            </Stack>
-          </Paper>
-        </Box>
+            </Paper>
+          </Box>
+        ) : (
+          <></>
+        )}
       </Box>
     </Box>
   )

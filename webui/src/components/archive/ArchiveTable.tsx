@@ -24,11 +24,12 @@ import OrderService from "../../services/ApplicationService";
 import ApplicationService from "../../services/ApplicationService";
 import fileDownload from "js-file-download";
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../redux/store";
 import {style} from "../../assets/css/CreateOrderModal";
 
 export default function ArchiveTable() {
+  const user = useSelector((state: RootState) => state.currentUser.user);
   const [archiveApplications, setArchiveApplications] = useState<Application[]>([]);
   const [key, setKey] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
@@ -158,7 +159,11 @@ export default function ArchiveTable() {
                 <TableCell align="left">Тип закупа</TableCell>
                 <TableCell align="center">Дата</TableCell>
                 <TableCell align="center">Статус</TableCell>
-                <TableCell align="center">Разархивация</TableCell>
+                {user ? (
+                  <TableCell align="center">Разархивация</TableCell>
+                ) : (
+                  <></>
+                )}
                 <TableCell align="center">Скачивание</TableCell>
               </TableRow>
             </TableHead>
@@ -180,11 +185,15 @@ export default function ArchiveTable() {
                   <TableCell align="center" onClick={() => {
                     // handleOpenEditApplicationModal(row)
                   }}>{row.status}</TableCell>
-                  <TableCell align="center"><Button
-                    variant="outlined" onClick={() => {
-                    unarchivApplication(row.number!)
-                  }}>В работу</Button>
-                  </TableCell>
+                  {user ? (
+                    <TableCell align="center"><Button
+                      variant="outlined" onClick={() => {
+                      unarchivApplication(row.number!)
+                    }}>В работу</Button>
+                    </TableCell>
+                  ) : (
+                    <></>
+                  )}
                   <TableCell align="center">
                     <Button variant="outlined" onClick={() => {
                       downloadApplication(row.number!)
