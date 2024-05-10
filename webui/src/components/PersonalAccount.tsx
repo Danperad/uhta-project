@@ -15,6 +15,7 @@ export default function PersonalAccount() {
   const [password, setPassword] = useState<string | undefined>();
   const [role, setRole] = useState<string | undefined>();
   const [avatarName, setAvatarName] = useState<string | undefined>();
+  const [disabled, setDisabled] = useState<boolean>(true);
 
   function ReRoleConverter(role: string) {
     switch (role) {
@@ -23,6 +24,13 @@ export default function PersonalAccount() {
       case "WORKER":
         return "Пользователь"
     }
+  }
+
+  const changeInfo = async () => {
+    setDisabled(false)
+  }
+  const saveChange = async () => {
+    setDisabled(true)
   }
 
   useEffect(() => {
@@ -84,18 +92,30 @@ export default function PersonalAccount() {
                   <TextField label="Фамилия" variant="outlined"
                              size='small'
                              required
+                             disabled={disabled}
                              value={surname}
                              onChange={(newValue) => setSurname(newValue.target.value)}/>
                   <TextField label="Имя" variant="outlined"
                              size='small'
                              required
+                             disabled={disabled}
                              value={name}
                              onChange={(newValue) => setName(newValue.target.value)}/>
                   <TextField label="Отчество" variant="outlined"
                              size='small'
+                             disabled={disabled}
                              value={middleName}
                              onChange={(newValue) => setMiddleName(newValue.target.value)}/>
-                  <Button variant="contained" sx={{width: "25%"}}>Сохранить</Button>
+                  {disabled ? (
+                    <Button variant="contained" sx={{width: "25%"}} onClick={() => {
+                      changeInfo()
+                    }}>Изменить</Button>
+                  ) : (
+                    <Button variant="contained" sx={{width: "25%"}} onClick={() => {
+                      saveChange()
+                    }}>Сохранить</Button>
+                  )}
+
                 </Stack>
               </Box>
               <Box sx={{gridArea: 'info', width: "80%"}}>
@@ -111,12 +131,6 @@ export default function PersonalAccount() {
                              value={login}
                              disabled={true}
                   />
-                  <TextField label="Пароль" variant="outlined"
-                             size='small'
-                             required
-                             value={password}
-                             type="password"
-                             onChange={(newValue) => setPassword(newValue.target.value)}/>
                 </Stack>
               </Box>
             </Box>

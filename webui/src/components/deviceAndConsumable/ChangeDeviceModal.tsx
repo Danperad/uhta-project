@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import {
   Box,
@@ -20,14 +20,16 @@ import style from "../../assets/css/ChangeDeviceModal.module.css"
 import styl from "../../assets/css/ChildModalDeleteMaterial.module.css"
 import {Device} from '../../models';
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../redux/store";
 import DeviceService from "../../services/DeviceService";
 
 function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => void }) {
+  const user = useSelector((state: RootState) => state.currentUser.user);
   const dispatch = useDispatch<AppDispatch>();
   const [device, setDevice] = useState<Device>(props.receivedMaterial);
   const [openChildModal, setOpenChildModal] = useState(false);
+  const [disabled, setDisabled] = useState<boolean>(true);
 
   const handleClose = () => {
     setOpenChildModal(false);
@@ -108,6 +110,12 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
     }
   }
 
+  useEffect(() => {
+    if (user){
+      setDisabled(false)
+    }
+  }, [user])
+
   return (
     <Box className={style.modalStyle}>
       <Stack direction="column"
@@ -130,6 +138,7 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
 
               <TextField variant="outlined" size='small' type="number"
                          style={{width: "10%"}}
+                         disabled={disabled}
                          value={device ? device!.inOperation : ""}
                          onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                          InputLabelProps={{
@@ -141,6 +150,7 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
               <Typography mb={2}>Количество на складе:</Typography>
               <TextField variant="outlined" size='small' type="number"
                          style={{marginLeft: "65px", width: "10%"}}
+                         disabled={disabled}
                          value={device ? device!.inStock : 0}
                          onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
                          InputLabelProps={{
@@ -195,8 +205,8 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
         </div>
         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-            <Button variant="contained" onClick={() => setOpenChildModal(true)}>Удалить прибор</Button>
-            <Button variant="contained" onClick={saveChange}>Сохранить изменения</Button>
+            <Button variant="contained" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить прибор</Button>
+            <Button variant="contained" disabled={disabled} onClick={saveChange}>Сохранить изменения</Button>
           </Stack>
         </Paper>
         <Modal

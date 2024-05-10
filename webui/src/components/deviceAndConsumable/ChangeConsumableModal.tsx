@@ -3,13 +3,15 @@ import style from "../../assets/css/ChangeDeviceModal.module.css";
 import {useEffect, useState} from "react";
 import {Binding, Consumable, Device} from '../../models';
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../redux/store";
 import DeviceService from "../../services/DeviceService";
 import styl from "../../assets/css/ChildModalDeleteMaterial.module.css";
 import ConsumableService from "../../services/ConsumableService";
 
 function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent: () => void }) {
+  const user = useSelector((state: RootState) => state.currentUser.user);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
   const [consumable, setConsumable] = useState<Consumable>(props.receivedMaterial);
   const [csss, setCsss] = useState<string | undefined>();
@@ -221,6 +223,12 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
     }
   }, [device])
 
+  useEffect(() => {
+    if (user){
+      setDisabled(false)
+    }
+  }, [user])
+
   return (
     <Box className={style.modalStyle}>
       <Stack direction="column"
@@ -242,6 +250,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
               <TextField variant="outlined" size='small' type="number"
                          style={{marginLeft: "10px", width: "10%"}}
                          value={consumable ? consumable.inStock : ""}
+                         disabled={disabled}
                          onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
                          InputLabelProps={{
                            shrink: true,
@@ -260,6 +269,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                   <TextField label="КССС" variant="outlined" size='small' type="number"
                              required
                              value={csss} onChange={(newValue) => setCsss(newValue.target.value)}
+                             disabled={disabled}
                              InputProps={{
                                inputProps: {min: 1}
                              }}
@@ -267,13 +277,14 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                   <TextField label="Количество" variant="outlined" size='small'
                              type="number" required
                              value={amount}
+                             disabled={disabled}
                              onChange={(newValue) => setAmount(newValue.target.value)}
                     //onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                              InputLabelProps={{
                                shrink: true,
                              }}
                   />
-                  <Button variant="contained" onClick={checkCorrectData}>добавить</Button>
+                  <Button variant="contained" onClick={checkCorrectData} disabled={disabled}>добавить</Button>
                 </Stack>
                 {consumable && consumable!.devices && consumable!.devices.length !== 0 && (
                   consumable!.devices.map((row) => (
@@ -296,9 +307,10 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                                  size='small'
                                  type="number"
                                  value={row.count}
+                                 disabled={disabled}
                                  onChange={(newValue) => changeMaterialInOperation(row.id!, parseInt(newValue.target.value))}
                       />
-                      <Button variant="outlined" onClick={() => {
+                      <Button variant="outlined" disabled={disabled} onClick={() => {
                         delBind(row.device!.csss)
                       }}>отвязать</Button>
 
@@ -311,8 +323,8 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
         </div>
         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-            <Button variant="contained" onClick={() => setOpenChildModal(true)}>Удалить материал</Button>
-            <Button variant="contained" onClick={saveChange}>Сохранить изменения</Button>
+            <Button variant="contained" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить материал</Button>
+            <Button variant="contained" disabled={disabled} onClick={saveChange}>Сохранить изменения</Button>
           </Stack>
         </Paper>
         <Modal
