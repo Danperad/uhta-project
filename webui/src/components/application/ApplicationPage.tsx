@@ -17,14 +17,15 @@ import {style} from '../../assets/css/CreateOrderModal';
 import DeviceService from "../../services/DeviceService";
 import ApplicationTable from "./ApplicationTable";
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../redux/store";
 import {Application, ApplicationConsumable, ApplicationDevice} from "../../models";
 import ConsumableService from "../../services/ConsumableService";
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 import ApplicationService from "../../services/ApplicationService";
 
 export default function ApplicationPage() {
+  const user = useSelector((state: RootState) => state.currentUser.user);
   const dispatch = useDispatch<AppDispatch>();
   const [checked, setChecked] = useState(false);
 
@@ -286,7 +287,11 @@ export default function ApplicationPage() {
                 />
                 <Button variant="contained" onClick={handleShowApplicationTable}>Показать</Button>
               </Stack>
+              {user ? (
               <Button variant="contained" onClick={handleOpenCreateApplicationModal}>Создать</Button>
+                ) : (
+                  <></>
+                )}
             </Stack>
           </Paper>
         </Box>
