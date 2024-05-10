@@ -106,7 +106,14 @@ export default function EmployeePage() {
         return "WORKER"
     }
   }
-
+  function ReRoleConverter(role: string) {
+    switch (role) {
+      case "ADMIN":
+        return "Администратор"
+      case "WORKER":
+        return "Пользователь"
+    }
+  }
   function ClearFields() {
     setName("");
     setSurname("");
@@ -170,7 +177,11 @@ export default function EmployeePage() {
                       <TableCell align="left">Отчество</TableCell>
                       <TableCell align="left">Логин</TableCell>
                       <TableCell align="left">Роль</TableCell>
-                      <TableCell align="center">Удаление</TableCell>
+                      {user && user.role === "ADMIN" ? (
+                        <TableCell align="center">Удаление</TableCell>
+                      ) : (
+                        <></>
+                      )}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -189,13 +200,16 @@ export default function EmployeePage() {
                         <TableCell>{row.firstName}</TableCell>
                         <TableCell>{row.middleName}</TableCell>
                         <TableCell>{row.login}</TableCell>
-                        <TableCell>{row.role}</TableCell>
-
-                        <TableCell align="center">
-                          <Button variant="outlined" onClick={() => {
-                            deleteUser(row.login)
-                          }}>Удалить</Button>
-                        </TableCell>
+                        <TableCell>{ReRoleConverter(row.role)}</TableCell>
+                        {user && user.role === "ADMIN" ? (
+                          <TableCell align="center">
+                            <Button variant="outlined" onClick={() => {
+                              deleteUser(row.login)
+                            }}>Удалить</Button>
+                          </TableCell>
+                        ) : (
+                          <></>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -211,7 +225,7 @@ export default function EmployeePage() {
             )}
           </div>
         </Box>
-        {user ? (
+        {user && user.role === "ADMIN" ? (
           <Box sx={{gridArea: 'sidebar', height: "76vh"}} component="form">
             <Paper
               style={{
