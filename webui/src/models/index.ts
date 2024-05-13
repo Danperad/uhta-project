@@ -8,3 +8,4 @@ export type {default as Binding} from "./Binding";
 export type {default as ApplicationDevice} from "./ApplicationDevice";
 export type {default as ApplicationConsumable} from "./ApplicationConsumable";
 export type {default as NewUser} from "./NewUserModel";
+export type {default as Logs} from "./Logs";
