@@ -341,7 +341,7 @@ export default function ArchiveTable() {
               </div>
               <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
                 <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                  <Button variant="contained" onClick={() => {
+                  <Button variant="outlined" onClick={() => {
                     deleteApplication(application.number!)
                   }}>Удалить заявку</Button>
                   <Button variant="contained" onClick={() => {

@@ -323,7 +323,11 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
         </div>
         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
+            {user && user.role === "ADMIN" ? (
             <Button variant="contained" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить материал</Button>
+            ) : (
+              <div></div>
+            )}
             <Button variant="contained" disabled={disabled} onClick={saveChange}>Сохранить изменения</Button>
           </Stack>
         </Paper>

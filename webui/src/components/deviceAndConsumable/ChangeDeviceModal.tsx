@@ -205,7 +205,11 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
         </div>
         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
+            {user && user.role === "ADMIN" ? (
             <Button variant="outlined" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить прибор</Button>
+            ) : (
+              <div></div>
+            )}
             <Button variant="contained" disabled={disabled} onClick={saveChange}>Сохранить изменения</Button>
           </Stack>
         </Paper>
