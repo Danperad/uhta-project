@@ -32,6 +32,7 @@ import {AddSnackbar} from "../redux/actions/snackbarAction";
 import UserService from "../services/UserService";
 import digestMessage from "../hashGenerator";
 import {CurrentUserNotLoaded} from "../redux/actions/currentUserAction";
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export default function SideBar() {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -123,6 +124,16 @@ export default function SideBar() {
           }}>
             Сотрудники
           </Button>
+          {user && user.role === "ADMIN" ? (
+            <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
+                    startIcon={<SettingsIcon/>} onClick={() => {
+              navigate("/logs")
+            }}>
+              Логирование
+            </Button>
+          ) : (
+            <></>
+          )}
           <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
                   startIcon={<ArchiveIcon/>} onClick={() => {
             navigate("/archive")

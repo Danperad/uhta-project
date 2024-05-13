@@ -9,6 +9,5 @@ declare type Application = {
   consumables: ApplicationConsumable[],
   devices: ApplicationDevice[],
   inArchive: boolean
-
 }
 export default Application;

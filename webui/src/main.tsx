@@ -7,6 +7,7 @@ import ReportPage from './components/ReportPage';
 import EmployeePage from './components/EmployeePage';
 import ArchivePage from './components/archive/ArchivePage';
 import PersonalAccount from './components/PersonalAccount';
+import ControlPage from "./components/ControlPage";
 import reportWebVitals from './reportWebVitals';
 import {Stack} from "@mui/material";
 import {SnackbarProvider} from "notistack";
@@ -81,6 +82,7 @@ if (domNode !== null) {
                   <Route path={"employee"} element={<EmployeePage/>}/>
                   <Route path={"archive"} element={<ArchivePage/>}/>
                   <Route path={"account"} element={<PersonalAccount/>}/>
+                  <Route path={"logs"} element={<ControlPage/>}/>
                 </Routes>
                 <SnackbarViewer/>
               </Stack>
