@@ -26,16 +26,18 @@ class ApplicationService(
     private val dateFormat: DateFormat
 ) {
     @Transactional
-    fun getAllApplications(limit: Pageable,
-                           inArchive: Boolean,
-                           search: String?,
-                           status: String?,
-                           startDate: String?,
-                           endDate: String?,): Set<ApplicationDTO> {
+    fun getAllApplications(
+        limit: Pageable,
+        inArchive: Boolean,
+        search: String?,
+        status: String?,
+        startDate: String?,
+        endDate: String?,
+    ): Set<ApplicationDTO> {
         val applications = if (search == null && status == null && startDate == null && endDate == null) {
-            if(inArchive){
+            if (inArchive) {
                 applicationRepository.findAllByInArchiveTrueAndIsDeletedFalseOrderByNumberDesc(limit)
-            }else{
+            } else {
                 applicationRepository.findAllByInArchiveFalseAndIsDeletedFalseOrderByNumberDesc(limit)
             }
         } else {
@@ -43,19 +45,19 @@ class ApplicationService(
                 limit,
                 search,
                 inArchive,
-                if(status == null){
+                if (status == null) {
                     null
-                }else{
+                } else {
                     ApplicationStatusConverter().convertToEntityAttribute(status)
                 },
-                if(startDate == null){
+                if (startDate == null) {
                     null
-                }else{
+                } else {
                     dateFormat.parse(startDate)
                 },
-                if(endDate == null){
+                if (endDate == null) {
                     null
-                }else{
+                } else {
                     dateFormat.parse(endDate)
                 }
             )
@@ -89,8 +91,9 @@ class ApplicationService(
         if (applicationDTO.devices.any { it.device.id == null } || applicationDTO.consumables.any { it.consumable.id == null })
             TODO()
         val devices = applicationDTO.devices.map {
-            val binding = applicationDeviceRepository.findById(ApplicationDeviceKey(it.device.id, newApplication.number))
-            if(!binding.isPresent){
+            val binding =
+                applicationDeviceRepository.findById(ApplicationDeviceKey(it.device.id, newApplication.number))
+            if (!binding.isPresent) {
                 applicationDeviceRepository.save(
                     ApplicationDevice(
                         device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(it.device.csss) ?: TODO(),
@@ -98,15 +101,19 @@ class ApplicationService(
                         deviceCount = it.count
                     )
                 )
-            }
-            else{
+            } else {
                 applicationDeviceRepository.save(binding.get().copy(deviceCount = it.count))
             }
 
         }
         val consumables = applicationDTO.consumables.map {
-            val binding = applicationConsumableRepository.findById(ApplicationConsumableKey(it.consumable.id, newApplication.number))
-            if(!binding.isPresent){
+            val binding = applicationConsumableRepository.findById(
+                ApplicationConsumableKey(
+                    it.consumable.id,
+                    newApplication.number
+                )
+            )
+            if (!binding.isPresent) {
                 applicationConsumableRepository.save(
                     ApplicationConsumable(
                         consumable = consumableRepository.findConsumableByCsssAndIsDeletedFalse(it.consumable.csss)
@@ -115,8 +122,7 @@ class ApplicationService(
                         consumableCount = it.count
                     )
                 )
-            }
-            else{
+            } else {
                 applicationConsumableRepository.save(binding.get().copy(consumableCount = it.count))
             }
 
@@ -162,6 +168,7 @@ class ApplicationService(
         workbook.write(outputStream)
         return ByteArrayResource(outputStream.toByteArray())
     }
+
     @Transactional
     fun archiveApplicationById(id: Int): Boolean {
         val application = applicationRepository.findApplicationByNumber(id)
@@ -172,6 +179,7 @@ class ApplicationService(
             false
         }
     }
+
     @Transactional
     fun deleteApplication(id: Int): Boolean {
         val application = applicationRepository.findApplicationByNumber(id)
@@ -182,6 +190,7 @@ class ApplicationService(
             false
         }
     }
+
     @Transactional
     fun unarchiveApplicationById(id: Int): Boolean {
         val application = applicationRepository.findApplicationByNumber(id)

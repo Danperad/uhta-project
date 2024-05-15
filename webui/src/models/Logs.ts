@@ -1,11 +1,11 @@
 declare type Logs = {
   id: number | undefined,
-  user: string,
+  user_login: string,
   action: string,
-  status: "ОК | ОШИБКА",
+  status: string,
   result: string,
   element_number: number,
-  date: number,
+  date: Date,
 }
 
 export default Logs
