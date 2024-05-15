@@ -10,8 +10,9 @@ import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import MaterialTable from "./MaterialTable";
 import DeviceService from "../../services/DeviceService";
 import ConsumableService from "../../services/ConsumableService";
-import {Binding, Consumable, Device} from "../../models";
+import {Binding, Consumable, Device, Logs} from "../../models";
 import FileUploadService from "../../services/FileUploadService";
+import LogsService from "../../services/LogsService";
 
 //Dictionaries
 const Type = ['Прибор', 'Расходник']
@@ -102,6 +103,26 @@ export default function DeviceAndConsumable() {
       }))
       const allDevices = await DeviceService.getAllDevices()
       if (!allDevices) return
+
+      const element : Device = allDevices.payload[0];
+      console.log("туц")
+      const newLog : Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Добавление прибора",
+        status: "ОК",
+        result: "Добавление прошло успешно",
+        element_number: element!.id!,
+        date: new Date()
+      }
+      try{
+        const log = await LogsService.addLog(newLog);
+        console.log(newLog)
+      }
+      catch (e){
+        console.log(e)
+      }
+
       dispatch(allDevices)
       ClearFields();
     } else if (check && materialType === "Расходник") {

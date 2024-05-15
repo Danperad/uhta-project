@@ -1,8 +1,11 @@
 package com.vyatsu.lukoilweb.repositories
 
-import com.vyatsu.lukoilweb.models.application.Logs
+import com.vyatsu.lukoilweb.models.Logs
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 
-interface LogsRepository {
-    fun findAllOrderByIdDesc(pageable: Pageable) : List<Logs>
+@Repository
+interface LogsRepository : JpaRepository<Logs, Int>{
+    fun findAllByOrderByDateDesc(pageable: Pageable) : List<Logs>;
 }
