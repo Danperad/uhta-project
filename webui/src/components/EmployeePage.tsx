@@ -19,8 +19,9 @@ import {AddSnackbar} from "../redux/actions/snackbarAction";
 import UserService from "../services/UserService";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../redux/store";
-import {NewUser} from "../models";
+import {Logs, NewUser} from "../models";
 import digestMessage from "../hashGenerator";
+import LogsService from "../services/LogsService";
 
 const Role = ['Администратор', 'Пользователь']
 
@@ -38,14 +39,47 @@ export default function EmployeePage() {
   const [employeeRole, setEmployeeRole] = useState<string | undefined>();
   const [autocompleteRoleValue, setAutocompleteRoleValue] = useState<string>('');
 
-  const deleteUser = async (login: string) => {
+  const deleteUser = async (login: string, id: number) => {
     const res = await UserService.deleteUserByLogin(login)
-    if (!res) return
+    if (!res) {
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Удалени пользователя",
+        status: "ОШИБКА",
+        result: "Не удалось удалить пользователя",
+        element_number: id,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+      return
+    }
     dispatch(AddSnackbar({
       messageText: "Пользователь успешно удален!",
       messageType: "success",
       key: +new Date()
     }))
+
+
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Удаление польхователя",
+      status: "ОК",
+      result: "Пользователь успешно удален",
+      element_number: id,
+      date: new Date()
+    }
+    try {
+      const log = await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
+
     const allUsers = await UserService.getAllUsers()
     if (!allUsers) return
     dispatch(allUsers)
@@ -68,14 +102,49 @@ export default function EmployeePage() {
         isDeleted: false
       }
       const res = await UserService.saveUser(newEmployee)
-      if (!res) return
+      if (!res) {
+        const newLog: Logs = {
+          id: undefined,
+          user_login: user!.login,
+          action: "Добавление пользователя",
+          status: "ОШИБКА",
+          result: "Не удалось добавить пользователя",
+          element_number: undefined,
+          date: new Date()
+        }
+        try {
+          const log = await LogsService.addLog(newLog);
+        } catch (e) {
+          console.log(e)
+        }
+        return
+      }
       dispatch(AddSnackbar({
         messageText: "Пользователь успешно добавлен!",
         messageType: "success",
         key: +new Date()
       }))
       const allUsers = await UserService.getAllUsers()
-      if (!allUsers) return
+      if (allUsers){
+        const newUser = allUsers.payload[0]
+        const newLog: Logs = {
+          id: undefined,
+          user_login: user!.login,
+          action: "Добавление пользователя",
+          status: "ОК",
+          result: "Добавление пользователя прошло успешно",
+          element_number: newUser.id,
+          date: new Date()
+        }
+        try {
+          const log = await LogsService.addLog(newLog);
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      else{
+        return
+      }
       dispatch(allUsers)
       ClearFields();
     } else {
@@ -204,7 +273,7 @@ export default function EmployeePage() {
                         {user && user.role === "ADMIN" ? (
                           <TableCell align="center">
                             <Button variant="outlined" onClick={() => {
-                              deleteUser(row.login)
+                              deleteUser(row.login, row.id!)
                             }}>Удалить</Button>
                           </TableCell>
                         ) : (

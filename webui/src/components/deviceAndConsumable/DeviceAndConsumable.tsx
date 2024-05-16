@@ -105,7 +105,7 @@ export default function DeviceAndConsumable() {
       if (!allDevices) return
 
       const element : Device = allDevices.payload[0];
-      console.log("туц")
+
       const newLog : Logs = {
         id: undefined,
         user_login: user!.login,
@@ -117,7 +117,6 @@ export default function DeviceAndConsumable() {
       }
       try{
         const log = await LogsService.addLog(newLog);
-        console.log(newLog)
       }
       catch (e){
         console.log(e)
@@ -151,7 +150,26 @@ export default function DeviceAndConsumable() {
           key: +new Date()
         }))
         const allConsumables = await ConsumableService.getAllConsumables()
-        if (allConsumables) dispatch(allConsumables)
+        if (allConsumables) {
+          dispatch(allConsumables)
+          const element : Consumable = allConsumables.payload[0];
+
+          const newLog : Logs = {
+            id: undefined,
+            user_login: user!.login,
+            action: "Добавление материала",
+            status: "ОК",
+            result: "Добавление прошло успешно",
+            element_number: element!.id!,
+            date: new Date()
+          }
+          try{
+            const log = await LogsService.addLog(newLog);
+          }
+          catch (e){
+            console.log(e)
+          }
+        }
       }
       ClearFields();
     } else {
