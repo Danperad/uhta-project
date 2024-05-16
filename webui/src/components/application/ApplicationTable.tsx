@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import fileDownload from "js-file-download";
-import {Application} from "../../models";
+import {Application, Logs} from "../../models";
 import ApplicationService from "../../services/ApplicationService";
 import {
   Button,
@@ -20,6 +20,7 @@ import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
 import ChangeApplicationModal from "./ChangeApplicationModal";
+import LogsService from "../../services/LogsService";
 
 export default function ApplicationTable(props: { applications: Application[] }) {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -56,6 +57,22 @@ export default function ApplicationTable(props: { applications: Application[] })
         messageType: "error",
         key: +new Date()
       }))
+
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Архивирование заявки",
+        status: "ОШИБКА",
+        result: "Не удалось архивировать заявку",
+        element_number: id,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       return
     }
     dispatch(AddSnackbar({
@@ -63,6 +80,21 @@ export default function ApplicationTable(props: { applications: Application[] })
       messageType: "success",
       key: +new Date()
     }))
+
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Архивирование заявки",
+      status: "ОК",
+      result: "Архивирование прошло успешно",
+      element_number: id,
+      date: new Date()
+    }
+    try {
+      const log = await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
 
     const allApplication = await ApplicationService.getAllApplications(null, false,)
     if (!allApplication)
@@ -81,10 +113,6 @@ export default function ApplicationTable(props: { applications: Application[] })
     if (key) return;
     setKey(true);
     setOrders(applications)
-    // ApplicationService.getAllApplications(null, false).then((res) => {
-    //     if (!res) return
-    //     setOrders(res);
-    // }).catch(err => console.log(err));
   }, [])
 
   return (

@@ -20,6 +20,7 @@ import LogsService from "../services/LogsService";
 import {useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {useNavigate} from "react-router-dom";
+import moment from "moment";
 export default function ControlPage() {
   const user = useSelector((state: RootState) => state.currentUser.user);
   const navigate = useNavigate();
@@ -106,7 +107,6 @@ export default function ControlPage() {
                 <Table sx={{minWidth: 650}} aria-label="simple table">
                   <TableHead>
                     <TableRow sx={{cursor: "default"}}>
-                      {/*<TableCell>Номер</TableCell>*/}
                       <TableCell align="left">Пользователь</TableCell>
                       <TableCell align="left">Действие</TableCell>
                       <TableCell align="left">Статус</TableCell>
@@ -126,13 +126,12 @@ export default function ControlPage() {
                           }
                         }}
                       >
-                        {/*<TableCell>{row.id}</TableCell>*/}
-                        <TableCell>{row.user}</TableCell>
+                        <TableCell>{row.user_login}</TableCell>
                         <TableCell>{row.action}</TableCell>
                         <TableCell>{row.status}</TableCell>
                         <TableCell>{row.result}</TableCell>
                         <TableCell>{row.element_number}</TableCell>
-                        <TableCell>{row.date}</TableCell>
+                        <TableCell>{moment(row.date).format("DD.MM.YYYY HH:mm:ss")}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

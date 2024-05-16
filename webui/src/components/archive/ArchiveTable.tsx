@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import moment from "moment/moment";
 import {useEffect, useState} from "react";
-import {Application, ApplicationConsumable, ApplicationDevice} from "../../models";
+import {Application, ApplicationConsumable, ApplicationDevice, Logs} from "../../models";
 import OrderService from "../../services/ApplicationService";
 import ApplicationService from "../../services/ApplicationService";
 import fileDownload from "js-file-download";
@@ -27,6 +27,7 @@ import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
 import {style} from "../../assets/css/CreateOrderModal";
+import LogsService from "../../services/LogsService";
 
 export default function ArchiveTable() {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -100,6 +101,22 @@ export default function ArchiveTable() {
         messageType: "error",
         key: +new Date()
       }))
+
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Разархивирование заявки",
+        status: "ОШИБКА",
+        result: "Не удалось разархивировать заявку",
+        element_number: id,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       return
     }
     dispatch(AddSnackbar({
@@ -107,6 +124,21 @@ export default function ArchiveTable() {
       messageType: "success",
       key: +new Date()
     }))
+
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Разархивирование заявки",
+      status: "ОК",
+      result: "Заявка успешно разархивирована",
+      element_number: id,
+      date: new Date()
+    }
+    try {
+      const log = await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
 
     const allArchiveApplication = await ApplicationService.getAllApplications(null, true)
     if (!allArchiveApplication)
@@ -121,6 +153,22 @@ export default function ArchiveTable() {
         messageType: "error",
         key: +new Date()
       }))
+
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Удаление заявки",
+        status: "ОШИБКА",
+        result: "Не удалось удалить заявку",
+        element_number: id,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       return
     }
     dispatch(AddSnackbar({
@@ -128,6 +176,21 @@ export default function ArchiveTable() {
       messageType: "success",
       key: +new Date()
     }))
+
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Удаление заявки",
+      status: "ОК",
+      result: "Удаление прошло успешно",
+      element_number: id,
+      date: new Date()
+    }
+    try {
+      const log = await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
 
     const allArchiveApplication = await ApplicationService.getAllApplications(null, true)
     if (!allArchiveApplication)

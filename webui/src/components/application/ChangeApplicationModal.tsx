@@ -11,18 +11,19 @@ import {
   Typography
 } from "@mui/material";
 import {style} from "../../assets/css/CreateOrderModal";
-import {Application, ApplicationConsumable, ApplicationDevice} from "../../models";
+import {Application, ApplicationConsumable, ApplicationDevice, Logs} from "../../models";
 import IndeterminateCheckBoxOutlinedIcon from "@mui/icons-material/IndeterminateCheckBoxOutlined";
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../redux/store";
 import {useEffect, useState} from "react";
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import DeviceService from "../../services/DeviceService";
 import ConsumableService from "../../services/ConsumableService";
 import ApplicationService from "../../services/ApplicationService";
+import LogsService from "../../services/LogsService";
 
 function ChangeApplicationModal(props: { receivedApplication: Application, closeEvent: () => void }) {
-
+  const user = useSelector((state: RootState) => state.currentUser.user);
   const dispatch = useDispatch<AppDispatch>();
   const [application, setApplication] = useState<Application>(props.receivedApplication);
 
@@ -123,6 +124,22 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
         messageType: "error",
         key: +new Date()
       }))
+
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Удаление заявки",
+        status: "ОШИБКА",
+        result: "Не удалось удалить заявку",
+        element_number: application.number,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       return
     }
     dispatch(AddSnackbar({
@@ -130,6 +147,21 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
       messageType: "success",
       key: +new Date()
     }))
+
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Удаление заявки",
+      status: "ОК",
+      result: "Удаление прошло успешно",
+      element_number: application.number,
+      date: new Date()
+    }
+    try {
+      const log = await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
 
     const allApplication = await ApplicationService.getAllApplications(null, false)
     if (!allApplication)
@@ -142,7 +174,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
       period = period * 30
     return period
   }
-  const saveApplication = () => {
+  const saveApplication = async () => {
 
     if (!date || !purchase || consumables.length === undefined || devices.length === undefined)
       return;
@@ -168,6 +200,22 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
         messageType: "error",
         key: +new Date()
       }))
+
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Смена статуса заявки",
+        status: "ОШИБКА",
+        result: "Не удалось изменить статус у заявки",
+        element_number: application.number,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       return
     }
     dispatch(AddSnackbar({
@@ -175,6 +223,21 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
       messageType: "success",
       key: +new Date()
     }))
+
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Смена статуса заявки",
+      status: "ОК",
+      result: "Статус успешно изменен на \"Утверждена\"",
+      element_number: application.number,
+      date: new Date()
+    }
+    try {
+      const log = await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
     //setChangeApplicationModal(false);
   }
 

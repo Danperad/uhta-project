@@ -19,10 +19,11 @@ import ApplicationTable from "./ApplicationTable";
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
-import {Application, ApplicationConsumable, ApplicationDevice} from "../../models";
+import {Application, ApplicationConsumable, ApplicationDevice, Logs} from "../../models";
 import ConsumableService from "../../services/ConsumableService";
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 import ApplicationService from "../../services/ApplicationService";
+import LogsService from "../../services/LogsService";
 
 export default function ApplicationPage() {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -191,12 +192,7 @@ export default function ApplicationPage() {
     return period
   }
 
-  const addApplication = () => {
-
-    console.log(unit);
-    console.log(purchase);
-
-
+  const addApplication = async () => {
     if (!date || !purchase || consumables.length === undefined || devices.length === undefined)
       return;
 
@@ -221,6 +217,22 @@ export default function ApplicationPage() {
         messageType: "error",
         key: +new Date()
       }))
+
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Добавление заявки",
+        status: "ОШИБКА",
+        result: "Неудалось добавить заявку",
+        element_number: undefined,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       return
     }
     dispatch(AddSnackbar({
@@ -228,6 +240,27 @@ export default function ApplicationPage() {
       messageType: "success",
       key: +new Date()
     }))
+
+    const allApplication = await ApplicationService.getAllApplications(null, false,)
+    if (allApplication) {
+      const element: Application = allApplication[0]
+
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Добавление заявки",
+        status: "ОК",
+        result: "Добавление прошло успешно",
+        element_number: element!.number!,
+        date: new Date()
+      }
+      try {
+        const log = await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
     setCreateApplicationModalOpen(false);
     setDate("");
     setPurchase("");
@@ -288,10 +321,10 @@ export default function ApplicationPage() {
                 <Button variant="contained" onClick={handleShowApplicationTable}>Показать</Button>
               </Stack>
               {user ? (
-              <Button variant="contained" onClick={handleOpenCreateApplicationModal}>Создать</Button>
-                ) : (
-                  <></>
-                )}
+                <Button variant="contained" onClick={handleOpenCreateApplicationModal}>Создать</Button>
+              ) : (
+                <></>
+              )}
             </Stack>
           </Paper>
         </Box>
