@@ -1,13 +1,14 @@
 import {Box, Button, Modal, Paper, Stack, TextField, Typography} from "@mui/material";
 import style from "../../assets/css/ChangeDeviceModal.module.css";
 import {useEffect, useState} from "react";
-import {Binding, Consumable, Device} from '../../models';
+import {Binding, Consumable, Device, Logs} from '../../models';
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
 import DeviceService from "../../services/DeviceService";
 import styl from "../../assets/css/ChildModalDeleteMaterial.module.css";
 import ConsumableService from "../../services/ConsumableService";
+import LogsService from "../../services/LogsService";
 
 function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent: () => void }) {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -36,15 +37,45 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
   const saveChange = async () => {
     const savedConsumable = await ConsumableService.saveConsumable(consumable)
     if (!savedConsumable) {
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Изменение материала",
+        status: "ОШИБКА",
+        result: "Не удалось изменить материал. Количество в эксплуатации: " + consumable.inOperation + ". Количество на складе: " + consumable.inStock + ".",
+        element_number: consumable.id,
+        date: new Date()
+      }
+      try {
+        await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       dispatch(AddSnackbar({
-        messageText: "Не удалось изменить расходник!",
+        messageText: "Не удалось изменить материал!",
         messageType: "error",
         key: +new Date()
       }))
       return
     }
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Изменение материала",
+      status: "ОК",
+      result: "Изменение материала прошло успешно. Количество в эксплуатации: " + consumable.inOperation + ". Количество на складе: " + consumable.inStock + ".",
+      element_number: consumable.id,
+      date: new Date()
+    }
+    try {
+      await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
+
     dispatch(AddSnackbar({
-      messageText: "Расходник успешно изменен!",
+      messageText: "Материал успешно изменен!",
       messageType: "success",
       key: +new Date()
     }))
@@ -57,15 +88,45 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
   const deleteConsumable = async () => {
     const isDeleted = await ConsumableService.deleteConsumableByCsss(consumable.csss)
     if (!isDeleted) {
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Удаление материала",
+        status: "ОШИБКА",
+        result: "Не удалось удалить материал",
+        element_number: consumable.id,
+        date: new Date()
+      }
+      try {
+        await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       dispatch(AddSnackbar({
-        messageText: "Не удалось удалить расходник!",
+        messageText: "Не удалось удалить материал!",
         messageType: "error",
         key: +new Date()
       }))
       return
     }
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Удаление материала",
+      status: "ОК",
+      result: "Материал успешно удален",
+      element_number: consumable.id,
+      date: new Date()
+    }
+    try {
+      await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
+
     dispatch(AddSnackbar({
-      messageText: "Расходник успешно удален!",
+      messageText: "Материал успешно удален!",
       messageType: "success",
       key: +new Date()
     }))

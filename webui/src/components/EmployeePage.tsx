@@ -52,10 +52,17 @@ export default function EmployeePage() {
         date: new Date()
       }
       try {
-        const log = await LogsService.addLog(newLog);
+        await LogsService.addLog(newLog);
       } catch (e) {
         console.log(e)
       }
+
+      dispatch(AddSnackbar({
+        messageText: "Не удалось удалить пользователя",
+        messageType: "error",
+        key: +new Date()
+      }))
+
       return
     }
     dispatch(AddSnackbar({
@@ -75,7 +82,7 @@ export default function EmployeePage() {
       date: new Date()
     }
     try {
-      const log = await LogsService.addLog(newLog);
+      await LogsService.addLog(newLog);
     } catch (e) {
       console.log(e)
     }
@@ -113,7 +120,7 @@ export default function EmployeePage() {
           date: new Date()
         }
         try {
-          const log = await LogsService.addLog(newLog);
+          await LogsService.addLog(newLog);
         } catch (e) {
           console.log(e)
         }
@@ -137,7 +144,7 @@ export default function EmployeePage() {
           date: new Date()
         }
         try {
-          const log = await LogsService.addLog(newLog);
+          await LogsService.addLog(newLog);
         } catch (e) {
           console.log(e)
         }

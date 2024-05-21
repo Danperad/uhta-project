@@ -18,11 +18,12 @@ import {
 
 import style from "../../assets/css/ChangeDeviceModal.module.css"
 import styl from "../../assets/css/ChildModalDeleteMaterial.module.css"
-import {Device} from '../../models';
+import {Device, Logs} from '../../models';
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../redux/store";
 import DeviceService from "../../services/DeviceService";
+import LogsService from "../../services/LogsService";
 
 function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => void }) {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -38,6 +39,21 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
   const saveChange = async () => {
     const savedDevice = await DeviceService.saveDevice(device)
     if (!savedDevice) {
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Изменение прибора",
+        status: "ОШИБКА",
+        result: "Не удалось изменить прибор. Количество в эксплуатации: " + device.inOperation + ". Количество на складе: " + device.inStock + ".",
+        element_number: device.id,
+        date: new Date()
+      }
+      try {
+        await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       dispatch(AddSnackbar({
         messageText: "Не удалось изменить прибор!",
         messageType: "error",
@@ -45,6 +61,21 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
       }))
       return
     }
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Изменение прибора",
+      status: "ОК",
+      result: "Изменение прибора прошло успешно. Количество в эксплуатации: " + device.inOperation + ". Количество на складе: " + device.inStock + ".",
+      element_number: device.id,
+      date: new Date()
+    }
+    try {
+      await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
+
     dispatch(AddSnackbar({
       messageText: "Прибор успешно изменен!",
       messageType: "success",
@@ -59,6 +90,21 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
   const deleteDevice = async () => {
     const isDelete = await DeviceService.deleteDeviceByCsss(device.csss)
     if (!isDelete) {
+      const newLog: Logs = {
+        id: undefined,
+        user_login: user!.login,
+        action: "Удаление прибора",
+        status: "ОШИБКА",
+        result: "Не удалось удалить прибор",
+        element_number: device.id,
+        date: new Date()
+      }
+      try {
+        await LogsService.addLog(newLog);
+      } catch (e) {
+        console.log(e)
+      }
+
       dispatch(AddSnackbar({
         messageText: "Не удалось удалить прибор!",
         messageType: "error",
@@ -66,6 +112,21 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
       }))
       return
     }
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Удаление прибора",
+      status: "ОК",
+      result: "Прибор успешно удален",
+      element_number: device.id,
+      date: new Date()
+    }
+    try {
+      await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
+
     dispatch(AddSnackbar({
       messageText: "Прибор успешно удален!",
       messageType: "success",

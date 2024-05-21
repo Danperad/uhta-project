@@ -112,7 +112,7 @@ export default function ArchiveTable() {
         date: new Date()
       }
       try {
-        const log = await LogsService.addLog(newLog);
+        await LogsService.addLog(newLog);
       } catch (e) {
         console.log(e)
       }
@@ -135,7 +135,7 @@ export default function ArchiveTable() {
       date: new Date()
     }
     try {
-      const log = await LogsService.addLog(newLog);
+      await LogsService.addLog(newLog);
     } catch (e) {
       console.log(e)
     }
@@ -164,7 +164,7 @@ export default function ArchiveTable() {
         date: new Date()
       }
       try {
-        const log = await LogsService.addLog(newLog);
+        await LogsService.addLog(newLog);
       } catch (e) {
         console.log(e)
       }
@@ -187,7 +187,7 @@ export default function ArchiveTable() {
       date: new Date()
     }
     try {
-      const log = await LogsService.addLog(newLog);
+      await LogsService.addLog(newLog);
     } catch (e) {
       console.log(e)
     }
