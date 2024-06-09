@@ -176,6 +176,28 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
     }
   }
 
+  function changeMinimalAmount(newValue: number) {
+    if (newValue >= 0) {
+      if (newValue > consumable!.minimalAmount) {
+        setConsumable({...consumable!, minimalAmount: consumable!.minimalAmount + 1})
+      }
+      if (newValue < consumable!.minimalAmount) {
+        setConsumable({...consumable!, minimalAmount: consumable!.minimalAmount - 1})
+      }
+    }
+  }
+
+  function changeReplacementFrequencyt(newValue: number) {
+    if (newValue >= 0) {
+      if (newValue > consumable!.replacementFrequency) {
+        setConsumable({...consumable!, replacementFrequency: consumable!.replacementFrequency + 1})
+      }
+      if (newValue < consumable!.replacementFrequency) {
+        setConsumable({...consumable!, replacementFrequency: consumable!.replacementFrequency - 1})
+      }
+    }
+  }
+
   const checkCorrectData = async () => {
     if (!csss) return
 
@@ -285,7 +307,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
   }, [device])
 
   useEffect(() => {
-    if (user){
+    if (user) {
       setDisabled(false)
     }
   }, [user])
@@ -298,7 +320,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
              sx={{width: '97.6%', height: '100%'}} style={{margin: '0px'}}>
         <div style={{width: '100%', height: '80%'}}>
           <Paper sx={{width: '100%'}} style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
-            <Stack direction="row" spacing={2} sx={{width: '100%'}}>
+            <Stack direction="row" spacing={2} sx={{width: '100%'}} mb={1}>
               <Typography mb={2}>Редактирование материала:</Typography>
               <Typography color="primary">{consumable ? consumable.title : ""}</Typography>
               <Typography mb={2}>№КССС:</Typography>
@@ -306,20 +328,56 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
               <Typography mb={2}>№R-3:</Typography>
               <Typography color="primary">{consumable ? consumable.nr3 : ""}</Typography>
             </Stack>
-            <Stack direction="row" spacing={2} mt={1}>
-              <Typography mb={2}>Количество на складе:</Typography>
-              <TextField variant="outlined" size='small' type="number"
-                         style={{marginLeft: "10px", width: "10%"}}
-                         value={consumable ? consumable.inStock : ""}
-                         disabled={disabled}
-                         onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
-                         InputLabelProps={{
-                           shrink: true,
-                         }}
-                         InputProps={{
-                           inputProps: {min: 0}
-                         }}
-              />
+            <Stack direction="row" spacing={2} justifyContent="space-between">
+
+              <Stack direction="row" spacing={2} mt={1}>
+                <Typography mb={2} style={{marginTop: "1%"}}>Количество на складе:</Typography>
+                <TextField variant="outlined" size='small' type="number"
+                           style={{marginLeft: "10px", width: "25%"}}
+                           value={consumable ? consumable.inStock : ""}
+                           disabled={disabled}
+                           onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
+                           InputLabelProps={{
+                             shrink: true,
+                           }}
+                           InputProps={{
+                             inputProps: {min: 0}
+                           }}
+                />
+              </Stack>
+              <div>
+                <Stack direction="row" spacing={2} mt={1} justifyContent="flex-end">
+                  <Typography style={{marginTop: "1%"}}>Минимальный остаток:</Typography>
+                  <TextField variant="outlined" size='small' type="number"
+                             style={{width: "25%", marginLeft: "24px", marginRight: "60px"}}
+                             disabled={disabled}
+                             value={consumable ? consumable!.minimalAmount : 0}
+                             onChange={(newValue) => changeMinimalAmount(parseInt(newValue.target.value))}
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                             InputProps={{
+                               inputProps: {min: 0}
+                             }}
+                  />
+                </Stack>
+                <Stack direction="row" spacing={2} mt={1} justifyContent="flex-end">
+                  <Typography style={{marginTop: "1%"}}>Периодичность замены:</Typography>
+                  <TextField variant="outlined" size='small' type="number"
+                             style={{width: "25%"}}
+                             disabled={disabled}
+                             value={consumable ? consumable!.replacementFrequency : 0}
+                             onChange={(newValue) => changeReplacementFrequencyt(parseInt(newValue.target.value))}
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                             InputProps={{
+                               inputProps: {min: 0}
+                             }}
+                  />
+                  <Typography style={{marginTop: "2%"}}>Дней</Typography>
+                </Stack>
+              </div>
             </Stack>
           </Paper>
           <div className='section' style={{height: '70%', width: '102.6%'}}>
@@ -385,7 +443,8 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
             {user && user.role === "ADMIN" ? (
-            <Button variant="contained" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить материал</Button>
+              <Button variant="contained" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить
+                материал</Button>
             ) : (
               <div></div>
             )}

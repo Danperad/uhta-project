@@ -9,6 +9,8 @@ declare type Device = {
   unitType: string,
   inOperation: number,
   inStock: number,
+  minimalAmount: number,
+  replacementFrequency: number,
   consumables: Binding[]
 }
 export default Device;
