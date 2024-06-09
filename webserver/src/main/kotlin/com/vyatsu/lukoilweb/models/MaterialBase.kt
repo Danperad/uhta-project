@@ -31,4 +31,10 @@ abstract class MaterialBase(
 
     @Column(name = "count_in_operation")
     val inOperation: Int = 0,
+
+    @Column(name = "minimal_amount")
+    val minimalAmount: Int = 0,
+
+    @Column(name = "replacement_frequency")
+    val replacementFrequency: Int = 0,
 )

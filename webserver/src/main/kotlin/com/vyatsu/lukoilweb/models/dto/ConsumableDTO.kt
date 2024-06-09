@@ -14,6 +14,8 @@ data class ConsumableDTO(
     val unitType: String,
     val inOperation: Int,
     val inStock: Int,
+    val minimalAmount: Int,
+    val replacementFrequency: Int,
     val devices: Set<BindingDTO> = setOf()
 ) {
     fun mapToConsumable(): Consumable {
@@ -26,6 +28,8 @@ data class ConsumableDTO(
             false,
             inStock,
             inOperation,
+            minimalAmount,
+            replacementFrequency,
             id = id
         )
         consumable.devices.addAll(devices.map { it.mapToBinding(consumable) })
@@ -33,7 +37,7 @@ data class ConsumableDTO(
     }
 
     override fun toString(): String {
-        return "ConsumableDTO(id=$id, title='$title', producer=$producer, csss=$csss, nr3=$nr3, unitType='$unitType', inOperation=$inOperation, inStock=$inStock, devices=$devices)"
+        return "ConsumableDTO(id=$id, title='$title', producer=$producer, csss=$csss, nr3=$nr3, unitType='$unitType', inOperation=$inOperation, inStock=$inStock,, minimalAmount=$minimalAmount, replacementFrequency=$replacementFrequency, devices=$devices)"
     }
 
 }

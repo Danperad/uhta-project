@@ -19,14 +19,22 @@ class ApplicationConsumable(
     val application: Application,
 
     @Column(name = "material_count")
-    val consumableCount: Int
+    val consumableCount: Int = 0,
+
+    @Column(name = "received_quantity")
+    val receivedQuantity: Int = 0,
+
+    @Column(name = "receipt_date")
+    val receiptDate: Int = 0
 ){
     fun copy(
         consumableKey: ApplicationConsumableKey = this.consumableKey,
         consumable: Consumable = this.consumable,
         application: Application = this.application,
-        consumableCount: Int = this.consumableCount
-    ) : ApplicationConsumable{
-        return ApplicationConsumable(consumableKey, consumable, application, consumableCount)
+        consumableCount: Int = this.consumableCount,
+        receivedQuantity: Int = this.receivedQuantity,
+        receiptDate: Int = this.receiptDate,
+    ): ApplicationConsumable {
+        return ApplicationConsumable(consumableKey, consumable, application, consumableCount, receivedQuantity, receiptDate)
     }
 }

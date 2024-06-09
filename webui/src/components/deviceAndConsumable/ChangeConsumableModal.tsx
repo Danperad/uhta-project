@@ -398,7 +398,6 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
                              value={amount}
                              disabled={disabled}
                              onChange={(newValue) => setAmount(newValue.target.value)}
-                    //onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
                              InputLabelProps={{
                                shrink: true,
                              }}
@@ -443,7 +442,7 @@ function ChangeConsumableModal(props: { receivedMaterial: Consumable, closeEvent
         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
             {user && user.role === "ADMIN" ? (
-              <Button variant="contained" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить
+              <Button variant="outlined" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить
                 материал</Button>
             ) : (
               <div></div>

@@ -126,7 +126,7 @@ export default function ApplicationPage() {
       devices.forEach((d) => {
         tmp.push(d)
       })
-      tmp.push({applicationNumber: undefined, device: resDevice, count: +materialAmount})
+      tmp.push({device: resDevice, count: +materialAmount})
       setDevices(tmp)
     } else {
       const tmp: ApplicationConsumable[] = []
@@ -134,7 +134,7 @@ export default function ApplicationPage() {
         tmp.push(c)
       })
 
-      tmp.push({applicationNumber: undefined, consumable: resConsumable!, count: +materialAmount})
+      tmp.push({consumable: resConsumable!, count: +materialAmount})
       setConsumables(tmp)
     }
     setMaterialAmount("")
@@ -356,7 +356,7 @@ export default function ApplicationPage() {
                 <Stack direction="column" spacing={2}>
                   <Stack direction="row" spacing={2}>
                     <TextField label="Дата" type="date" size='small' sx={{width: '16%'}}
-                               defaultValue={+Date()} value={date}
+                               defaultValue={+Date()} value={date} required
                                onChange={e => {
                                  setDate((e.target.value))
                                }}
@@ -372,6 +372,7 @@ export default function ApplicationPage() {
                                   value={purchase}
                                   renderInput={(params) => <TextField
                                     value={purchase}
+                                    required
                                     onChange={(newValue) => setPurchase(newValue.target.value)} {...params}
                                     label="Закуп"/>}
 
@@ -382,7 +383,7 @@ export default function ApplicationPage() {
                     {checked &&
                       <Stack direction="row" spacing={2} sx={{width: '40%'}}>
                         <TextField label="Интервал" variant="outlined" size='small'
-                                   type="number" value={interval}
+                                   type="number" value={interval} required
                                    onChange={(newValue) => setInterval(+newValue.target.value)}
                                    InputProps={{
                                      inputProps: {min: 1}
@@ -396,6 +397,7 @@ export default function ApplicationPage() {
                                       value={unit}
                                       renderInput={(params) => <TextField
                                         value={unit}
+                                        required
                                         onChange={(newValue) => setUnit(newValue.target.value)} {...params}
                                         label="Ед. измерения"/>}
 
@@ -414,6 +416,7 @@ export default function ApplicationPage() {
                     />
                     <TextField label="Количество" variant="outlined" size='small'
                                type="number"
+                               required
                                InputProps={{
                                  inputProps: {min: 1}
                                }}

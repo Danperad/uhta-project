@@ -14,6 +14,8 @@ class Device(
     isDeleted: Boolean = false,
     inStock: Int = 0,
     inOperation: Int = 0,
+    minimalAmount: Int = 0,
+    replacementFrequency: Int = 0,
 
     @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = true)
     @JoinColumn(name = "device_id")
@@ -22,7 +24,7 @@ class Device(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "device_id", nullable = false)
     var id: Int? = null
-) : MaterialBase(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation) {
+) : MaterialBase(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation, minimalAmount, replacementFrequency) {
     fun mapToDeviceDTO(): DeviceDTO {
         val newConsumables = consumables.filter { !it.isDeleted }.map { it.mapToBindingWithoutDevice() }.toSet()
 
@@ -30,7 +32,7 @@ class Device(
     }
 
     fun mapToDeviceDTOWithoutConsumables() =
-        DeviceDTO(id, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, emptySet())
+        DeviceDTO(id, title, producer, csss, nr, unitOfMeasurement.value, inOperation, inStock, minimalAmount, replacementFrequency, emptySet())
 
     fun copy(
         csss: Int = this.csss,
@@ -41,7 +43,9 @@ class Device(
         isDeleted: Boolean = this.isDeleted,
         inStock: Int = this.inStock,
         inOperation: Int = this.inOperation,
+        minimalAmount: Int = this.minimalAmount,
+        replacementFrequency: Int = this.replacementFrequency,
         consumables: MutableList<Binding> = this.consumables,
         id: Int? = this.id
-    ) = Device(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation, consumables, id)
+    ) = Device(csss, nr, title, producer, unitOfMeasurement, isDeleted, inStock, inOperation, minimalAmount, replacementFrequency, consumables, id)
 }

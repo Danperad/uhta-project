@@ -14,6 +14,8 @@ data class DeviceDTO(
     val unitType: String,
     val inOperation: Int,
     val inStock: Int,
+    val minimalAmount: Int,
+    val replacementFrequency: Int,
     val consumables: Set<BindingDTO> = setOf()
 ) {
     fun mapToDevice(): Device {
@@ -26,6 +28,8 @@ data class DeviceDTO(
             false,
             inStock,
             inOperation,
+            minimalAmount,
+            replacementFrequency,
             id = id
         )
         device.consumables.addAll(consumables.map { it.mapToBinding(device) })
@@ -33,6 +37,6 @@ data class DeviceDTO(
     }
 
     override fun toString(): String {
-        return "DeviceDTO(id=$id, title='$title', producer=$producer, csss=$csss, nr3=$nr3, unitType='$unitType', inOperation=$inOperation, inStock=$inStock, consumables=$consumables)"
+        return "DeviceDTO(id=$id, title='$title', producer=$producer, csss=$csss, nr3=$nr3, unitType='$unitType', inOperation=$inOperation, inStock=$inStock, minimalAmount=$minimalAmount, replacementFrequency=$replacementFrequency, consumables=$consumables)"
     }
 }

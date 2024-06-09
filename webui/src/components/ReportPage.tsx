@@ -5,6 +5,17 @@ export default function ReportPage() {
 
   const [reportName, setReportName] = useState<string | undefined>();
 
+  const createReport = async () => {
+    const link = document.createElement('a');
+    link.href = 'https://download1523.mediafire.com/6lg104yr1togBAkA3065_YuiqBXBXRBXnCpxZLtLHB4mnUdku-fUv4v6azvv02106Lm3I64Bw2bwYlXgSepf53vcUcHGyOeKvEDogftDW6xFkaZM3x_JUHB2_tDSNi1HFX7_lPZRyNIL0KUTI0PuPGivkznwge1jhTnjfJSUwhjY4A/jsf3gpw0s0s83x3/Отчет.xlsx';
+    link.setAttribute('download', 'report.xlsx'); //or any other extension
+    document.body.appendChild(link);
+    link.click();
+
+    // clean up "a" element & remove ObjectURL
+    document.body.removeChild(link);
+  }
+
   return (
     <Box sx={{
       width: '100%',
@@ -29,8 +40,6 @@ export default function ReportPage() {
           <Paper style={{padding: "20px"}}>
             <Typography mb={1}>Отчеты</Typography>
             <Stack direction="row" spacing={2} style={{width: "100%"}} height='100%'>
-              <TextField sx={{width: '30%'}} label="Поиск" variant="outlined"
-                         size='small' type="search"/>
               <TextField label="От" type="date" size='small' sx={{width: '16%'}}
                          InputLabelProps={{
                            shrink: true,
@@ -41,7 +50,7 @@ export default function ReportPage() {
                            shrink: true,
                          }}
               />
-              <Button variant="contained">Показать</Button>
+              <Button variant="contained" onClick={() => {createReport()}}>Скачать</Button>
             </Stack>
           </Paper>
         </Box>
