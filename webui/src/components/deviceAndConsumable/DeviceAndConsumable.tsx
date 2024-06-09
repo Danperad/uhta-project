@@ -240,6 +240,19 @@ export default function DeviceAndConsumable() {
       messageType: "success",
       key: +new Date()
     }))
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Массовое добавление материалов",
+      status: "ОК",
+      result: "Добавление прошло успешно",
+      date: new Date()
+    }
+    try {
+      await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   const uploadXmlButtonClick = () => {

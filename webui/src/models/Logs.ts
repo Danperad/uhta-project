@@ -4,7 +4,7 @@ declare type Logs = {
   action: string,
   status: string,
   result: string,
-  element_number: number | undefined,
+  element_number?: number,
   date: Date,
 }
 
