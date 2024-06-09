@@ -19,14 +19,22 @@ class ApplicationDevice (
     val application: Application,
 
     @Column(name = "material_count")
-    val deviceCount: Int
+    val deviceCount: Int = 0,
+
+    @Column(name = "received_quantity")
+    val receivedQuantity: Int = 0,
+
+    @Column(name = "receipt_date")
+    val receiptDate: Int = 0
 ){
     fun copy(
         deviceKey: ApplicationDeviceKey = this.deviceKey,
         device: Device = this.device,
         application: Application = this.application,
-        deviceCount: Int = this.deviceCount
+        deviceCount: Int = this.deviceCount,
+        receivedQuantity: Int = this.receivedQuantity,
+        receiptDate: Int = this.receiptDate,
     ): ApplicationDevice{
-        return ApplicationDevice(deviceKey, device, application, deviceCount)
+        return ApplicationDevice(deviceKey, device, application, deviceCount, receivedQuantity, receiptDate)
     }
 }
