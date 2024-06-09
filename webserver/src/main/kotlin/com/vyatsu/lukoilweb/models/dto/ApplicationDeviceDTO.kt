@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 data class ApplicationDeviceDTO(
     var applicationNumber: Int? = null,
     val device: DeviceDTO,
-    val count: Int
+    val count: Int,
+    val receivedQuantity: Int? = null,
+    val receiptDate: Int? = null
 )
