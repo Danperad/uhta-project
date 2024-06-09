@@ -29,6 +29,8 @@ export default function DeviceAndConsumable() {
   const [producer, setProducer] = useState<string | undefined>();
   const [materialType, setMaterialType] = useState<string | undefined>();
   const [amount, setAmount] = useState<string | undefined>();
+  const [minimalAmount, setMinimalAmount] = useState<string | undefined>();
+  const [replacementFrequency, setReplacementFrequency] = useState<string | undefined>();
   const [materialUnit, setMaterialUnit] = useState<string | undefined>();
 
   const [showDeviceBinding, setShowDeviceBinding] = useState(false);
@@ -92,6 +94,8 @@ export default function DeviceAndConsumable() {
         unitType: materialUnit!,
         inOperation: 0,
         inStock: parseInt(amount!),
+        minimalAmount: parseInt(minimalAmount!),
+        replacementFrequency: parseInt(replacementFrequency!),
         consumables: []
       }
       const res = await DeviceService.saveDevice(newDevice)
@@ -104,9 +108,9 @@ export default function DeviceAndConsumable() {
       const allDevices = await DeviceService.getAllDevices()
       if (!allDevices) return
 
-      const element : Device = allDevices.payload[0];
+      const element: Device = allDevices.payload[0];
 
-      const newLog : Logs = {
+      const newLog: Logs = {
         id: undefined,
         user_login: user!.login,
         action: "Добавление прибора",
@@ -115,10 +119,9 @@ export default function DeviceAndConsumable() {
         element_number: element!.id!,
         date: new Date()
       }
-      try{
+      try {
         await LogsService.addLog(newLog);
-      }
-      catch (e){
+      } catch (e) {
         console.log(e)
       }
 
@@ -140,6 +143,8 @@ export default function DeviceAndConsumable() {
           unitType: materialUnit!,
           inOperation: 0,
           inStock: parseInt(amount!),
+          minimalAmount: parseInt(minimalAmount!),
+          replacementFrequency: parseInt(replacementFrequency!),
           devices: !res ? [] : [newDevice]
         }
         const saveRes = await ConsumableService.saveConsumable(newConsumable)
@@ -152,9 +157,9 @@ export default function DeviceAndConsumable() {
         const allConsumables = await ConsumableService.getAllConsumables()
         if (allConsumables) {
           dispatch(allConsumables)
-          const element : Consumable = allConsumables.payload[0];
+          const element: Consumable = allConsumables.payload[0];
 
-          const newLog : Logs = {
+          const newLog: Logs = {
             id: undefined,
             user_login: user!.login,
             action: "Добавление материала",
@@ -163,10 +168,9 @@ export default function DeviceAndConsumable() {
             element_number: element!.id!,
             date: new Date()
           }
-          try{
+          try {
             await LogsService.addLog(newLog);
-          }
-          catch (e){
+          } catch (e) {
             console.log(e)
           }
         }
@@ -193,10 +197,10 @@ export default function DeviceAndConsumable() {
   }
 
   const CheckRequiredFields = () => {
-    return !(materialName === undefined || nr3 === undefined || csss === undefined ||
-      materialType === undefined || amount === undefined || materialUnit === undefined ||
-      materialName === "" || nr3 === "" || csss === "" ||
-      materialType === "" || amount === "" || materialUnit === "");
+    return !(materialName === undefined || nr3 === undefined || csss === undefined || materialType === undefined || amount === undefined ||
+      materialUnit === undefined || minimalAmount === undefined || replacementFrequency === undefined ||
+      materialName === "" || nr3 === "" || csss === "" || materialType === "" || amount === "" ||
+      materialUnit === "" || minimalAmount === "" || replacementFrequency === "");
   }
 
   function ClearFields() {
@@ -207,6 +211,8 @@ export default function DeviceAndConsumable() {
     setParentCsss("");
     setProducer("");
     setAmount("");
+    setMinimalAmount("");
+    setReplacementFrequency("");
     setMaterialUnit("");
     setAutocompleteTypeValue("");
     setAutocompleteUnitValue("");
@@ -334,6 +340,24 @@ export default function DeviceAndConsumable() {
                                                                     value={materialUnit} required
                                                                     onChange={(newValue) => setMaterialUnit(newValue.target.value)}/>}
                   />
+                  <TextField label="Минимальный остаток" variant="outlined" size='small'
+                             type="number" required
+                             value={minimalAmount} onChange={(newValue) => setMinimalAmount(newValue.target.value)}
+                             InputProps={{
+                               inputProps: {min: 1}
+                             }}
+                  />
+                  <Stack direction='row' spacing={1}>
+                    <TextField label="Периодичность замены" variant="outlined" size='small'
+                               type="number" required
+                               value={replacementFrequency}
+                               onChange={(newValue) => setReplacementFrequency(newValue.target.value)}
+                               InputProps={{
+                                 inputProps: {min: 1}
+                               }}
+                    />
+                    <Typography style={{marginTop: "2%"}}>Дней</Typography>
+                  </Stack>
                 </Stack>
                 <Stack direction='row' spacing={1} justifyContent='center'>
                   <Button variant="contained"

@@ -171,8 +171,30 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
     }
   }
 
+  function changeMinimalAmount(newValue: number) {
+    if (newValue >= 0) {
+      if (newValue > device!.minimalAmount) {
+        setDevice({...device!, minimalAmount: device!.minimalAmount + 1})
+      }
+      if (newValue < device!.minimalAmount) {
+        setDevice({...device!, minimalAmount: device!.minimalAmount - 1})
+      }
+    }
+  }
+
+  function changeReplacementFrequencyt(newValue: number) {
+    if (newValue >= 0) {
+      if (newValue > device!.replacementFrequency) {
+        setDevice({...device!, replacementFrequency: device!.replacementFrequency + 1})
+      }
+      if (newValue < device!.replacementFrequency) {
+        setDevice({...device!, replacementFrequency: device!.replacementFrequency - 1})
+      }
+    }
+  }
+
   useEffect(() => {
-    if (user){
+    if (user) {
       setDisabled(false)
     }
   }, [user])
@@ -186,7 +208,7 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
         <div style={{width: '100%', height: '80%'}}>
           <Paper sx={{width: '100%'}}
                  style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
-            <Stack direction="row" spacing={2} sx={{width: '100%'}}>
+            <Stack direction="row" spacing={2} sx={{width: '100%'}} mb={1}>
               <Typography mb={2}>Редактирование прибора:</Typography>
               <Typography color="primary">{device ? device!.title : ""}</Typography>
               <Typography mb={2}>№КССС:</Typography>
@@ -194,35 +216,71 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
               <Typography mb={2}>№R-3:</Typography>
               <Typography color="primary">{device ? device!.nr3 : ""}</Typography>
             </Stack>
-            <Stack direction="row" spacing={2} mt={1}>
-              <Typography mb={2}>Количество в эксплуатации:</Typography>
+            <Stack direction="row" spacing={2} justifyContent="space-between">
+              <div>
+                <Stack direction="row" spacing={2} mt={1}>
+                  <Typography style={{marginTop: "1%"}}>Количество в эксплуатации:</Typography>
 
-              <TextField variant="outlined" size='small' type="number"
-                         style={{width: "10%"}}
-                         disabled={disabled}
-                         value={device ? device!.inOperation : ""}
-                         onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
-                         InputLabelProps={{
-                           shrink: true,
-                         }}
-              />
+                  <TextField variant="outlined" size='small' type="number"
+                             style={{width: "25%"}}
+                             disabled={disabled}
+                             value={device ? device!.inOperation : ""}
+                             onChange={(newValue) => changeMaterialInOperation(parseInt(newValue.target.value))}
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                  />
+                </Stack>
+                <Stack direction="row" spacing={2} mt={1}>
+                  <Typography style={{marginTop: "1%"}}>Количество на складе:</Typography>
+                  <TextField variant="outlined" size='small' type="number"
+                             style={{marginLeft: "65px", width: "25%"}}
+                             disabled={disabled}
+                             value={device ? device!.inStock : 0}
+                             onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                             InputProps={{
+                               inputProps: {min: 0}
+                             }}
+                  />
+                </Stack>
+              </div>
+              <div>
+                <Stack direction="row" spacing={2} mt={1} justifyContent="flex-end">
+                  <Typography style={{marginTop: "1%"}}>Минимальный остаток:</Typography>
+                  <TextField variant="outlined" size='small' type="number"
+                             style={{width: "25%", marginLeft: "24px", marginRight: "60px"}}
+                             disabled={disabled}
+                             value={device ? device!.minimalAmount : 0}
+                             onChange={(newValue) => changeMinimalAmount(parseInt(newValue.target.value))}
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                             InputProps={{
+                               inputProps: {min: 0}
+                             }}
+                  />
+                </Stack>
+                <Stack direction="row" spacing={2} mt={1} justifyContent="flex-end">
+                  <Typography style={{marginTop: "1%"}}>Периодичность замены:</Typography>
+                  <TextField variant="outlined" size='small' type="number"
+                             style={{width: "25%"}}
+                             disabled={disabled}
+                             value={device ? device!.replacementFrequency : 0}
+                             onChange={(newValue) => changeReplacementFrequencyt(parseInt(newValue.target.value))}
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                             InputProps={{
+                               inputProps: {min: 0}
+                             }}
+                  />
+                  <Typography style={{marginTop: "2%"}}>Дней</Typography>
+                </Stack>
+              </div>
             </Stack>
-            <Stack direction="row" spacing={2} mt={1}>
-              <Typography mb={2}>Количество на складе:</Typography>
-              <TextField variant="outlined" size='small' type="number"
-                         style={{marginLeft: "65px", width: "10%"}}
-                         disabled={disabled}
-                         value={device ? device!.inStock : 0}
-                         onChange={(newValue) => changeMaterialInStock(parseInt(newValue.target.value))}
-                         InputLabelProps={{
-                           shrink: true,
-                         }}
-                         InputProps={{
-                           inputProps: {min: 0}
-                         }}
-              />
-            </Stack>
-
           </Paper>
           <div className='section' style={{height: '70%', width: '102.6%'}}>
             <TableContainer component={Paper}>
@@ -267,7 +325,8 @@ function ChangeDeviceModal(props: { receivedMaterial: Device, closeEvent: () => 
         <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
             {user && user.role === "ADMIN" ? (
-            <Button variant="outlined" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить прибор</Button>
+              <Button variant="outlined" disabled={disabled} onClick={() => setOpenChildModal(true)}>Удалить
+                прибор</Button>
             ) : (
               <div></div>
             )}

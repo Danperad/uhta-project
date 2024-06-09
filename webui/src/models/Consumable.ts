@@ -9,6 +9,8 @@ declare type Consumable = {
   unitType: string,
   inOperation: number,
   inStock: number,
-  devices: Binding[]
+  minimalAmount: number,
+  replacementFrequency: number,
+  devices: Binding[],
 }
 export default Consumable;
