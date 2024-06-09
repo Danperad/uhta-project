@@ -294,8 +294,8 @@ export default function EmployeePage() {
 
             ) : (
               <Stack spacing={2}>
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Skeleton variant="rounded" height={100} sx={{width: '100%'}} key={i}/>
+                {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+                  <Skeleton variant="rounded" height={90} sx={{width: '100%'}} key={i}/>
                 ))}
               </Stack>
             )}
