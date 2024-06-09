@@ -112,7 +112,7 @@ export default function ControlPage() {
                       <TableCell align="left">Статус</TableCell>
                       <TableCell align="left">Результат</TableCell>
                       <TableCell align="left">Номер элемента</TableCell>
-                      <TableCell align="left">Дата</TableCell>
+                      <TableCell align="left">Дата и время</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
