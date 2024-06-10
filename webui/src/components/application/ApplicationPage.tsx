@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {ChangeEvent, useRef, useState} from 'react';
 import {
   Autocomplete,
   Box,
@@ -14,6 +14,7 @@ import {
   Typography
 } from '@mui/material';
 import {style} from '../../assets/css/CreateOrderModal';
+import {styleReportModel} from '../../assets/css/CreateReportModal';
 import DeviceService from "../../services/DeviceService";
 import ApplicationTable from "./ApplicationTable";
 import {AddSnackbar} from "../../redux/actions/snackbarAction";
@@ -24,6 +25,7 @@ import ConsumableService from "../../services/ConsumableService";
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 import ApplicationService from "../../services/ApplicationService";
 import LogsService from "../../services/LogsService";
+import excelIcon from "../../../public/image/excel.svg";
 
 export default function ApplicationPage() {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -31,6 +33,8 @@ export default function ApplicationPage() {
   const [checked, setChecked] = useState(false);
 
   const [openCreateOrderModal, setCreateApplicationModalOpen] = useState(false);
+  const [openCreateReportModal, setCreateReportModalOpen] = useState(false);
+  const [openAddDeliveryModal, setAddDeliveryModalOpen] = useState(false);
 
   const [materialAmount, setMaterialAmount] = useState<string | undefined>();
 
@@ -45,11 +49,52 @@ export default function ApplicationPage() {
   const [interval, setInterval] = useState<number>()
   const [unit, setUnit] = useState<string>()
 
+  const [applicationNumber, setApplicationNumber] = useState<string | undefined>();
+  const inputFile = useRef<HTMLInputElement | null>(null)
+  const uploadXmlButtonClick = () => {
+    inputFile.current?.click()
+  };
+  const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files
+    if (files === null || !files || files!.length === 0)
+      return
+
+    const file = files!.item(0)
+    if (file === null) return;
+
+    const newLog: Logs = {
+      id: undefined,
+      user_login: user!.login,
+      action: "Добавление поставки",
+      status: "ОК",
+      result: "Добавление прошло успешно",
+      element_number: parseInt(applicationNumber!),
+      date: new Date()
+    }
+    try {
+      await LogsService.addLog(newLog);
+    } catch (e) {
+      console.log(e)
+    }
+    setAddDeliveryModalOpen(false);
+    dispatch(AddSnackbar({
+      messageText: "Поставка успешно добавлена!",
+      messageType: "success",
+      key: +new Date()
+    }))
+  }
+
   const handleOpenCreateApplicationModal = () => {
     setCreateApplicationModalOpen(true)
     DeviceService.getAllDevices().then((res) => {
       if (res) dispatch(res);
     });
+  }
+  const handleOpenCreateReportModal = () => {
+    setCreateReportModalOpen(true)
+  }
+  const handleOpenAddDeliveryModal = () => {
+    setAddDeliveryModalOpen(true)
   }
   const handleCloseCreateOrderModal = () => {
     setCreateApplicationModalOpen(false);
@@ -59,6 +104,12 @@ export default function ApplicationPage() {
   }
   const handleChangeChecked = () => {
     setChecked(prev => !prev)
+  }
+  const handleCloseCreateReportModal = () => {
+    setCreateReportModalOpen(false);
+  }
+  const handleCloseAddDeliveryModal = () => {
+    setAddDeliveryModalOpen(false);
   }
   //Dictionaries
   const Unit = ['Дни', 'Месяцы',]
@@ -166,6 +217,19 @@ export default function ApplicationPage() {
     setConsumables(tmp)
   }
 
+  const createReport = async () => {
+    const link = document.createElement('a');
+    link.href = 'https://download1523.mediafire.com/6lg104yr1togBAkA3065_YuiqBXBXRBXnCpxZLtLHB4mnUdku-fUv4v6azvv02106Lm3I64Bw2bwYlXgSepf53vcUcHGyOeKvEDogftDW6xFkaZM3x_JUHB2_tDSNi1HFX7_lPZRyNIL0KUTI0PuPGivkznwge1jhTnjfJSUwhjY4A/jsf3gpw0s0s83x3/Отчет.xlsx';
+    link.setAttribute('download', 'report.xlsx'); //or any other extension
+    document.body.appendChild(link);
+    link.click();
+
+    // clean up "a" element & remove ObjectURL
+    document.body.removeChild(link);
+
+    setCreateReportModalOpen(false);
+  }
+
   function changeDeviceAmountInApplication(newValue: number, csss: number) {
     if (newValue < 1) {
       dispatch(AddSnackbar({
@@ -271,6 +335,11 @@ export default function ApplicationPage() {
     setChecked(false);
   }
 
+  // useEffect( () => {
+  //   const application = await ApplicationService.getAllApplications(search, false, status, dateStart, dateEnd);
+  //   setSearchApplications(application);
+  //   setShowApplicationTable(true);
+  // }, [])
   return (
     <Box sx={{
       width: '100%',
@@ -319,6 +388,12 @@ export default function ApplicationPage() {
                                                                   onChange={(newValue) => setStatus(newValue.target.value)}/>}
                 />
                 <Button variant="contained" onClick={handleShowApplicationTable}>Показать</Button>
+                <Button variant="outlined" onClick={handleOpenCreateReportModal}>Отчет</Button>
+                {user ? (
+                  <Button variant="outlined" onClick={handleOpenAddDeliveryModal}>Поставка</Button>
+                ) : (
+                  <></>
+                )}
               </Stack>
               {user ? (
                 <Button variant="contained" onClick={handleOpenCreateApplicationModal}>Создать</Button>
@@ -348,10 +423,9 @@ export default function ApplicationPage() {
       >
         <Box sx={style}>
           <Stack direction="column" justifyContent="space-between" spacing={1}
-                 sx={{width: '97%', height: '100%'}} style={{margin: '0px'}}>
+                 sx={{width: '100%', height: '100%'}} style={{margin: '0px'}}>
             <div>
-              <Paper sx={{width: '100%'}}
-                     style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
+              <Paper style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
                 <Typography mb={2}>Создание заявки</Typography>
                 <Stack direction="column" spacing={2}>
                   <Stack direction="row" spacing={2}>
@@ -427,7 +501,7 @@ export default function ApplicationPage() {
                   </Stack>
                 </Stack>
               </Paper>
-              <Paper sx={{width: '100%'}} style={{marginLeft: "0px", padding: "20px"}}>
+              <Paper style={{marginLeft: "0px", padding: "20px"}}>
                 {consumables && consumables!.length !== 0 && consumables!.map(
                   (row: ApplicationConsumable) => (
                     <Stack direction="row" width='100%' spacing={1} mb={1}>
@@ -495,10 +569,92 @@ export default function ApplicationPage() {
                 )}
               </Paper>
             </div>
-            <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
+            <Paper style={{padding: "20px"}}>
               <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                <Button variant="contained" onClick={handleCloseCreateOrderModal}>Отмена</Button>
+                <Button variant="outlined" onClick={handleCloseCreateOrderModal}>Отмена</Button>
                 <Button variant="contained" onClick={addApplication}>Создать</Button>
+              </Stack>
+            </Paper>
+          </Stack>
+        </Box>
+      </Modal>
+      <Modal
+        open={openCreateReportModal}
+        onClose={handleCloseCreateReportModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleReportModel}>
+          <Stack direction="column" spacing={1}
+                 sx={{width: '100%', height: '100%'}} style={{margin: '0px'}}>
+            <div>
+              <Paper style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
+                <Typography mb={2}>Создание отчета</Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <TextField label="От" type="date" size='small' sx={{width: '30%'}} required
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                  />
+                  <TextField label="До" type="date" size='small' sx={{width: '30%'}} required
+                             InputLabelProps={{
+                               shrink: true,
+                             }}
+                  />
+                </Stack>
+                <Typography mt={2}>Перед формированием отчета убедитесь, что загружены все актуальные
+                  поставки</Typography>
+              </Paper>
+            </div>
+            <Paper style={{padding: "20px"}}>
+              <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
+                <Button variant="outlined" onClick={() => {
+                  handleCloseCreateReportModal()
+                }}>Отмена</Button>
+                <Button variant="contained" onClick={() => {
+                  createReport()
+                }}>Скачать</Button>
+              </Stack>
+            </Paper>
+          </Stack>
+        </Box>
+      </Modal>
+      <Modal
+        open={openAddDeliveryModal}
+        onClose={handleCloseAddDeliveryModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleReportModel}>
+          <Stack direction="column" spacing={1}
+                 sx={{width: '100%', height: '100%'}} style={{margin: '0px'}}>
+            <div>
+              <Paper style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
+                <Typography mb={2}>Добавление поставки</Typography>
+                <TextField label="Номер заявки" variant="outlined" size='small'
+                           type="number" required
+                           value={applicationNumber}
+                           onChange={(newValue) => setApplicationNumber(newValue.target.value)}
+                           InputProps={{
+                             inputProps: {min: 1}
+                           }}
+                />
+                <Typography mt={2}>Дата загрузки последней поставки: 09.06.2024</Typography>
+              </Paper>
+            </div>
+            <Paper style={{padding: "20px"}}>
+              <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
+                <Button variant="outlined" onClick={() => {
+                  handleCloseAddDeliveryModal()
+                }}>Отмена</Button>
+                <Button variant="contained"
+                        endIcon={<img src={excelIcon} style={{width: "20px"}} alt="excel"></img>}
+                        onClick={uploadXmlButtonClick}>
+                  Загрузить
+                  <input type='file' ref={inputFile}
+                         accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
+                         hidden onChange={uploadFile}/>
+                </Button>
               </Stack>
             </Paper>
           </Stack>
