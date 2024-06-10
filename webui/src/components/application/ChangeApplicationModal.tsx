@@ -303,10 +303,9 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
   return (
     <Box sx={style}>
       <Stack direction="column" justifyContent="space-between" spacing={1}
-             sx={{width: '97%', height: '100%'}} style={{margin: '0px'}}>
+             sx={{width: '100%', height: '100%'}} style={{margin: '0px'}}>
         <div>
-          <Paper sx={{width: '100%'}}
-                 style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
+          <Paper style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
             <Typography mb={2}>Редактирование заявки</Typography>
             <Stack direction="column" spacing={2}>
               <Stack direction="row" spacing={2}>
@@ -383,7 +382,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
               </Stack>
             </Stack>
           </Paper>
-          <Paper sx={{width: '100%'}} style={{marginLeft: "0px", padding: "20px"}}>
+          <Paper style={{marginLeft: "0px", padding: "20px"}}>
             {consumables && consumables!.length !== 0 && consumables!.map(
               (row: ApplicationConsumable) => (
                 <Stack direction="row" width='100%' spacing={1} mb={1}>
@@ -451,7 +450,7 @@ function ChangeApplicationModal(props: { receivedApplication: Application, close
             )}
           </Paper>
         </div>
-        <Paper sx={{width: '100%'}} style={{padding: "20px"}}>
+        <Paper style={{padding: "20px"}}>
           <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
             <Button variant="outlined" onClick={() => {
               deleteApplication(application.number!)

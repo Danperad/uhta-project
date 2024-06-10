@@ -22,7 +22,6 @@ import style from '../assets/css/SignInModal.module.css';
 
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import DescriptionIcon from '@mui/icons-material/Description';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import BuildIcon from '@mui/icons-material/Build';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
@@ -139,12 +138,6 @@ export default function SideBar() {
             navigate("/archive")
           }}>
             Архив
-          </Button>
-          <Button variant="contained" color="secondary" disableElevation sx={{borderRadius: '5px'}}
-                  startIcon={<DescriptionIcon/>} onClick={() => {
-            navigate("/report")
-          }}>
-            Отчеты
           </Button>
         </Stack>
         {user ? (
