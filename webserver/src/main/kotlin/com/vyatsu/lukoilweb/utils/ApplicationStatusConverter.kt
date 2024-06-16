@@ -14,8 +14,9 @@ class ApplicationStatusConverter : AttributeConverter<ApplicationStatuses, Strin
     override fun convertToEntityAttribute(dbData: String?): ApplicationStatuses {
         return when (dbData){
             "Новая" -> ApplicationStatuses.NEW
-            "На согласование" -> ApplicationStatuses.ON_APPROVAL
             "Согласована" -> ApplicationStatuses.AGREED
+            "Завершена" -> ApplicationStatuses.COMPLETED
+            "В архиве" -> ApplicationStatuses.IN_ARCHIVE
             else -> throw NoSuchElementException()
         }
     }

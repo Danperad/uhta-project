@@ -236,6 +236,12 @@ export default function EmployeePage() {
               <TextField sx={{width: '30%'}} label="Поиск" variant="outlined"
                          size='small' type="search" value={search}
                          onChange={(newValue) => setSearch(newValue.target.value)}/>
+              <Autocomplete disablePortal size='small' options={Role} sx={{width: '15%'}}
+                            onInputChange={CheckRole} value={autocompleteRoleValue}
+                            renderInput={(params) => <TextField {...params} label="Роль"
+                                                                value={employeeRole} required
+                                                                onChange={(newValue) => setEmployeeRole(newValue.target.value)}/>}
+              />
               <Button variant="contained" onClick={handleShowUsersTable}>Показать</Button>
             </Stack>
           </Paper>

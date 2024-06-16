@@ -25,7 +25,6 @@ import ConsumableService from "../../services/ConsumableService";
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 import ApplicationService from "../../services/ApplicationService";
 import LogsService from "../../services/LogsService";
-import excelIcon from "../../../public/image/excel.svg";
 
 export default function ApplicationPage() {
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -34,7 +33,6 @@ export default function ApplicationPage() {
 
   const [openCreateOrderModal, setCreateApplicationModalOpen] = useState(false);
   const [openCreateReportModal, setCreateReportModalOpen] = useState(false);
-  const [openAddDeliveryModal, setAddDeliveryModalOpen] = useState(false);
 
   const [materialAmount, setMaterialAmount] = useState<string | undefined>();
 
@@ -76,7 +74,6 @@ export default function ApplicationPage() {
     } catch (e) {
       console.log(e)
     }
-    setAddDeliveryModalOpen(false);
     dispatch(AddSnackbar({
       messageText: "Поставка успешно добавлена!",
       messageType: "success",
@@ -93,9 +90,6 @@ export default function ApplicationPage() {
   const handleOpenCreateReportModal = () => {
     setCreateReportModalOpen(true)
   }
-  const handleOpenAddDeliveryModal = () => {
-    setAddDeliveryModalOpen(true)
-  }
   const handleCloseCreateOrderModal = () => {
     setCreateApplicationModalOpen(false);
     if (checked) {
@@ -108,13 +102,10 @@ export default function ApplicationPage() {
   const handleCloseCreateReportModal = () => {
     setCreateReportModalOpen(false);
   }
-  const handleCloseAddDeliveryModal = () => {
-    setAddDeliveryModalOpen(false);
-  }
   //Dictionaries
   const Unit = ['Дни', 'Месяцы',]
   const Purchase = ['Внутренний', 'Внешний',]
-  const Statuses = ['Новая', 'На согласование', 'Согласована']
+  const Statuses = ['Новая', 'Согласована', 'Завершена']
 
   const [search, setSearch] = useState<string>('');
   const [dateStart, setDateStart] = useState<string | undefined>();
@@ -335,11 +326,6 @@ export default function ApplicationPage() {
     setChecked(false);
   }
 
-  // useEffect( () => {
-  //   const application = await ApplicationService.getAllApplications(search, false, status, dateStart, dateEnd);
-  //   setSearchApplications(application);
-  //   setShowApplicationTable(true);
-  // }, [])
   return (
     <Box sx={{
       width: '100%',
@@ -390,7 +376,11 @@ export default function ApplicationPage() {
                 <Button variant="contained" onClick={handleShowApplicationTable}>Показать</Button>
                 <Button variant="outlined" onClick={handleOpenCreateReportModal}>Отчет</Button>
                 {user ? (
-                  <Button variant="outlined" onClick={handleOpenAddDeliveryModal}>Поставка</Button>
+                  <Button variant="outlined" onClick={uploadXmlButtonClick}>Поставка
+                    <input type='file' ref={inputFile}
+                           accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
+                           hidden
+                           onChange={uploadFile}/></Button>
                 ) : (
                   <></>
                 )}
@@ -619,48 +609,6 @@ export default function ApplicationPage() {
           </Stack>
         </Box>
       </Modal>
-      <Modal
-        open={openAddDeliveryModal}
-        onClose={handleCloseAddDeliveryModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={styleReportModel}>
-          <Stack direction="column" spacing={1}
-                 sx={{width: '100%', height: '100%'}} style={{margin: '0px'}}>
-            <div>
-              <Paper style={{marginLeft: "0px", padding: "20px", marginBottom: "8px"}}>
-                <Typography mb={2}>Добавление поставки</Typography>
-                <TextField label="Номер заявки" variant="outlined" size='small'
-                           type="number" required
-                           value={applicationNumber}
-                           onChange={(newValue) => setApplicationNumber(newValue.target.value)}
-                           InputProps={{
-                             inputProps: {min: 1}
-                           }}
-                />
-                <Typography mt={2}>Дата загрузки последней поставки: 09.06.2024</Typography>
-              </Paper>
-            </div>
-            <Paper style={{padding: "20px"}}>
-              <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
-                <Button variant="outlined" onClick={() => {
-                  handleCloseAddDeliveryModal()
-                }}>Отмена</Button>
-                <Button variant="contained"
-                        endIcon={<img src={excelIcon} style={{width: "20px"}} alt="excel"></img>}
-                        onClick={uploadXmlButtonClick}>
-                  Загрузить
-                  <input type='file' ref={inputFile}
-                         accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
-                         hidden onChange={uploadFile}/>
-                </Button>
-              </Stack>
-            </Paper>
-          </Stack>
-        </Box>
-      </Modal>
     </Box>
-
   )
 }
