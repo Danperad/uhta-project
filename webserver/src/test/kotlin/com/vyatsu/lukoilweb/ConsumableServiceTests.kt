@@ -53,7 +53,7 @@ class ConsumableServiceTests {
     fun addConsumableWithBinding() {
         val device = deviceRepository.findDeviceByCsssAndIsDeletedFalse(1)!!.mapToDeviceDTO()
         val consumable =
-            ConsumableDTO(null, "Расходник 3", "Тест", 3, 3, "ШТ", 0, 0, setOf(BindingDTO(null, device, null, 0)))
+            ConsumableDTO(null, "Расходник 3", "Тест", 3, 3, "ШТ", 0, 0, 0, 0,setOf(BindingDTO(null, device, null, 0)))
         val newConsumable = consumableService.saveConsumable(consumable)
         assert(newConsumable.devices.isNotEmpty())
         assert(newConsumable.devices.first().device != null)
