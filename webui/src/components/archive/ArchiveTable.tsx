@@ -223,7 +223,7 @@ export default function ArchiveTable() {
                 <TableCell align="center">Дата</TableCell>
                 <TableCell align="center">Статус</TableCell>
                 {user ? (
-                  <TableCell align="center">Разархивация</TableCell>
+                  <TableCell align="center">Создание копии</TableCell>
                 ) : (
                   <></>
                 )}
